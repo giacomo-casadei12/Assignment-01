@@ -1,4 +1,4 @@
-package sap.ass01.layers.DAL;
+package sap.ass01.layers.DAL.Schemas;
 
 public class UserSchemaImpl implements UserSchema {
     final int ID;

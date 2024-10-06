@@ -1,4 +1,4 @@
-package sap.ass01.layers.DAL;
+package sap.ass01.layers.DAL.Schemas;
 
 public interface UserSchema {
     int getID();
@@ -6,6 +6,5 @@ public interface UserSchema {
     String getPassword();
     int getCredit();
     Boolean isAdmin();
-
 }
 

@@ -1,6 +1,8 @@
-package sap.ass01.layers.DAL;
+package sap.ass01.layers.DAL.DB;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
+import sap.ass01.layers.DAL.Schemas.UserSchema;
+import sap.ass01.layers.DAL.Schemas.UserSchemaImpl;
 
 import java.sql.*;
 import java.util.ArrayList;

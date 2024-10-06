@@ -1,4 +1,6 @@
-package sap.ass01.layers.DAL;
+package sap.ass01.layers.DAL.DB;
+
+import sap.ass01.layers.DAL.Schemas.UserSchema;
 
 import java.util.List;
 
