@@ -8,6 +8,7 @@ public interface UserDA {
     List<UserSchema> getAllUsers();
     UserSchema getUserByName(String userName);
     UserSchema getUserById(int id);
+    boolean login(String userName, String password);
     boolean createUser(String userName, String password);
     boolean updateUser(int id, int credit);
     boolean deleteUser(int id);

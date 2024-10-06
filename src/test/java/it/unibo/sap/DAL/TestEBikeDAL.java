@@ -29,7 +29,7 @@ public class TestEBikeDAL {
         boolean b = eBikeDA.createEBike(22,22);
         assertTrue(b);
         List<EBikeSchema> bis = eBikeDA.getAllEBikesNearby(30,30);
-        assertNotNull(bis);
+        assertFalse(bis.isEmpty());
         assertTrue(bis.stream().anyMatch(eBikeSchema -> eBikeSchema.getPositionX() == 22 && eBikeSchema.getPositionY() == 22));
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = bis.stream().
                                                                      filter(eBikeSchema -> eBikeSchema.getPositionX() == 22 && eBikeSchema.getPositionY() == 22).

@@ -25,7 +25,7 @@ public class UserDB implements UserDA{
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM users");
-            if (rs.next()) {
+            while (rs.next()) {
                 UserSchema user = new UserSchemaImpl(rs.getInt("ID"),
                                                 rs.getString("UserName"),
                                                 rs.getString("Password"),
@@ -78,6 +78,28 @@ public class UserDB implements UserDA{
             throw new IllegalStateException("Problem in the query", e);
         }
         return user;
+    }
+
+    @Override
+    public boolean login(String userName, String password) {
+        ResultSet rs;
+        UserSchema user = null;
+        try (Connection connection = ds.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+            stmt.setString(1, userName);
+            stmt.setString(2, password);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                user = new UserSchemaImpl(rs.getInt("ID"),
+                        rs.getString("UserName"),
+                        rs.getString("Password"),
+                        rs.getInt("Credit"),
+                        rs.getBoolean("IsAdmin"));
+            }
+        } catch( SQLException e) {
+            throw new IllegalStateException("Problem in the query", e);
+        }
+        return user != null;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class EBikeDB implements EBikeDA {
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM ebike");
-            if (rs.next()) {
+            while (rs.next()) {
                 EBikeSchema bike = new EBikeSchemaImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
                         rs.getInt("State"),
@@ -52,7 +52,7 @@ public class EBikeDB implements EBikeDA {
             stmt.setInt(3, positionY - NEARBY_RANGE);
             stmt.setInt(4, positionY + NEARBY_RANGE);
             rs = stmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 EBikeSchema bike = new EBikeSchemaImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
                         rs.getInt("State"),

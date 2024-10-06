@@ -32,6 +32,18 @@ public class TestUserDAL {
         assertEquals(1, x.getID());
     }
 
+    @Test
+    public void loginUser() {
+        boolean x = userDA.login("GiacomoCasadei","password");
+        assertFalse(x);
+        x = userDA.login("GiacomoC","passwordStorta");
+        assertFalse(x);
+        x = userDA.login("GiacomoCasadei","passwordStorta");
+        assertFalse(x);
+        x = userDA.login("GiacomoC","password");
+        assertTrue(x);
+    }
+
 
     @Test
     public void createUpdateDeleteUser() {
