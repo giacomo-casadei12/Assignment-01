@@ -42,6 +42,27 @@ public class EBikeDB implements EBikeDA {
     }
 
     @Override
+    public List<EBikeSchema> getAllAvailableEBikes() {
+        ResultSet rs;
+        List<EBikeSchema> bikes = new ArrayList<>();
+        try (Connection connection = ds.getConnection()) {
+            Statement stmt = connection.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM ebike WHERE State = 0");
+            while (rs.next()) {
+                EBikeSchema bike = new EBikeSchemaImpl(rs.getInt("ID"),
+                        rs.getInt("Battery"),
+                        rs.getInt("State"),
+                        rs.getInt("PositionX"),
+                        rs.getInt("PositionY"));
+                bikes.add(bike);
+            }
+        } catch( SQLException e) {
+            throw new IllegalStateException("Problem in the query", e);
+        }
+        return bikes;
+    }
+
+    @Override
     public List<EBikeSchema> getAllEBikesNearby(int positionX, int positionY ) {
         ResultSet rs;
         List<EBikeSchema> bikes = new ArrayList<>();

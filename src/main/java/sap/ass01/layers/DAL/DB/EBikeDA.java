@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface EBikeDA {
     List<EBikeSchema> getAllEBikes();
+    List<EBikeSchema> getAllAvailableEBikes();
     List<EBikeSchema> getAllEBikesNearby(int positionX, int positionY);
     EBikeSchema getEBikeById(int id);
     boolean createEBike(int positionX, int positionY);
