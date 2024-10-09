@@ -1,14 +1,14 @@
 package sap.ass01.layers.DAL.Schemas;
 
-public class EBikeSchemaImpl implements EBikeSchema {
+public class EBikeImpl implements EBike {
 
     final int ID;
     final int battery;
-    final int state;
+    final EBikeState state;
     final int positionX;
     final int positionY;
 
-    public EBikeSchemaImpl(int ID, int battery, int state, int positionX, int positionY) {
+    public EBikeImpl(int ID, int battery, EBikeState state, int positionX, int positionY) {
         this.ID = ID;
         this.battery = battery;
         this.state = state;
@@ -27,7 +27,7 @@ public class EBikeSchemaImpl implements EBikeSchema {
     }
 
     @Override
-    public int getState() {
+    public EBikeState getState() {
         return this.state;
     }
 

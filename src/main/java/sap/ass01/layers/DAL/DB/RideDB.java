@@ -1,8 +1,8 @@
 package sap.ass01.layers.DAL.DB;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
-import sap.ass01.layers.DAL.Schemas.RideSchema;
-import sap.ass01.layers.DAL.Schemas.RideSchemaImpl;
+import sap.ass01.layers.DAL.Schemas.Ride;
+import sap.ass01.layers.DAL.Schemas.RideImpl;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,14 +20,14 @@ public class RideDB implements RideDA{
     }
 
     @Override
-    public List<RideSchema> getAllRides() {
+    public List<Ride> getAllRides() {
         ResultSet rs;
-        List<RideSchema> rides = new ArrayList<>();
+        List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM ride");
             while (rs.next()) {
-                RideSchema ride = new RideSchemaImpl(rs.getInt("ID"),
+                Ride ride = new RideImpl(rs.getInt("ID"),
                         rs.getDate("StartDate"),
                         rs.getDate("EndDate"),
                         rs.getInt("UserID"),
@@ -41,14 +41,14 @@ public class RideDB implements RideDA{
     }
 
     @Override
-    public List<RideSchema> getAllOngoingRides() {
+    public List<Ride> getAllOngoingRides() {
         ResultSet rs;
-        List<RideSchema> rides = new ArrayList<>();
+        List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM ride WHERE EndDate IS NULL");
             while (rs.next()) {
-                RideSchema ride = new RideSchemaImpl(rs.getInt("ID"),
+                Ride ride = new RideImpl(rs.getInt("ID"),
                         rs.getDate("StartDate"),
                         rs.getDate("EndDate"),
                         rs.getInt("UserID"),
@@ -62,8 +62,8 @@ public class RideDB implements RideDA{
     }
 
     @Override
-    public List<RideSchema> getAllRidesByUser(int userId) {
-        List<RideSchema> rides = new ArrayList<>();
+    public List<Ride> getAllRidesByUser(int userId) {
+        List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE UserID = ?");
             getRidesAndFillList(userId, rides, stmt);
@@ -74,8 +74,8 @@ public class RideDB implements RideDA{
     }
 
     @Override
-    public List<RideSchema> getAllRidesByEBike(int eBikeId) {
-        List<RideSchema> rides = new ArrayList<>();
+    public List<Ride> getAllRidesByEBike(int eBikeId) {
+        List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE EBikeID = ?");
             getRidesAndFillList(eBikeId, rides, stmt);
@@ -86,15 +86,36 @@ public class RideDB implements RideDA{
     }
 
     @Override
-    public RideSchema getRideById(int id) {
+    public Ride getRideById(int id) {
         ResultSet rs;
-        RideSchema ride = null;
+        Ride ride = null;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE ID = ?");
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
             if (rs.next()) {
-                ride = new RideSchemaImpl(rs.getInt("ID"),
+                ride = new RideImpl(rs.getInt("ID"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate"),
+                        rs.getInt("UserID"),
+                        rs.getInt("EBikeID"));
+            }
+        } catch( SQLException e) {
+            throw new IllegalStateException("Problem in the query", e);
+        }
+        return ride;
+    }
+
+    @Override
+    public Ride getOngoingRideByUserId(int userId) {
+        ResultSet rs;
+        Ride ride = null;
+        try (Connection connection = ds.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE UserID = ? AND EndDate IS NULL");
+            stmt.setInt(1, userId);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                ride = new RideImpl(rs.getInt("ID"),
                         rs.getDate("StartDate"),
                         rs.getDate("EndDate"),
                         rs.getInt("UserID"),
@@ -150,12 +171,12 @@ public class RideDB implements RideDA{
         return rs > 0;
     }
 
-    private void getRidesAndFillList(int userId, List<RideSchema> rides, PreparedStatement stmt) throws SQLException {
+    private void getRidesAndFillList(int userId, List<Ride> rides, PreparedStatement stmt) throws SQLException {
         ResultSet rs;
         stmt.setInt(1, userId);
         rs = stmt.executeQuery();
         while (rs.next()) {
-            RideSchema ride = new RideSchemaImpl(rs.getInt("ID"),
+            Ride ride = new RideImpl(rs.getInt("ID"),
                     rs.getDate("StartDate"),
                     rs.getDate("EndDate"),
                     rs.getInt("UserID"),

@@ -1,8 +1,8 @@
 package sap.ass01.layers.DAL.DB;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
-import sap.ass01.layers.DAL.Schemas.UserSchema;
-import sap.ass01.layers.DAL.Schemas.UserSchemaImpl;
+import sap.ass01.layers.DAL.Schemas.User;
+import sap.ass01.layers.DAL.Schemas.UserImpl;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,14 +19,14 @@ public class UserDB implements UserDA{
     }
 
     @Override
-    public List<UserSchema> getAllUsers() {
+    public List<User> getAllUsers() {
         ResultSet rs;
-        List<UserSchema> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM users");
             while (rs.next()) {
-                UserSchema user = new UserSchemaImpl(rs.getInt("ID"),
+                User user = new UserImpl(rs.getInt("ID"),
                                                 rs.getString("UserName"),
                                                 rs.getString("Password"),
                                                 rs.getInt("Credit"),
@@ -40,15 +40,15 @@ public class UserDB implements UserDA{
     }
 
     @Override
-    public UserSchema getUserByName(String userName) {
+    public User getUserByName(String userName) {
         ResultSet rs;
-        UserSchema user = null;
+        User user = null;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE username = ?");
             stmt.setString(1, userName);
             rs = stmt.executeQuery();
             if (rs.next()) {
-                user = new UserSchemaImpl(rs.getInt("ID"),
+                user = new UserImpl(rs.getInt("ID"),
                         rs.getString("UserName"),
                         rs.getString("Password"),
                         rs.getInt("Credit"),
@@ -61,14 +61,14 @@ public class UserDB implements UserDA{
     }
 
     @Override
-    public UserSchema getUserById(int id) {
+    public User getUserById(int id) {
         ResultSet rs;
-        UserSchema user = null;
+        User user = null;
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM users WHERE ID = " + id);
             if (rs.next()) {
-                user = new UserSchemaImpl(rs.getInt("ID"),
+                user = new UserImpl(rs.getInt("ID"),
                         rs.getString("UserName"),
                         rs.getString("Password"),
                         rs.getInt("Credit"),
@@ -83,14 +83,14 @@ public class UserDB implements UserDA{
     @Override
     public boolean login(String userName, String password) {
         ResultSet rs;
-        UserSchema user = null;
+        User user = null;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
             stmt.setString(1, userName);
             stmt.setString(2, password);
             rs = stmt.executeQuery();
             if (rs.next()) {
-                user = new UserSchemaImpl(rs.getInt("ID"),
+                user = new UserImpl(rs.getInt("ID"),
                         rs.getString("UserName"),
                         rs.getString("Password"),
                         rs.getInt("Credit"),

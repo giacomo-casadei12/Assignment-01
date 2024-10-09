@@ -1,15 +1,16 @@
 package sap.ass01.layers.DAL.DB;
 
-import sap.ass01.layers.DAL.Schemas.EBikeSchema;
+import sap.ass01.layers.DAL.Schemas.EBike;
+import sap.ass01.layers.DAL.Schemas.EBikeState;
 
 import java.util.List;
 
 public interface EBikeDA {
-    List<EBikeSchema> getAllEBikes();
-    List<EBikeSchema> getAllAvailableEBikes();
-    List<EBikeSchema> getAllEBikesNearby(int positionX, int positionY);
-    EBikeSchema getEBikeById(int id);
+    List<EBike> getAllEBikes();
+    List<EBike> getAllAvailableEBikes();
+    List<EBike> getAllEBikesNearby(int positionX, int positionY);
+    EBike getEBikeById(int id);
     boolean createEBike(int positionX, int positionY);
-    boolean updateEBike(int id, int battery, int state, int positionX, int positionY);
+    boolean updateEBike(int id, int battery, EBikeState state, int positionX, int positionY);
     boolean deleteEBike(int id);
 }

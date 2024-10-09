@@ -2,7 +2,7 @@ package sap.ass01.layers.DAL.Schemas;
 
 import java.util.Date;
 
-public class RideSchemaImpl implements RideSchema {
+public class RideImpl implements Ride {
 
     final int id;
     final Date startDate;
@@ -10,7 +10,7 @@ public class RideSchemaImpl implements RideSchema {
     final int userID;
     final int eBikeID;
 
-    public RideSchemaImpl(int id, Date startDate, Date endDate, int userID, int eBikeID) {
+    public RideImpl(int id, Date startDate, Date endDate, int userID, int eBikeID) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;

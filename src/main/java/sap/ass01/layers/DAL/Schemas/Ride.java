@@ -2,7 +2,7 @@ package sap.ass01.layers.DAL.Schemas;
 
 import java.util.Date;
 
-public interface RideSchema {
+public interface Ride {
 
     int getID();
     Date getStartDate();

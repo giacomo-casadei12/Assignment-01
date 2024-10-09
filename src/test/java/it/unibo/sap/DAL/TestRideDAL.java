@@ -3,7 +3,7 @@ package it.unibo.sap.DAL;
 import org.junit.jupiter.api.Test;
 import sap.ass01.layers.DAL.DB.RideDA;
 import sap.ass01.layers.DAL.DB.RideDB;
-import sap.ass01.layers.DAL.Schemas.RideSchema;
+import sap.ass01.layers.DAL.Schemas.Ride;
 
 import java.util.List;
 
@@ -22,14 +22,14 @@ public class TestRideDAL {
     public void createUpdateDeleteRide() {
         boolean b = rideDA.createRide(1,1);
         assertTrue(b);
-        List<RideSchema> rs = rideDA.getAllOngoingRides();
+        List<Ride> rs = rideDA.getAllOngoingRides();
         assertFalse(rs.isEmpty());
-        assertTrue(rs.stream().anyMatch(rideSchema -> rideSchema.getUserID() == 1 && rideSchema.getEBikeID() == 1));
+        assertTrue(rs.stream().anyMatch(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1));
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = rs.stream().
-                                filter(rideSchema -> rideSchema.getUserID() == 1 && rideSchema.getEBikeID() == 1).
+                                filter(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1).
                                 findFirst().
                                 get().getID();
-        RideSchema r = rideDA.getRideById(id);
+        Ride r = rideDA.getRideById(id);
         assertNotNull(r);
         assertEquals(1, r.getUserID());
         assertEquals(1, r.getEBikeID());
@@ -37,7 +37,7 @@ public class TestRideDAL {
         assertTrue(b);
         rs = rideDA.getAllOngoingRides();
         if (!rs.isEmpty()) {
-            assertFalse(rs.stream().anyMatch(rideSchema -> rideSchema.getUserID() == 1 && rideSchema.getEBikeID() == 1));
+            assertFalse(rs.stream().anyMatch(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1));
         }
         b = rideDA.deleteRide(id);
         assertTrue(b);
@@ -49,18 +49,18 @@ public class TestRideDAL {
     public void getRidesByUserAndEBike() {
         boolean b = rideDA.createRide(1,1);
         assertTrue(b);
-        List<RideSchema> rs = rideDA.getAllRidesByUser(1);
+        List<Ride> rs = rideDA.getAllRidesByUser(1);
         assertFalse(rs.isEmpty());
-        assertTrue(rs.stream().anyMatch(rideSchema -> rideSchema.getUserID() == 1 && rideSchema.getEBikeID() == 1));
+        assertTrue(rs.stream().anyMatch(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1));
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = rs.stream().
-                filter(rideSchema -> rideSchema.getUserID() == 1 && rideSchema.getEBikeID() == 1).
+                filter(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1).
                 findFirst().
                 get().getID();
         rs = rideDA.getAllRidesByEBike(1);
         assertFalse(rs.isEmpty());
         b = rideDA.deleteRide(id);
         assertTrue(b);
-        RideSchema r = rideDA.getRideById(id);
+        Ride r = rideDA.getRideById(id);
         assertNull(r);
     }
 

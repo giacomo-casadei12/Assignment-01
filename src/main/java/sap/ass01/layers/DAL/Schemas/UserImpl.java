@@ -1,13 +1,13 @@
 package sap.ass01.layers.DAL.Schemas;
 
-public class UserSchemaImpl implements UserSchema {
+public class UserImpl implements User {
     final int ID;
     final String userName;
     final String password;
     final int credit;
     final boolean isAdmin;
 
-    public UserSchemaImpl(int ID, String userName, String password, int credit, boolean isAdmin) {
+    public UserImpl(int ID, String userName, String password, int credit, boolean isAdmin) {
         this.ID = ID;
         this.userName = userName;
         this.password = password;
@@ -21,11 +21,6 @@ public class UserSchemaImpl implements UserSchema {
     @Override
     public String getName() {
         return this.userName;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
     }
 
     @Override

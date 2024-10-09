@@ -1,8 +1,9 @@
 package sap.ass01.layers.DAL.DB;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
-import sap.ass01.layers.DAL.Schemas.EBikeSchema;
-import sap.ass01.layers.DAL.Schemas.EBikeSchemaImpl;
+import sap.ass01.layers.DAL.Schemas.EBike;
+import sap.ass01.layers.DAL.Schemas.EBikeImpl;
+import sap.ass01.layers.DAL.Schemas.EBikeState;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,16 +22,16 @@ public class EBikeDB implements EBikeDA {
     }
 
     @Override
-    public List<EBikeSchema> getAllEBikes() {
+    public List<EBike> getAllEBikes() {
         ResultSet rs;
-        List<EBikeSchema> bikes = new ArrayList<>();
+        List<EBike> bikes = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM ebike");
             while (rs.next()) {
-                EBikeSchema bike = new EBikeSchemaImpl(rs.getInt("ID"),
+                EBike bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        rs.getInt("State"),
+                        EBikeState.values()[rs.getInt("State")],
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
                 bikes.add(bike);
@@ -42,16 +43,16 @@ public class EBikeDB implements EBikeDA {
     }
 
     @Override
-    public List<EBikeSchema> getAllAvailableEBikes() {
+    public List<EBike> getAllAvailableEBikes() {
         ResultSet rs;
-        List<EBikeSchema> bikes = new ArrayList<>();
+        List<EBike> bikes = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM ebike WHERE State = 0");
             while (rs.next()) {
-                EBikeSchema bike = new EBikeSchemaImpl(rs.getInt("ID"),
+                EBike bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        rs.getInt("State"),
+                        EBikeState.values()[rs.getInt("State")],
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
                 bikes.add(bike);
@@ -63,9 +64,9 @@ public class EBikeDB implements EBikeDA {
     }
 
     @Override
-    public List<EBikeSchema> getAllEBikesNearby(int positionX, int positionY ) {
+    public List<EBike> getAllEBikesNearby(int positionX, int positionY ) {
         ResultSet rs;
-        List<EBikeSchema> bikes = new ArrayList<>();
+        List<EBike> bikes = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ebike WHERE PositionX BETWEEN ? AND ? AND PositionY BETWEEN ? AND ?");
             stmt.setInt(1, positionX - NEARBY_RANGE);
@@ -74,9 +75,9 @@ public class EBikeDB implements EBikeDA {
             stmt.setInt(4, positionY + NEARBY_RANGE);
             rs = stmt.executeQuery();
             while (rs.next()) {
-                EBikeSchema bike = new EBikeSchemaImpl(rs.getInt("ID"),
+                EBike bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        rs.getInt("State"),
+                        EBikeState.values()[rs.getInt("State")],
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
                 bikes.add(bike);
@@ -88,17 +89,17 @@ public class EBikeDB implements EBikeDA {
     }
 
     @Override
-    public EBikeSchema getEBikeById(int id) {
+    public EBike getEBikeById(int id) {
         ResultSet rs;
-        EBikeSchema bike = null;
+        EBike bike = null;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ebike WHERE ID = ?");
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
             if (rs.next()) {
-                bike = new EBikeSchemaImpl(rs.getInt("ID"),
+                bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        rs.getInt("State"),
+                        EBikeState.values()[rs.getInt("State")],
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
             }
@@ -125,12 +126,12 @@ public class EBikeDB implements EBikeDA {
     }
 
     @Override
-    public boolean updateEBike(int id, int battery, int state, int positionX, int positionY) {
+    public boolean updateEBike(int id, int battery, EBikeState state, int positionX, int positionY) {
         int rs;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("UPDATE ebike SET Battery = ?, State = ?, PositionX = ?, PositionY = ? WHERE ID = ?");
             stmt.setInt(1, battery);
-            stmt.setInt(2, state);
+            stmt.setInt(2, state.ordinal());
             stmt.setInt(3, positionX);
             stmt.setInt(4, positionY);
             stmt.setInt(5, id);
