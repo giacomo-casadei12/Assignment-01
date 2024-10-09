@@ -2,8 +2,6 @@ package sap.ass01.bbom;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * 
@@ -12,10 +10,10 @@ import java.awt.event.ActionListener;
  */
 public class AddUserDialog extends JDialog {
 
-    private JTextField idField;
+    private JTextField idField, errorField;
     private JButton okButton;
     private JButton cancelButton;
-    private EBikeApp app;
+    private final EBikeApp app;
 
     public AddUserDialog(EBikeApp owner) {
         super(owner, "Adding User", true);
@@ -29,6 +27,7 @@ public class AddUserDialog extends JDialog {
 
     private void initializeComponents() {
         idField = new JTextField(15);
+        errorField = new JTextField(25);
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
     }
@@ -42,28 +41,24 @@ public class AddUserDialog extends JDialog {
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
 
+        JPanel errorPanel = new JPanel();
+        errorPanel.add(errorField);
+
         setLayout(new BorderLayout(10, 10));
         add(inputPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
+        add(errorPanel, BorderLayout.SOUTH);
     }
 
     private void addEventHandlers() {
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implement OK button behavior here
-                String id = idField.getText();
-                app.addUser(id);                
-                dispose();
-            }
+        okButton.addActionListener(e -> {
+            // Implement OK button behavior here
+            String id = idField.getText();
+            app.addUser(id);
+            dispose();
         });
 
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        cancelButton.addActionListener(e -> dispose());
     }
 
     public static void main(String[] args) {
