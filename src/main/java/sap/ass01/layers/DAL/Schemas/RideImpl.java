@@ -1,6 +1,7 @@
 package sap.ass01.layers.DAL.Schemas;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class RideImpl implements Ride {
 
@@ -41,5 +42,18 @@ public class RideImpl implements Ride {
     @Override
     public int getEBikeID() {
         return this.eBikeID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RideImpl ride = (RideImpl) o;
+        return id == ride.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

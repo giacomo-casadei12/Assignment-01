@@ -1,6 +1,5 @@
 package sap.ass01.layers.BLL.Logic;
 
-import com.mysql.cj.conf.ConnectionUrlParser.*;
 
 public interface RideManager {
 

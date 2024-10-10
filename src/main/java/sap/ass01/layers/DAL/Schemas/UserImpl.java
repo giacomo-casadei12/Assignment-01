@@ -1,5 +1,7 @@
 package sap.ass01.layers.DAL.Schemas;
 
+import java.util.Objects;
+
 public class UserImpl implements User {
     final int ID;
     final String userName;
@@ -31,5 +33,18 @@ public class UserImpl implements User {
     @Override
     public Boolean isAdmin() {
         return this.isAdmin;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserImpl user = (UserImpl) o;
+        return getID() == user.getID();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getID());
     }
 }

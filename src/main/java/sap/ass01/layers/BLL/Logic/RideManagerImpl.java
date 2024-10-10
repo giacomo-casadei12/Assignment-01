@@ -1,6 +1,5 @@
 package sap.ass01.layers.BLL.Logic;
 
-import com.mysql.cj.conf.ConnectionUrlParser.*;
 import sap.ass01.layers.BLL.Persistence.PersistenceManager;
 import sap.ass01.layers.DAL.Schemas.EBike;
 import sap.ass01.layers.DAL.Schemas.EBikeState;
@@ -13,7 +12,7 @@ import java.util.*;
 public class RideManagerImpl implements RideManager {
 
     final private static double BATTERY_CONSUMPTION_PER_METER = 0.5;
-    final private static double CREDIT_CONSUMPTION_PER_SECOND = 0.01;
+    final private static double CREDIT_CONSUMPTION_PER_SECOND = 0.1;
     final private PersistenceManager manager;
     final private HashMap<Pair<Integer,Integer>, Triple<Integer, Integer, Long>> ongoingRides = new HashMap<>();
 
@@ -68,9 +67,11 @@ public class RideManagerImpl implements RideManager {
                 manager.updateEBike(eBikeId, battery, EBikeState.AVAILABLE, positionX, positionY);
             }
 
+            this.ongoingRides.remove(new Pair<>(userId, eBikeId));
+
         }
 
-        return new Pair<>(credit, battery);
+        return new Pair<>(credit,battery);
     }
 
     @Override
@@ -89,6 +90,8 @@ public class RideManagerImpl implements RideManager {
         if (bike != null) {
             manager.updateEBike(eBikeId, bike.getBattery(), EBikeState.AVAILABLE, bike.getPositionX(), bike.getPositionY());
         }
+
+        this.ongoingRides.remove(new Pair<>(userId, eBikeId));
 
         return res;
     }

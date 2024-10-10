@@ -59,7 +59,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
 
     @Override
     public Ride getRide(int rideId, int userId) {
-        return rideId != 0 && userId == 0 ? this.rideDA.getRideById(rideId) : this.rideDA.getOngoingRideByUserId(rideId);
+        return rideId != 0 && userId == 0 ? this.rideDA.getRideById(rideId) : this.rideDA.getOngoingRideByUserId(userId);
     }
 
     @Override

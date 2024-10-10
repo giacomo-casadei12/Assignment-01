@@ -1,5 +1,7 @@
 package sap.ass01.layers.DAL.Schemas;
 
+import java.util.Objects;
+
 public class EBikeImpl implements EBike {
 
     final int ID;
@@ -39,5 +41,18 @@ public class EBikeImpl implements EBike {
     @Override
     public int getPositionY() {
         return this.positionY;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EBikeImpl eBike = (EBikeImpl) o;
+        return getID() == eBike.getID();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getID());
     }
 }

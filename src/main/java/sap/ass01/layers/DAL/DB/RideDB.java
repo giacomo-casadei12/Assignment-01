@@ -5,18 +5,25 @@ import sap.ass01.layers.DAL.Schemas.Ride;
 import sap.ass01.layers.DAL.Schemas.RideImpl;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RideDB implements RideDA{
 
     final MysqlDataSource ds;
+    final SimpleDateFormat format;
+    final String NEW_DATE;
 
     public RideDB() {
         ds = new MysqlDataSource();
         ds.setUser("root");
         ds.setPassword("d3fR3@dy!");
         ds.setURL("jdbc:mysql://localhost:3307/ebcesena");
+
+        Date date = new Date(System.currentTimeMillis());
+        format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") ;
+        NEW_DATE = format.format(date);
     }
 
     @Override
@@ -134,7 +141,7 @@ public class RideDB implements RideDA{
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO ride VALUES(?,?,null,?,?)");
             stmt.setInt(1, lastID+1);
-            stmt.setDate(2, new Date(System.currentTimeMillis()));
+            stmt.setString(2, NEW_DATE);
             stmt.setInt(3, userId);
             stmt.setInt(4, eBikeId);
             rs = stmt.executeUpdate();
@@ -149,7 +156,7 @@ public class RideDB implements RideDA{
         int rs;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("UPDATE ride SET EndDate = ? WHERE ID = ?");
-            stmt.setDate(1, new Date(System.currentTimeMillis()));
+            stmt.setString(1, format.format(new Date(System.currentTimeMillis())));
             stmt.setInt(2, id);
             rs = stmt.executeUpdate();
         } catch( SQLException e) {
