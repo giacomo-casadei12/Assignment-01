@@ -103,6 +103,12 @@ public class PersistenceManagerImpl implements PersistenceManager {
     }
 
     @Override
+    public boolean updateEbikePosition(int id, int positionX, int positionY) {
+        EBike bike = this.bikeDA.getEBikeById(id);
+        return this.bikeDA.updateEBike(id, bike.getBattery(), bike.getState(), positionX, positionY);
+    }
+
+    @Override
     public boolean deleteEBike(int id) {
         return this.bikeDA.deleteEBike(id);
     }

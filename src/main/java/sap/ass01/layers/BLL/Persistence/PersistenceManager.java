@@ -24,9 +24,11 @@ public interface PersistenceManager {
     boolean deleteUser(int id);
     boolean createEBike(int positionX, int positionY);
     boolean updateEBike(int id, int battery, EBikeState state, int positionX, int positionY);
+    boolean updateEbikePosition(int id, int positionX, int positionY);
     boolean deleteEBike(int id);
     boolean createRide(int userId, int eBikeId);
     boolean endRide(int id);
     boolean deleteRide(int id);
+
 
 }
