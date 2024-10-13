@@ -6,6 +6,7 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -20,8 +21,7 @@ import sap.ass01.layers.DAL.Schemas.EBike;
 import sap.ass01.layers.DAL.Schemas.Ride;
 import sap.ass01.layers.DAL.Schemas.User;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -133,7 +133,7 @@ public class WebController extends AbstractVerticle {
         JsonObject requestBody = context.body().asJsonObject();
         if (requestBody != null && requestBody.containsKey("operation")) {
             WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
-            boolean b = false;
+            boolean b;
             User u;
             List<User> users;
             switch (op) {
@@ -142,24 +142,39 @@ public class WebController extends AbstractVerticle {
                         String username = requestBody.getString("username");
                         String password = requestBody.getString("password");
                         b = pManager.login(username, password);
+                        checkResponseAndSendReply(context, b);
                     } else {
                         invalidJSONReply(context,requestBody);
                     }
                     break;
                 }
                 case READ:  {
-                    if (requestBody.containsKey("userId") && requestBody.containsKey("username")) {
-                        int id = requestBody.getInteger("userId");
-                        String username = requestBody.getString("username");
+                    if (requestBody.containsKey("userId") || requestBody.containsKey("username")) {
+                        int id = requestBody.containsKey("userId") ? requestBody.getInteger("userId") : 0;
+                        String username = requestBody.containsKey("username") ? requestBody.getString("username") : "";
                         u = pManager.getUser(id,username);
+                        var map = new HashMap<String, Object>();
+                        map.put("userId", u.getID());
+                        map.put("username", u.getName());
+                        map.put("credit", u.getCredit());
+                        map.put("admin", u.isAdmin());
+                        composeJSONAndSendReply(context,map);
                     } else {
                         users = pManager.getAllUsers();
+                        var array = new ArrayList<Map<String,Object>>();
+                        for (User user : users) {
+                            var map = new HashMap<String, Object>();
+                            map.put("userId", user.getID());
+                            map.put("username", user.getName());
+                            map.put("credit", user.getCredit());
+                            map.put("admin", user.isAdmin());
+                            array.add(map);
+                        }
+                        composeJSONArrayAndSendReply(context,array);
                     }
-                    b = true;
                     break;
                 }
             }
-            checkResponseAndSendReply(context, b);
         } else {
             invalidJSONReply(context,requestBody);
         }
@@ -217,31 +232,48 @@ public class WebController extends AbstractVerticle {
         JsonObject requestBody = context.body().asJsonObject();
         if (requestBody != null && requestBody.containsKey("operation")) {
             WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
-            boolean b = false;
             EBike eb;
             List<EBike> bikes;
             if (Objects.requireNonNull(op) == WebOperation.READ) {
                 if (requestBody.containsKey("eBikeId")) {
                     int id = requestBody.getInteger("eBikeId");
                     eb = pManager.getEBike(id);
-                } else if (requestBody.containsKey("x") || requestBody.containsKey("y")) {
-                    int x = requestBody.containsKey("x") ? requestBody.getInteger("x") : 0;
-                    int y = requestBody.containsKey("y") ? requestBody.getInteger("y") : 0;
-                    bikes = pManager.getAllEBikes(x,y,false);
-                } else if (requestBody.containsKey("available")) {
-                    boolean avail = requestBody.getBoolean("available");
-                    bikes = pManager.getAllEBikes(0,0,avail);
+                    var map = buildEBikeMap(eb);
+                    composeJSONAndSendReply(context,map);
                 } else {
-                    bikes = pManager.getAllEBikes(0,0,false);
+                    if (requestBody.containsKey("x") || requestBody.containsKey("y")) {
+                        int x = requestBody.containsKey("x") ? requestBody.getInteger("x") : 0;
+                        int y = requestBody.containsKey("y") ? requestBody.getInteger("y") : 0;
+                        bikes = pManager.getAllEBikes(x,y,false);
+                    } else if (requestBody.containsKey("available")) {
+                        boolean avail = requestBody.getBoolean("available");
+                        bikes = pManager.getAllEBikes(0,0,avail);
+                    } else {
+                        bikes = pManager.getAllEBikes(0,0,false);
+                    }
+                    var array = new ArrayList<Map<String,Object>>();
+                    for (EBike eBike : bikes) {
+                        var map = buildEBikeMap(eBike);
+                        array.add(map);
+                    }
+                    composeJSONArrayAndSendReply(context,array);
                 }
-                b = true;
             } else {
                 invalidJSONReply(context,requestBody);
             }
-            checkResponseAndSendReply(context, b);
         } else {
             invalidJSONReply(context,requestBody);
         }
+    }
+
+    private Map<String, Object> buildEBikeMap(EBike eb) {
+        var map = new HashMap<String, Object>();
+        map.put("eBikeId", eb.getID());
+        map.put("x", eb.getPositionX());
+        map.put("y", eb.getPositionY());
+        map.put("battery", eb.getBattery());
+        map.put("status", eb.getState().toString());
+        return map;
     }
 
     protected void processServiceRideCmd(RoutingContext context) {
@@ -341,15 +373,39 @@ public class WebController extends AbstractVerticle {
         }
     }
 
-
     private void checkResponseAndSendReply(RoutingContext context, boolean b) {
         JsonObject reply = new JsonObject();
         if (b) {
             reply.put("result", "ok");
         } else {
-            reply.put("result", "error in query");
+            reply.put("result", "error");
         }
         sendReply(context, reply);
+    }
+
+    private void composeJSONAndSendReply(RoutingContext context, Map<String,Object> body) {
+        JsonObject reply = composeJSONFromFieldsMap(body);
+        sendReply(context, reply);
+    }
+
+    private void composeJSONArrayAndSendReply(RoutingContext context, List<Map<String,Object>> body) {
+        JsonObject reply = new JsonObject();
+        JsonArray replyArray = new JsonArray();
+        for (Map<String,Object> map : body) {
+            JsonObject json = composeJSONFromFieldsMap(map);
+            replyArray.add(json);
+        }
+        reply.put("result", replyArray);
+        sendReply(context, reply);
+    }
+
+    private JsonObject composeJSONFromFieldsMap(Map<String, Object> body) {
+        JsonObject reply = new JsonObject();
+        for (Map.Entry<String, Object> entry : body.entrySet()) {
+            String key = entry.getKey();
+            reply.put(key, entry.getValue().toString());
+        }
+        return reply;
     }
 
     private void invalidJSONReply(RoutingContext context, JsonObject requestBody) {
@@ -359,30 +415,7 @@ public class WebController extends AbstractVerticle {
         sendReply(context, reply);
     }
 
-    protected void processServiceLogin(RoutingContext context) {
-        logger.log(Level.INFO, "New request - Login " + context.currentRoute().getPath());
-
-        // Parse the JSON body
-        JsonObject requestBody = context.body().asJsonObject();
-        if (requestBody != null && requestBody.containsKey("username") && requestBody.containsKey("password")) {
-            String username = requestBody.getString("username");
-            String password = requestBody.getString("password");
-            JsonObject reply = new JsonObject();
-            boolean b = this.pManager.login(username, password);
-            if (b) {
-                reply.put("result", "ok");
-            } else {
-                reply.put("result", "fail");
-            }
-            sendReply(context, reply);
-            notifyCountChanged(0);
-        } else {
-            logger.warning("Received invalid JSON payload: " + requestBody);
-            JsonObject reply = new JsonObject();
-            reply.put("result", "not ok");
-            sendReply(context, reply);
-        }
-    }
+    //notifyCountChanged(0);
 
     public void notifyCountChanged(int newCount) {
         logger.log(Level.INFO, "notify count changed");

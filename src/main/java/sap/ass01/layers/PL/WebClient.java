@@ -4,9 +4,13 @@ import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.core.http.WebSocket;
+import sap.ass01.layers.BLL.Logic.Pair;
+import sap.ass01.layers.BLL.Logic.Triple;
 import sap.ass01.layers.BLL.Web.VertxSingleton;
 import sap.ass01.layers.BLL.Web.WebOperation;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class WebClient {
@@ -32,7 +36,8 @@ public class WebClient {
         webClient = io.vertx.ext.web.client.WebClient.create(vertx, options);
     }
 
-    public void requestCreateUser(String username, String password) {
+    public Future<Boolean> requestCreateUser(String username, String password) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("username", username);
         requestPayload.put("password", password);
@@ -41,14 +46,20 @@ public class WebClient {
         webClient.post(USER_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("User created: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to create user: " + ar.cause().getMessage());
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("User created: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.severe("Failed to create user: " + ar.cause().getMessage());
+                            promise.complete(false);
+                        }
                     }
                 });
+        return promise.future();
     }
 
-    public void requestDeleteUser(int userId) {
+    public Future<Boolean> requestDeleteUser(int userId) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("userId", userId);
         requestPayload.put("operation", WebOperation.DELETE.ordinal());
@@ -56,14 +67,20 @@ public class WebClient {
         webClient.post(USER_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("User deleted: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to delete user: " + ar.cause().getMessage());
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("User deleted: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.severe("Failed to delete user: " + ar.cause().getMessage());
+                            promise.complete(false);
+                        }
                     }
                 });
+        return promise.future();
     }
 
-    public void requestUpdateUser(int userId, int credit) {
+    public Future<Boolean> requestUpdateUser(int userId, int credit) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("userId", userId);
         requestPayload.put("credit", credit);
@@ -72,11 +89,16 @@ public class WebClient {
         webClient.post(USER_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("User updated: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to update user: " + ar.cause().getMessage());
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("User updated: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.severe("Failed to update user: " + ar.cause().getMessage());
+                            promise.complete(false);
+                        }
                     }
                 });
+        return promise.future();
     }
 
     public Future<Boolean> requestLogin(String username, String password) {
@@ -86,11 +108,16 @@ public class WebClient {
         requestPayload.put("password", password);
         requestPayload.put("operation", WebOperation.LOGIN.ordinal());
 
-        webClient.post(USER_QUERY_PATH)
+        webClient.get(USER_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("Login: " + ar.result().bodyAsString());
-                        promise.complete(true);
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("Login: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.warning("Login failed: " + ar.result().bodyAsString());
+                            promise.complete(false);
+                        }
                     } else {
                         logger.severe("Failed to login: " + ar.cause().getMessage());
                         promise.fail(ar.cause());
@@ -99,24 +126,51 @@ public class WebClient {
         return promise.future();
     }
 
-    public void requestReadUser(int userId) {
+    public Future<Map<Integer,Triple<String,Integer,Boolean>>> requestReadUser(int userId, String username) {
+        Promise<Map<Integer,Triple<String,Integer,Boolean>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
+        Map<Integer, Triple<String, Integer, Boolean>> retMap = new HashMap<>();
         if (userId > 0) {
             requestPayload.put("userId", userId);
         }
+        if (!username.isBlank()) {
+            requestPayload.put("username", username);
+        }
         requestPayload.put("operation", WebOperation.READ.ordinal());
 
-        webClient.post(USER_QUERY_PATH)
+        webClient.get(USER_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("Users: " + ar.result().bodyAsString());
+                        JsonObject res = ar.result().bodyAsJsonObject();
+                        if (res.containsKey("result")) {
+                            var resList = res.getJsonArray("result");
+                            var it = resList.stream().iterator();
+                            while (it.hasNext()) {
+                                var jsonObj = (JsonObject) it.next();
+                                int resId = Integer.parseInt(jsonObj.getString("userId"));
+                                var resUser = new Triple<>(jsonObj.getString("username"), Integer.parseInt(jsonObj.getString("credit")), Boolean.parseBoolean(jsonObj.getString("isAdmin")));
+                                retMap.put(resId, resUser);
+                            }
+                            promise.complete(retMap);
+                        } else if (res.containsKey("userId")) {
+                            int resId = Integer.parseInt(res.getString("userId"));
+                            var resUser = new Triple<>(res.getString("username"), Integer.parseInt(res.getString("credit")), Boolean.parseBoolean(res.getString("admin")));
+                            retMap.put(resId, resUser);
+                            promise.complete(retMap);
+                        } else {
+                            logger.warning("Error in response received from server");
+                            promise.complete(null);
+                        }
                     } else {
                         logger.severe("Failed to retrieve users: " + ar.cause().getMessage());
+                        promise.fail(ar.cause());
                     }
                 });
+        return promise.future();
     }
 
-    public void requestCreateEBike(int x, int y) {
+    public Future<Boolean> requestCreateEBike(int x, int y) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("x", x);
         requestPayload.put("y", y);
@@ -125,14 +179,20 @@ public class WebClient {
         webClient.post(EBIKE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("EBike created: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to create eBike: " + ar.cause().getMessage());
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("EBike created: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.severe("Failed to create eBike: " + ar.cause().getMessage());
+                            promise.complete(false);
+                        }
                     }
                 });
+        return promise.future();
     }
 
-    public void requestDeleteEBike(int eBikeId) {
+    public Future<Boolean> requestDeleteEBike(int eBikeId) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("eBikeId", eBikeId);
         requestPayload.put("operation", WebOperation.DELETE.ordinal());
@@ -140,14 +200,20 @@ public class WebClient {
         webClient.post(EBIKE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("eBike deleted: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to delete eBike: " + ar.cause().getMessage());
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("eBike deleted: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.severe("Failed to delete eBike: " + ar.cause().getMessage());
+                            promise.complete(false);
+                        }
                     }
                 });
+        return promise.future();
     }
 
-    public void requestUpdateEBike(int eBikeId, int x, int y) {
+    public Future<Boolean> requestUpdateEBike(int eBikeId, int x, int y) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("eBikeId", eBikeId);
         requestPayload.put("x", x);
@@ -157,15 +223,22 @@ public class WebClient {
         webClient.post(EBIKE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("eBike updated: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to update eBike: " + ar.cause().getMessage());
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("eBike updated: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.severe("Failed to update eBike: " + ar.cause().getMessage());
+                            promise.complete(false);
+                        }
                     }
                 });
+        return promise.future();
     }
 
-    public void requestReadEBike(int eBikeId, int x, int y, boolean available) {
+    public Future<Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>>> requestReadEBike(int eBikeId, int x, int y, boolean available) {
+        Promise<Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
+        Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> retMap = new HashMap<>();
         if (eBikeId > 0) {
             requestPayload.put("eBikeId", eBikeId);
         } else {
@@ -180,14 +253,32 @@ public class WebClient {
 
         requestPayload.put("operation", WebOperation.READ.ordinal());
 
-        webClient.post(EBIKE_QUERY_PATH)
+        webClient.get(EBIKE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         logger.info("eBikes: " + ar.result().bodyAsString());
+                        JsonObject res = ar.result().bodyAsJsonObject();
+                        if (res.containsKey("result")) {
+                            var resList = res.getJsonArray("result");
+                            var it = resList.stream().iterator();
+                            while (it.hasNext()) {
+                                var jsonObj = (JsonObject) it.next();
+                                insertEBikeInMap(retMap, jsonObj);
+                            }
+                            promise.complete(retMap);
+                        } else if (res.containsKey("eBikeId")) {
+                            insertEBikeInMap(retMap, res);
+                            promise.complete(retMap);
+                        } else {
+                            logger.warning("Error in response received from server");
+                            promise.complete(null);
+                        }
                     } else {
                         logger.severe("Failed to retrieve eBikes: " + ar.cause().getMessage());
+                        promise.fail(ar.cause());
                     }
                 });
+        return promise.future();
     }
 
     public void requestStartRide(int userId, int eBikeId) {
@@ -240,7 +331,8 @@ public class WebClient {
                 });
     }
 
-    public void requestDeleteRide(int rideId) {
+    public Future<Boolean> requestDeleteRide(int rideId) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("rideId", rideId);
         requestPayload.put("operation", WebOperation.DELETE.ordinal());
@@ -248,11 +340,16 @@ public class WebClient {
         webClient.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("ride deleted: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to delete ride: " + ar.cause().getMessage());
+                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                            logger.info("ride deleted: " + ar.result().bodyAsString());
+                            promise.complete(true);
+                        } else {
+                            logger.severe("Failed to delete ride: " + ar.cause().getMessage());
+                            promise.complete(false);
+                        }
                     }
                 });
+        return promise.future();
     }
 
     public void requestMultipleReadRide(int eBikeId, int userId, boolean ongoing) {
@@ -267,7 +364,7 @@ public class WebClient {
         requestPayload.put("multiple", true);
         requestPayload.put("operation", WebOperation.READ.ordinal());
 
-        webClient.post(RIDE_QUERY_PATH)
+        webClient.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         logger.info("rides: " + ar.result().bodyAsString());
@@ -288,7 +385,7 @@ public class WebClient {
         requestPayload.put("multiple", false);
         requestPayload.put("operation", WebOperation.READ.ordinal());
 
-        webClient.post(RIDE_QUERY_PATH)
+        webClient.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         logger.info("ride: " + ar.result().bodyAsString());
@@ -298,6 +395,12 @@ public class WebClient {
                 });
     }
 
+    private void insertEBikeInMap(Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> retMap, JsonObject jsonObj) {
+        int resId = Integer.parseInt(jsonObj.getString("eBikeId"));
+        var resBike = new Triple<>(new Pair<>(Integer.parseInt(jsonObj.getString("x")), Integer.parseInt(jsonObj.getString("y"))),
+                Integer.parseInt(jsonObj.getString("battery")), jsonObj.getString("status"));
+        retMap.put(resId, resBike);
+    }
 
 
     public void sendCountUpdate(int newCount) {
@@ -330,7 +433,7 @@ public class WebClient {
         return promise.future();
     }
 
-    public void startMonitoringCountChanges() {
+    public void startMonitoringCountChanges(EBikeApp app) {
         vertx.createHttpClient().webSocket(SERVER_PORT, SERVER_HOST, "", asyncResult -> {
             if (asyncResult.succeeded()) {
                 WebSocket webSocket = asyncResult.result();
