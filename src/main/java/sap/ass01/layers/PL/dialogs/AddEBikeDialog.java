@@ -1,7 +1,5 @@
 package sap.ass01.layers.PL.dialogs;
 
-import sap.ass01.layers.PL.EBikeApp;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -24,9 +22,9 @@ public class AddEBikeDialog extends JDialog {
     private JTextField yCoordField;
     private JButton okButton;
     private JButton cancelButton;
-    private final EBikeApp app;
+    private final AllEBikesDialog app;
     
-    public AddEBikeDialog(EBikeApp owner) {
+    public AddEBikeDialog(AllEBikesDialog owner) {
         super(owner, "Adding E-Bike", true);
         this.app = owner;
         initializeComponents();

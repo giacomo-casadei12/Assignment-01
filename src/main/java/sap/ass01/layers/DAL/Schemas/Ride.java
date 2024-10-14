@@ -1,12 +1,10 @@
 package sap.ass01.layers.DAL.Schemas;
 
-import java.util.Date;
-
 public interface Ride {
 
     int getID();
-    Date getStartDate();
-    Date getEndDate();
+    String getStartDate();
+    String getEndDate();
     int getUserID();
     int getEBikeID();
 }

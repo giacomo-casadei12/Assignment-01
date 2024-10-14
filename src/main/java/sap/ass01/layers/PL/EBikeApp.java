@@ -1,5 +1,6 @@
 package sap.ass01.layers.PL;
 
+import io.vertx.core.Future;
 import sap.ass01.layers.BLL.Logic.Pair;
 import sap.ass01.layers.BLL.Logic.Triple;
 import sap.ass01.layers.PL.dialogs.*;
@@ -26,9 +27,10 @@ public class EBikeApp extends JFrame implements ActionListener {
     private final JButton allBikesButton;
     private final JButton allUsersButton;
     private Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes = new HashMap<>();
-    private Map<Pair<Integer, Integer>, RideSimulation> rides;
+    private final Map<Pair<Integer, Integer>, RideSimulation> rides = new HashMap<>();
     private Triple<String, Integer, Boolean> user;
     private int userId;
+    private final String username;
     private final WebClient webClient;
 
     public EBikeApp(WebClient webClient, String username) {
@@ -41,7 +43,12 @@ public class EBikeApp extends JFrame implements ActionListener {
         allBikesButton = new JButton("All EBikes");
         allUsersButton = new JButton("All Users");
         centralPanel = new VisualiserPanel(800,500,this);
-        this.webClient.requestReadUser(0,username).onComplete(res -> {
+        this.username = username;
+        retrieveData();
+    }
+
+    public void retrieveData() {
+        this.webClient.requestReadUser(0,this.username).onComplete(res -> {
             if (res.result() != null) {
                 var result = res.result();
                 if (result.size() == 1) {
@@ -51,10 +58,6 @@ public class EBikeApp extends JFrame implements ActionListener {
                         this.user = element;
                     }
                     setupView();
-                    /*if (this.bikes.isEmpty()) {
-                        this.refreshView();
-                    }*/
-
                 }
             }
         });
@@ -111,27 +114,27 @@ public class EBikeApp extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.nearbyBikeButton) {
             SwingUtilities.invokeLater(() -> {
-                /*JDialog d = new AddEBikeDialog(this);
-                d.setVisible(true);*/
+                JDialog d = new NearbyEBikeDialog(this);
+                d.setVisible(true);
             });
         } else if (e.getSource() == this.rechargeCreditButton) {
             SwingUtilities.invokeLater(() -> {
-                JDialog d = new RechargeCreditDialog(this.userId,this.user.second(),this,this.webClient);
+                JDialog d = new RechargeCreditDialog(this.userId,this.user.second(),this);
                 d.setVisible(true);
             });
         } else if (e.getSource() == this.startRideButton) {
             SwingUtilities.invokeLater(() -> {
-                JDialog d = new RideDialog(this);
+                JDialog d = new RideDialog(this, this.userId);
                 d.setVisible(true);
             });
         } else if (e.getSource() == this.myRidesButton) {
-            SwingUtilities.invokeLater(() -> new AllRideDialog(this.userId));
+            SwingUtilities.invokeLater(() -> new AllRideDialog(this, this.userId));
         } else if (e.getSource() == this.allRidesButton) {
-            SwingUtilities.invokeLater(() -> new AllRideDialog(0));
+            SwingUtilities.invokeLater(() -> new AllRideDialog(this, 0));
         } else if (e.getSource() == this.allUsersButton) {
-            SwingUtilities.invokeLater(AllUsersDialog::new);
+            SwingUtilities.invokeLater(() -> new AllUsersDialog(this));
         } else if (e.getSource() == this.allBikesButton) {
-            SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(AllEBikesDialog::new));
+            SwingUtilities.invokeLater(() -> new AllEBikesDialog(this, new HashMap<>()));
         }
     }
 
@@ -161,7 +164,7 @@ public class EBikeApp extends JFrame implements ActionListener {
 
     public void startNewRide(int userId, int bikeId) {
         var bikeLocation = this.bikes.get(bikeId);
-        var rideSimulation = new RideSimulation(bikeId, bikeLocation.first().first(), bikeLocation.first().second(), userId, this);
+        var rideSimulation = new RideSimulation(bikeId, bikeLocation.first().first(), bikeLocation.first().second(),this);
         RideSimulationControlPanel ridingWindow = new RideSimulationControlPanel(userId, bikeId, this);
         ridingWindow.display();
         rideSimulation.start();
@@ -176,12 +179,64 @@ public class EBikeApp extends JFrame implements ActionListener {
         this.rides.remove(key);
     }
 
+    public Future<Boolean> requestUpdateUser(int userId, int credit){
+        return webClient.requestUpdateUser(userId, credit);
+    }
+
+    public Future<Boolean> requestDeleteUser(int userId){
+        return webClient.requestDeleteUser(userId);
+    }
+
+    public Future<Map<Integer, Triple<String, Integer, Boolean>>> requestReadUser(int userId, String username){
+        return webClient.requestReadUser(userId, username);
+    }
+
+    public Future<Boolean> requestUpdateEBike(int ebikeId, int battery, String state, int x, int y){
+        return webClient.requestUpdateEBike(ebikeId,battery,state,x,y);
+    }
+
+    public Future<Boolean> requestDeleteEBike(int ebikeId){
+        return webClient.requestDeleteEBike(ebikeId);
+    }
+
+    public Future<Boolean> requestCreateEBike(int x, int y){
+        return webClient.requestCreateEBike(x, y);
+    }
+
+    public Future<Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>>> requestReadEBike(int ebikeId, int x, int y, boolean available){
+        return webClient.requestReadEBike(ebikeId, x, y, available);
+    }
+
+    public Future<Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>>> requestMultipleReadRide(int userId, int eBikeId, boolean ongoing){
+        return webClient.requestMultipleReadRide(userId, eBikeId, ongoing);
+    }
+
+    public Future<Boolean> requestDeleteRide(int rideId){
+        return webClient.requestDeleteRide(rideId);
+    }
+
+    public Future<Boolean> requestStartRide(int eBikeId){
+        return webClient.requestStartRide(this.userId, eBikeId);
+    }
+
+    public Future<Boolean> requestEndRide(int eBikeId){
+        return webClient.requestEndRide(this.userId, eBikeId);
+    }
+
+    public Future<Pair<Integer, Integer>> requestUpdateRide(int eBikeId, int x, int y){
+        return webClient.requestUpdateRide(this.userId, eBikeId, x, y);
+    }
+
     public Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> getEBikes(){
-        return bikes;
+        return this.bikes;
     }
 
     public Triple<String, Integer, Boolean> getUser(){
-        return user;
+        return this.user;
+    }
+
+    public int getUserId(){
+        return this.userId;
     }
 
     private void log(String msg) {

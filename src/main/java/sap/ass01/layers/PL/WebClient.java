@@ -212,12 +212,18 @@ public class WebClient {
         return promise.future();
     }
 
-    public Future<Boolean> requestUpdateEBike(int eBikeId, int x, int y) {
+    public Future<Boolean> requestUpdateEBike(int eBikeId, int battery, String state, int x, int y) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("eBikeId", eBikeId);
         requestPayload.put("x", x);
         requestPayload.put("y", y);
+        if (battery > 0) {
+            requestPayload.put("battery", battery);
+        }
+        if (state != null) {
+            requestPayload.put("state", state);
+        }
         requestPayload.put("operation", WebOperation.UPDATE.ordinal());
 
         webClient.post(EBIKE_COMMAND_PATH)
@@ -281,7 +287,8 @@ public class WebClient {
         return promise.future();
     }
 
-    public void requestStartRide(int userId, int eBikeId) {
+    public Future<Boolean> requestStartRide(int userId, int eBikeId) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("userId", userId);
         requestPayload.put("eBikeId", eBikeId);
@@ -289,15 +296,19 @@ public class WebClient {
 
         webClient.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
-                    if (ar.succeeded()) {
+                    if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
                         logger.info("ride started: " + ar.result().bodyAsString());
+                        promise.complete(true);
                     } else {
                         logger.severe("Failed to start ride: " + ar.cause().getMessage());
+                        promise.complete(false);
                     }
                 });
+        return promise.future();
     }
 
-    public void requestUpdateRide(int userId, int eBikeId, int x, int y) {
+    public Future<Pair<Integer,Integer>> requestUpdateRide(int userId, int eBikeId, int x, int y) {
+        Promise<Pair<Integer,Integer>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("userId", userId);
         requestPayload.put("eBikeId", eBikeId);
@@ -308,14 +319,24 @@ public class WebClient {
         webClient.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("ride updated: " + ar.result().bodyAsString());
+                        var res = ar.result().bodyAsJsonObject();
+                        if (res.containsKey("credit") && res.containsKey("battery")) {
+                            logger.info("ride updated: " + ar.result().bodyAsString());
+                            promise.complete(new Pair<>(Integer.parseInt(res.getString("credit")),
+                                    Integer.parseInt(res.getString("battery"))));
+                        } else {
+                            promise.complete(null);
+                        }
                     } else {
                         logger.severe("Failed to update ride: " + ar.cause().getMessage());
+                        promise.fail(ar.cause());
                     }
                 });
+        return promise.future();
     }
 
-    public void requestEndRide(int userId, int eBikeId) {
+    public Future<Boolean> requestEndRide(int userId, int eBikeId) {
+        Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("userId", userId);
         requestPayload.put("eBikeId", eBikeId);
@@ -323,12 +344,15 @@ public class WebClient {
 
         webClient.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
-                    if (ar.succeeded()) {
+                    if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
                         logger.info("ride ended: " + ar.result().bodyAsString());
+                        promise.complete(true);
                     } else {
                         logger.severe("Failed to end ride: " + ar.cause().getMessage());
+                        promise.complete(false);
                     }
                 });
+        return promise.future();
     }
 
     public Future<Boolean> requestDeleteRide(int rideId) {
@@ -352,15 +376,19 @@ public class WebClient {
         return promise.future();
     }
 
-    public void requestMultipleReadRide(int eBikeId, int userId, boolean ongoing) {
+    public Future<Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>>> requestMultipleReadRide(int userId, int eBikeId, boolean ongoing) {
+        Promise<Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
+        Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>> retMap = new HashMap<>();
         if (eBikeId > 0) {
             requestPayload.put("eBikeId", eBikeId);
         }
         if (userId > 0) {
             requestPayload.put("userId", userId);
         }
-        requestPayload.put("ongoing", ongoing);
+        if (ongoing) {
+            requestPayload.put("ongoing", true);
+        }
         requestPayload.put("multiple", true);
         requestPayload.put("operation", WebOperation.READ.ordinal());
 
@@ -368,10 +396,24 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         logger.info("rides: " + ar.result().bodyAsString());
+                        var res = ar.result().bodyAsJsonObject();
+                        if (res.containsKey("result")) {
+                            var resList = res.getJsonArray("result");
+                            var it = resList.stream().iterator();
+                            while (it.hasNext()) {
+                                var jsonObj = (JsonObject) it.next();
+                                int resId = Integer.parseInt(jsonObj.getString("rideId"));
+                                var resUser = new Pair<>(new Pair<>(Integer.parseInt(jsonObj.getString("userId")),Integer.parseInt(jsonObj.getString("eBikeId"))),
+                                        new Pair<>(jsonObj.getString("startDate"), jsonObj.getString("endDate")));
+                                retMap.put(resId, resUser);
+                            }
+                            promise.complete(retMap);
+                        }
                     } else {
                         logger.severe("Failed to retrieve rides: " + ar.cause().getMessage());
                     }
                 });
+        return promise.future();
     }
 
     public void requestSingleReadRide(int rideId, int userId) {

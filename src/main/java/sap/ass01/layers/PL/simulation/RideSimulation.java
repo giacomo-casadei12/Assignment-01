@@ -1,37 +1,35 @@
 package sap.ass01.layers.PL.simulation;
 
-import sap.ass01.bbom.EBike;
 import sap.ass01.layers.PL.EBikeApp;
+
+import javax.swing.*;
 
 public class RideSimulation extends Thread {
 	
 	private final int bikeId;
-	private final int user;
 
 
-	private P2d loc;
-	private V2d direction = new V2d(1,0);;
-	private double speed;
-	
-	private final EBikeApp app;
+    private P2d loc;
+	private V2d direction = new V2d(1,0);
+
+    private final EBikeApp app;
 	private volatile boolean stopped;
 	
-	public RideSimulation(int bikeId, int bikeX, int bikeY, int user, EBikeApp app) {
+	public RideSimulation(int bikeId, int bikeX, int bikeY, EBikeApp app) {
 		this.bikeId = bikeId;
 		this.loc = new P2d(bikeX, bikeY);
-		this.user = user;
-		this.app = app;
+        this.app = app;
 		stopped = false;
 	}
 	
 	public void run() {
-		speed = 1;
+        double speed = 3;
 
 		var lastTimeChangedDir = System.currentTimeMillis();
 		
 		while (!stopped) {
 			/* update pos */
-			this.loc = this.loc.sum(this.direction.mul(this.speed));
+			this.loc = this.loc.sum(this.direction.mul(speed));
 			if (this.loc.x() > 200 || this.loc.x() < -200) {
 				this.direction = new V2d(-this.direction.x(), this.direction.y());
 				if (this.loc.x() > 200) {
@@ -57,17 +55,38 @@ public class RideSimulation extends Thread {
 				this.direction = this.direction.rotate(angle);
             }
 
+			log(this.loc.toString());
+			log(this.direction.toString());
+			this.app.requestUpdateRide(this.bikeId, (int) Math.round(this.loc.x()), (int) Math.round(this.loc.y())).onComplete(x -> {
+				if (x.result() != null) {
+					if (x.result().first() <= 0 || x.result().second() <= 0) {
+						this.stopped = true;
+						JOptionPane.showMessageDialog(app, "Credit emptied or dead battery", "End ride", JOptionPane.WARNING_MESSAGE);
+					}
+				} else {
+					JOptionPane.showMessageDialog(app, "Failed to update ride", "Fail", JOptionPane.ERROR_MESSAGE);
+				}
+			});
 			app.refreshView();
 
 			try {
-				Thread.sleep(500);
+				Thread.sleep(2000);
 			} catch (Exception ignored) {}
 			
 		}
+		this.app.requestEndRide(this.bikeId).onComplete(x -> {
+			if (!x.result()) {
+				JOptionPane.showMessageDialog(app, "Failed to stop ride", "Fail", JOptionPane.ERROR_MESSAGE);
+			}
+		});
 	}
 
 	public void stopSimulation() {
 		stopped = true;
 		interrupt();
+	}
+
+	private void log(String msg) {
+		System.out.println("[EBikeApp] " + msg);
 	}
 }

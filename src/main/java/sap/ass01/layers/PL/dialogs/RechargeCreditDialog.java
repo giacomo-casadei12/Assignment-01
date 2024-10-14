@@ -1,7 +1,6 @@
 package sap.ass01.layers.PL.dialogs;
 
 import sap.ass01.layers.PL.EBikeApp;
-import sap.ass01.layers.PL.WebClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +10,11 @@ import java.awt.event.WindowEvent;
 public class RechargeCreditDialog extends JDialog {
 
     private final JTextField creditField;
-    private final WebClient webClient;
     private final int userId;
     private final int actualCredit;
     private final EBikeApp app;
 
-    public RechargeCreditDialog(int userId, int actualCredit, EBikeApp parent, WebClient webClient) {
+    public RechargeCreditDialog(int userId, int actualCredit, EBikeApp parent) {
         super(parent, "Login", true); // true to make it modal
         this.app = parent;
         setLayout(new BorderLayout());
@@ -25,7 +23,6 @@ public class RechargeCreditDialog extends JDialog {
         creditField = new JTextField();
         this.userId = userId;
         this.actualCredit = actualCredit;
-        this.webClient = webClient;
         initializeDialog();
 
     }
@@ -69,7 +66,7 @@ public class RechargeCreditDialog extends JDialog {
             // Simple validation (could be expanded)
             if (valid) {
                 credit = credit + actualCredit;
-                webClient.requestUpdateUser(this.userId, credit).onComplete(x -> {
+                app.requestUpdateUser(this.userId, credit).onComplete(x -> {
                     if (x.result()) {
                         showNonBlockingMessage("Successfully recharged credit", "Success", JOptionPane.INFORMATION_MESSAGE);
                         app.updateUser();
@@ -84,7 +81,7 @@ public class RechargeCreditDialog extends JDialog {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent ev) {
-                System.exit(-1);
+                dispose();
             }
         });
 

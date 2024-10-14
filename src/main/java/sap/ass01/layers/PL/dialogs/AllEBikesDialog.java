@@ -1,94 +1,180 @@
 package sap.ass01.layers.PL.dialogs;
 
+import sap.ass01.layers.BLL.Logic.Pair;
+import sap.ass01.layers.BLL.Logic.Triple;
+import sap.ass01.layers.PL.EBikeApp;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Map;
 
 public class AllEBikesDialog extends JDialog {
 
-    public AllEBikesDialog() {
-        String[] items = {"Item 1", "Item 2", "Item 3", "Item 4"};
-        // Create the JDialog
-        JDialog dialog = new JDialog();
-        dialog.setTitle("List with Delete Buttons");
-        dialog.setSize(400, 400);
-        dialog.setLocationRelativeTo(null); // Center the dialog on screen
+    private final EBikeApp app;
+    private final JDialog dialog;
+    private JPanel listPanel;
+    private boolean admin = true;
+    private Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes;
+
+    public AllEBikesDialog(EBikeApp app, Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes) {
+        dialog = new JDialog();
+        this.app = app;
+        if (!bikes.isEmpty()) {
+            this.bikes = bikes;
+            this.admin = false;
+            initialiseDialog();
+        } else {
+            this.app.requestReadEBike(0, 0, 0, false).onComplete(x -> {
+                if (!x.result().isEmpty()) {
+                    this.bikes = x.result();
+                    initialiseDialog();
+                } else {
+                    showNonBlockingMessage("Something went wrong when retrieving bikes", "Fail", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+        }
+    }
+
+    public void addEBike(int x, int y){
+        this.app.requestCreateEBike(x, y).onComplete(res -> {
+            if (res.result()) {
+                showNonBlockingMessage("Successfully added a new bike", "Success", JOptionPane.INFORMATION_MESSAGE);
+                this.refreshList(listPanel);
+            } else {
+                showNonBlockingMessage("Something went wrong when creating bike", "Fail", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    }
+
+    private void initialiseDialog() {
+        dialog.setTitle(admin ? "All Bikes Registered" : "Nearby Bikes");
+        dialog.setLocationRelativeTo(null);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        // Initialize dataList and copy items into it
-        ArrayList<String> dataList = new ArrayList<>();
-        Collections.addAll(dataList, items);
-
-        // Set layout for the dialog
         dialog.setLayout(new BorderLayout());
 
-        // Create a scrollable panel to hold the list and delete buttons
-        JPanel listPanel = getjPanel(dataList);
+        listPanel = getjPanel();
 
-        // Wrap listPanel in a JScrollPane for scrolling
         JScrollPane scrollPane = new JScrollPane(listPanel);
         dialog.add(scrollPane, BorderLayout.CENTER);
 
-        // Create a "Back" button
         JButton backButton = new JButton("Back");
         backButton.addActionListener(e -> {
             dialog.dispose(); // Close the dialog when "Back" is pressed
         });
+
+        if (admin) {
+            JButton newBikeButton = new JButton("Add eBike");
+            newBikeButton.addActionListener(e -> {
+                var d = new AddEBikeDialog(this);
+                d.setVisible(true);
+            });
+            JPanel newPanel = new JPanel();
+            newPanel.add(newBikeButton);
+            dialog.add(newPanel, BorderLayout.NORTH);
+        }
 
         // Add the "Back" button at the bottom
         JPanel backPanel = new JPanel();
         backPanel.add(backButton);
         dialog.add(backPanel, BorderLayout.SOUTH);
 
+
+        dialog.setSize(600, bikes.size()*150);
+
         // Make the dialog visible
         dialog.setVisible(true);
     }
 
-    private static JPanel getjPanel(ArrayList<String> dataList) {
+    private JPanel getjPanel() {
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
         // Populate the list with items and delete buttons
-        buildList(dataList, listPanel);
+        buildList(listPanel);
         return listPanel;
     }
 
-    private static void buildList(ArrayList<String> dataList, JPanel listPanel) {
-        for (int i = 0; i < dataList.size(); i++) {
-            String item = dataList.get(i);
+    private void buildList(JPanel listPanel) {
+        for (Map.Entry<Integer, Triple<Pair<Integer, Integer>, Integer, String>> entry : bikes.entrySet() ) {
+            String item = "Bike number " + entry.getKey() + " - (" + entry.getValue().first().first() + "," +
+                    entry.getValue().first().second() + ") -- Battery level " + entry.getValue().second() +
+                    " -- Status: " + entry.getValue().third();
+
             JPanel itemPanel = new JPanel(new BorderLayout());
             JLabel itemLabel = new JLabel(item);
-            JButton deleteButton = getDeleteButton(dataList, listPanel, i);
 
-            // Add label and button to the item panel
+            if (admin) {
+                JButton deleteButton = getDeleteButton(listPanel, entry.getKey());
+                JButton rechargeButton = getRechargeButton(listPanel, entry.getKey(), entry.getValue());
+
+                itemPanel.add(rechargeButton, BorderLayout.WEST);
+                itemPanel.add(deleteButton, BorderLayout.EAST);
+            }
             itemPanel.add(itemLabel, BorderLayout.CENTER);
-            itemPanel.add(deleteButton, BorderLayout.EAST);
             listPanel.add(itemPanel);
         }
     }
 
-    private static JButton getDeleteButton(ArrayList<String> dataList, JPanel listPanel, int i) {
+    private JButton getDeleteButton(JPanel listPanel, int key) {
         JButton deleteButton = new JButton("Delete");
 
-        // Add action listener for delete button
-        final int index = i; // Capture the index for each delete button
-        deleteButton.addActionListener(e -> {
-            // Remove the item from the list and refresh the display
-            dataList.remove(index);
-            refreshList(listPanel, dataList);
-        });
+        deleteButton.addActionListener(e -> this.app.requestDeleteEBike(key).onComplete(x -> {
+            if (x.result()) {
+                showNonBlockingMessage("Successfully deleted bike", "Success", JOptionPane.INFORMATION_MESSAGE);
+                this.bikes.remove(key);
+                refreshList(listPanel);
+            } else {
+                showNonBlockingMessage("Something went wrong", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }));
         return deleteButton;
     }
 
+    private JButton getRechargeButton(JPanel listPanel, int key, Triple<Pair<Integer, Integer>, Integer, String> value) {
+        JButton rechargeButton = new JButton("Recharge");
+
+        rechargeButton.addActionListener(e -> this.app.requestUpdateEBike(key, 100, value.third(), value.first().first(), value.first().second()).onComplete(x -> {
+            if (x.result()) {
+                showNonBlockingMessage("Successfully recharged bike", "Success", JOptionPane.INFORMATION_MESSAGE);
+                refreshList(listPanel);
+            } else {
+                showNonBlockingMessage("Something went wrong", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }));
+        return rechargeButton;
+    }
+
     // Method to refresh the list after deleting an item
-    private static void refreshList(JPanel listPanel, ArrayList<String> dataList) {
-        listPanel.removeAll();
-        buildList(dataList, listPanel);
-        listPanel.revalidate();
-        listPanel.repaint();
+    private void refreshList(JPanel listPanel) {
+        this.app.requestReadEBike(0,0, 0, false).onComplete(x -> {
+            if (!x.result().isEmpty()) {
+                this.bikes = x.result();
+                listPanel.removeAll();
+                buildList(listPanel);
+                listPanel.revalidate();
+                listPanel.repaint();
+                dialog.setSize(600, bikes.size()*150);
+            } else {
+                showNonBlockingMessage("Something went wrong when retrieving bikes", "Fail", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    }
+
+    private void showNonBlockingMessage(String message, String title, int messageType) {
+        // Use SwingWorker to run the dialog on the EDT but not block the event thread
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // Show the message dialog on the EDT
+                JOptionPane.showMessageDialog(AllEBikesDialog.this, message, title, messageType);
+            }
+        }.execute();
     }
 
 }

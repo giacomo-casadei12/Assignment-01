@@ -14,7 +14,7 @@ public class RideManagerImpl implements RideManager {
     final private static double BATTERY_CONSUMPTION_PER_METER = 0.5;
     final private static double CREDIT_CONSUMPTION_PER_SECOND = 0.1;
     final private PersistenceManager manager;
-    final private HashMap<Pair<Integer,Integer>, Triple<Integer, Integer, Long>> ongoingRides = new HashMap<>();
+    final private HashMap<Pair<Integer,Integer>, Long> ongoingRides = new HashMap<>();
 
     public RideManagerImpl(PersistenceManager manager) {
         this.manager = manager;
@@ -22,14 +22,17 @@ public class RideManagerImpl implements RideManager {
 
     @Override
     public boolean startRide(int userId, int eBikeId) {
-        boolean success = manager.createRide(userId, eBikeId);
         EBike bike = manager.getEBike(eBikeId);
+        boolean success = false;
+        if (bike.getState() == EBikeState.AVAILABLE) {
+            success = manager.createRide(userId, eBikeId);
 
-        if (success) {
-            this.ongoingRides.put(new Pair<>(userId, eBikeId),
-                    new Triple<>(bike.getPositionX(), bike.getPositionY(), new Date().getTime()));
+            if (success) {
+                this.ongoingRides.put(new Pair<>(userId, eBikeId),
+                        new Date().getTime());
 
-            manager.updateEBike(eBikeId,bike.getBattery(), EBikeState.IN_USE,bike.getPositionX(),bike.getPositionY());
+                manager.updateEBike(eBikeId, bike.getBattery(), EBikeState.IN_USE, bike.getPositionX(), bike.getPositionY());
+            }
         }
 
         return success;
@@ -38,13 +41,13 @@ public class RideManagerImpl implements RideManager {
     @Override
     public Pair<Integer, Integer> updateRide(int userId, int eBikeId, int positionX, int positionY) {
 
-        int credit = 0;
+        int credit;
         int battery;
         boolean stopRide;
         int rideId;
         Ride ride;
 
-        credit = getUpdatedCredit(userId, eBikeId, credit);
+        credit = getUpdatedCredit(userId, eBikeId);
 
         stopRide = credit <= 0;
 
@@ -96,8 +99,6 @@ public class RideManagerImpl implements RideManager {
         return res;
     }
 
-    private record Triple<T, U, V>(T first, U second, V third) { }
-
     private int getUpdatedBattery(int eBikeId, int positionX, int positionY) {
         double distance;
         int battery = 0;
@@ -117,13 +118,17 @@ public class RideManagerImpl implements RideManager {
         return battery;
     }
 
-    private int getUpdatedCredit(int userId, int eBikeId, int credit) {
+    private int getUpdatedCredit(int userId, int eBikeId) {
         User user = manager.getUser(userId, "");
+        int credit = 0;
 
         if (user != null) {
             credit = user.getCredit();
-            long timeElapsed = new Date().getTime() - ongoingRides.get(new Pair<>(userId, eBikeId)).third();
+            var now = new Date().getTime();
+            var last = ongoingRides.get(new Pair<>(userId, eBikeId));
+            long timeElapsed = now - last;
             credit -= (int) (((double) timeElapsed / 1000) * CREDIT_CONSUMPTION_PER_SECOND);
+            ongoingRides.put(new Pair<>(userId, eBikeId),now);
             manager.updateUser(userId, credit);
         }
         return credit;

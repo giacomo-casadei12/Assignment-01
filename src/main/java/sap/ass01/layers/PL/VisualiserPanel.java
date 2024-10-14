@@ -43,9 +43,10 @@ public class VisualiserPanel extends JPanel {
         }
 
         Triple<String, Integer, Boolean> hm = app.getUser();
+        int userId = app.getUserId();
         var credit = hm.second();
         g2.drawRect(10,20,20,20);
-        g2.drawString(hm.first() + " - credit: " + credit, 35, 35);
+        g2.drawString("#" + userId + " " + hm.first() + " - credit: " + credit, 35, 35);
 
     }
 

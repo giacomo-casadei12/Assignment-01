@@ -13,7 +13,6 @@ public class RideDB implements RideDA{
 
     final MysqlDataSource ds;
     final SimpleDateFormat format;
-    final String NEW_DATE;
 
     public RideDB() {
         ds = new MysqlDataSource();
@@ -21,9 +20,7 @@ public class RideDB implements RideDA{
         ds.setPassword("d3fR3@dy!");
         ds.setURL("jdbc:mysql://localhost:3307/ebcesena");
 
-        Date date = new Date(System.currentTimeMillis());
         format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") ;
-        NEW_DATE = format.format(date);
     }
 
     @Override
@@ -35,8 +32,8 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery("SELECT * FROM ride");
             while (rs.next()) {
                 Ride ride = new RideImpl(rs.getInt("ID"),
-                        rs.getDate("StartDate"),
-                        rs.getDate("EndDate"),
+                        rs.getString("StartDate"),
+                        rs.getString("EndDate"),
                         rs.getInt("UserID"),
                         rs.getInt("EBikeID"));
                 rides.add(ride);
@@ -56,8 +53,8 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery("SELECT * FROM ride WHERE EndDate IS NULL");
             while (rs.next()) {
                 Ride ride = new RideImpl(rs.getInt("ID"),
-                        rs.getDate("StartDate"),
-                        rs.getDate("EndDate"),
+                        rs.getString("StartDate"),
+                        rs.getString("EndDate"),
                         rs.getInt("UserID"),
                         rs.getInt("EBikeID"));
                 rides.add(ride);
@@ -102,8 +99,8 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery();
             if (rs.next()) {
                 ride = new RideImpl(rs.getInt("ID"),
-                        rs.getDate("StartDate"),
-                        rs.getDate("EndDate"),
+                        rs.getString("StartDate"),
+                        rs.getString("EndDate"),
                         rs.getInt("UserID"),
                         rs.getInt("EBikeID"));
             }
@@ -123,8 +120,8 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery();
             if (rs.next()) {
                 ride = new RideImpl(rs.getInt("ID"),
-                        rs.getDate("StartDate"),
-                        rs.getDate("EndDate"),
+                        rs.getString("StartDate"),
+                        rs.getString("EndDate"),
                         rs.getInt("UserID"),
                         rs.getInt("EBikeID"));
             }
@@ -141,7 +138,7 @@ public class RideDB implements RideDA{
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO ride VALUES(?,?,null,?,?)");
             stmt.setInt(1, lastID+1);
-            stmt.setString(2, NEW_DATE);
+            stmt.setString(2, format.format(new Date(System.currentTimeMillis())));
             stmt.setInt(3, userId);
             stmt.setInt(4, eBikeId);
             rs = stmt.executeUpdate();
@@ -184,8 +181,8 @@ public class RideDB implements RideDA{
         rs = stmt.executeQuery();
         while (rs.next()) {
             Ride ride = new RideImpl(rs.getInt("ID"),
-                    rs.getDate("StartDate"),
-                    rs.getDate("EndDate"),
+                    rs.getString("StartDate"),
+                    rs.getString("EndDate"),
                     rs.getInt("UserID"),
                     rs.getInt("EBikeID"));
             rides.add(ride);

@@ -1,17 +1,16 @@
 package sap.ass01.layers.DAL.Schemas;
 
-import java.util.Date;
 import java.util.Objects;
 
 public class RideImpl implements Ride {
 
     final int id;
-    final Date startDate;
-    final Date endDate;
+    final String startDate;
+    final String endDate;
     final int userID;
     final int eBikeID;
 
-    public RideImpl(int id, Date startDate, Date endDate, int userID, int eBikeID) {
+    public RideImpl(int id, String startDate, String endDate, int userID, int eBikeID) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -25,12 +24,12 @@ public class RideImpl implements Ride {
     }
 
     @Override
-    public Date getStartDate() {
+    public String getStartDate() {
         return this.startDate;
     }
 
     @Override
-    public Date getEndDate() {
+    public String getEndDate() {
         return this.endDate;
     }
 
