@@ -67,7 +67,6 @@ public class RideSimulation extends Thread {
 					JOptionPane.showMessageDialog(app, "Failed to update ride", "Fail", JOptionPane.ERROR_MESSAGE);
 				}
 			});
-			app.refreshView();
 
 			try {
 				Thread.sleep(2000);

@@ -59,9 +59,7 @@ public class AllEBikesDialog extends JDialog {
         dialog.add(scrollPane, BorderLayout.CENTER);
 
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> {
-            dialog.dispose(); // Close the dialog when "Back" is pressed
-        });
+        backButton.addActionListener(e -> dialog.dispose());
 
         if (admin) {
             JButton newBikeButton = new JButton("Add eBike");
@@ -74,7 +72,6 @@ public class AllEBikesDialog extends JDialog {
             dialog.add(newPanel, BorderLayout.NORTH);
         }
 
-        // Add the "Back" button at the bottom
         JPanel backPanel = new JPanel();
         backPanel.add(backButton);
         dialog.add(backPanel, BorderLayout.SOUTH);
@@ -82,7 +79,6 @@ public class AllEBikesDialog extends JDialog {
 
         dialog.setSize(600, bikes.size()*150);
 
-        // Make the dialog visible
         dialog.setVisible(true);
     }
 
@@ -90,7 +86,6 @@ public class AllEBikesDialog extends JDialog {
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
-        // Populate the list with items and delete buttons
         buildList(listPanel);
         return listPanel;
     }
@@ -145,7 +140,6 @@ public class AllEBikesDialog extends JDialog {
         return rechargeButton;
     }
 
-    // Method to refresh the list after deleting an item
     private void refreshList(JPanel listPanel) {
         this.app.requestReadEBike(0,0, 0, false).onComplete(x -> {
             if (!x.result().isEmpty()) {
@@ -162,7 +156,6 @@ public class AllEBikesDialog extends JDialog {
     }
 
     private void showNonBlockingMessage(String message, String title, int messageType) {
-        // Use SwingWorker to run the dialog on the EDT but not block the event thread
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -171,7 +164,6 @@ public class AllEBikesDialog extends JDialog {
 
             @Override
             protected void done() {
-                // Show the message dialog on the EDT
                 JOptionPane.showMessageDialog(AllEBikesDialog.this, message, title, messageType);
             }
         }.execute();

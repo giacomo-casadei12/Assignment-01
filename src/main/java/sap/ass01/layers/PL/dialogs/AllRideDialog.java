@@ -15,7 +15,7 @@ public class AllRideDialog extends JDialog {
     private final int userId;
 
     public AllRideDialog(EBikeApp app, int userId) {
-        // Create the JDialog
+
         dialog = new JDialog();
         this.userId = userId;
         this.app = app;
@@ -31,7 +31,7 @@ public class AllRideDialog extends JDialog {
 
     private void initialiseDialog() {
         dialog.setTitle("All Rides");
-        dialog.setLocationRelativeTo(app); // Center the dialog on screen
+        dialog.setLocationRelativeTo(app);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         dialog.setLayout(new BorderLayout());
@@ -93,7 +93,6 @@ public class AllRideDialog extends JDialog {
         return deleteButton;
     }
 
-    // Method to refresh the list after deleting an item
     private void refreshList(JPanel listPanel) {
         this.app.requestMultipleReadRide(this.userId,0, false).onComplete(x -> {
             if (!x.result().isEmpty()) {
@@ -110,7 +109,7 @@ public class AllRideDialog extends JDialog {
     }
 
     private void showNonBlockingMessage(String message, String title, int messageType) {
-        // Use SwingWorker to run the dialog on the EDT but not block the event thread
+
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -119,7 +118,6 @@ public class AllRideDialog extends JDialog {
 
             @Override
             protected void done() {
-                // Show the message dialog on the EDT
                 JOptionPane.showMessageDialog(AllRideDialog.this, message, title, messageType);
             }
         }.execute();

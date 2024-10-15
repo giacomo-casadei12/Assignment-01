@@ -14,7 +14,7 @@ public class AllUsersDialog extends JDialog {
     private Map<Integer, Triple<String, Integer, Boolean>> users;
 
     public AllUsersDialog(EBikeApp app) {
-        // Create the JDialog
+
         dialog = new JDialog();
         this.app = app;
         this.app.requestReadUser(0,"").onComplete(x -> {
@@ -29,33 +29,25 @@ public class AllUsersDialog extends JDialog {
 
     private void initialiseDialog() {
         dialog.setTitle("All Users Registered");
-        dialog.setLocationRelativeTo(null); // Center the dialog on screen
+        dialog.setLocationRelativeTo(null);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        // Set layout for the dialog
         dialog.setLayout(new BorderLayout());
 
-        // Create a scrollable panel to hold the list and delete buttons
         JPanel listPanel = getjPanel();
 
-        // Wrap listPanel in a JScrollPane for scrolling
         JScrollPane scrollPane = new JScrollPane(listPanel);
         dialog.add(scrollPane, BorderLayout.CENTER);
 
-        // Create a "Back" button
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> {
-            dialog.dispose(); // Close the dialog when "Back" is pressed
-        });
+        backButton.addActionListener(e -> dialog.dispose());
 
-        // Add the "Back" button at the bottom
         JPanel backPanel = new JPanel();
         backPanel.add(backButton);
         dialog.add(backPanel, BorderLayout.SOUTH);
 
         dialog.setSize(400, users.size()*100);
 
-        // Make the dialog visible
         dialog.setVisible(true);
     }
 
@@ -63,7 +55,6 @@ public class AllUsersDialog extends JDialog {
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
-        // Populate the list with items and delete buttons
         buildList(listPanel);
         return listPanel;
     }
@@ -75,7 +66,6 @@ public class AllUsersDialog extends JDialog {
             JLabel itemLabel = new JLabel(item);
             JButton deleteButton = getDeleteButton(listPanel, entry.getKey());
 
-            // Add label and button to the item panel
             itemPanel.add(itemLabel, BorderLayout.CENTER);
             itemPanel.add(deleteButton, BorderLayout.EAST);
             listPanel.add(itemPanel);
@@ -97,7 +87,6 @@ public class AllUsersDialog extends JDialog {
         return deleteButton;
     }
 
-    // Method to refresh the list after deleting an item
     private void refreshList(JPanel listPanel) {
         this.app.requestReadUser(0,"").onComplete(x -> {
             if (!x.result().isEmpty()) {
@@ -114,7 +103,7 @@ public class AllUsersDialog extends JDialog {
     }
 
     private void showNonBlockingMessage(String message, String title, int messageType) {
-        // Use SwingWorker to run the dialog on the EDT but not block the event thread
+
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -123,7 +112,7 @@ public class AllUsersDialog extends JDialog {
 
             @Override
             protected void done() {
-                // Show the message dialog on the EDT
+
                 JOptionPane.showMessageDialog(AllUsersDialog.this, message, title, messageType);
             }
         }.execute();

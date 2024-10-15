@@ -15,7 +15,7 @@ public class RechargeCreditDialog extends JDialog {
     private final EBikeApp app;
 
     public RechargeCreditDialog(int userId, int actualCredit, EBikeApp parent) {
-        super(parent, "Login", true); // true to make it modal
+        super(parent, "Login", true);
         this.app = parent;
         setLayout(new BorderLayout());
         setSize(300, 200);
@@ -28,9 +28,9 @@ public class RechargeCreditDialog extends JDialog {
     }
 
     private void initializeDialog() {
-        // Panel for input fields and labels
+
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns with spacing
+        inputPanel.setLayout(new GridLayout(3, 2, 10, 10));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel creditLabel = new JLabel("Credit to add:");
@@ -38,18 +38,14 @@ public class RechargeCreditDialog extends JDialog {
         inputPanel.add(creditLabel);
         inputPanel.add(creditField);
 
-        // Add button
         JButton rechargeButton = new JButton("Recharge");
 
-        // Panel for buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(rechargeButton);
 
-        // Add panels to the dialog
         add(inputPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Action listeners for the buttons
         rechargeButton.addActionListener(e -> {
             int credit = 0;
             boolean valid = true;
@@ -63,7 +59,6 @@ public class RechargeCreditDialog extends JDialog {
                 valid = false;
             }
 
-            // Simple validation (could be expanded)
             if (valid) {
                 credit = credit + actualCredit;
                 app.requestUpdateUser(this.userId, credit).onComplete(x -> {
@@ -87,9 +82,8 @@ public class RechargeCreditDialog extends JDialog {
 
     }
 
-    // Method to show the message in a non-blocking way using SwingWorker
     private void showNonBlockingMessage(String message, String title, int messageType) {
-        // Use SwingWorker to run the dialog on the EDT but not block the event thread
+
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -98,10 +92,9 @@ public class RechargeCreditDialog extends JDialog {
 
             @Override
             protected void done() {
-                // Show the message dialog on the EDT
                 JOptionPane.showMessageDialog(RechargeCreditDialog.this, message, title, messageType);
                 if (title.contains("Success")) {
-                    dispose(); // Close the dialog
+                    dispose();
                 }
             }
         }.execute();

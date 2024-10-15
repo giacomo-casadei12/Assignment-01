@@ -45,6 +45,7 @@ public class EBikeApp extends JFrame implements ActionListener {
         centralPanel = new VisualiserPanel(800,500,this);
         this.username = username;
         retrieveData();
+        webClient.startMonitoringEBike(this);
     }
 
     public void retrieveData() {
@@ -138,6 +139,11 @@ public class EBikeApp extends JFrame implements ActionListener {
         }
     }
 
+    public void updateEBikeFromEventbus(int eBikeId, int x, int y, int battery, String status) {
+        this.bikes.put(eBikeId, new Triple<>(new Pair<>(x, y), battery, status));
+        this.refreshView();
+    }
+
     public void updateUser() {
         this.webClient.requestReadUser(0,this.user.first()).onComplete(res -> {
             if (res.result() != null) {
@@ -152,13 +158,7 @@ public class EBikeApp extends JFrame implements ActionListener {
         });
     }
 
-    public void refreshView() {
-        centralPanel.refresh();
-    }
-
-    public void addEBike(int x, int y) {
-        webClient.requestCreateEBike(x,y);
-        log("added new EBike");
+    private void refreshView() {
         centralPanel.refresh();
     }
 

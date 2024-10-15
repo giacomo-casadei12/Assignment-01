@@ -24,8 +24,6 @@ public class WebClient {
     private static final String EBIKE_QUERY_PATH = "/api/ebike/query";
     private static final String RIDE_COMMAND_PATH = "/api/ride/command";
     private static final String RIDE_QUERY_PATH = "/api/ride/query";
-    private static final String COUNT_UPDATE_PATH = "/api/count/update";
-    private static final String COUNT_QUERY_PATH = "/api/count";
 
     private final io.vertx.ext.web.client.WebClient webClient;
     private final Vertx vertx;
@@ -437,57 +435,40 @@ public class WebClient {
                 });
     }
 
+    public void startMonitoringEBike(EBikeApp app) {
+        vertx.createHttpClient().webSocket(SERVER_PORT, SERVER_HOST, "/api/ebikes/monitoring", asyncResult -> {
+            if (asyncResult.succeeded()) {
+                WebSocket webSocket = asyncResult.result();
+                webSocket.handler(buffer -> {
+                    String message = buffer.toString();
+                    JsonObject jsonMessage = new JsonObject(message);
+                    if (jsonMessage.containsKey("event")){
+                        if (jsonMessage.getString("event").equals("ebike-changed")){
+                            if (jsonMessage.containsKey("eBikeId") && jsonMessage.containsKey("x") &&
+                                    jsonMessage.containsKey("y") && jsonMessage.containsKey("battery") && jsonMessage.containsKey("status")){
+                                int eBikeId = Integer.parseInt(jsonMessage.getString("eBikeId"));
+                                int x = Integer.parseInt(jsonMessage.getString("x"));
+                                int y = Integer.parseInt(jsonMessage.getString("y"));
+                                int battery = Integer.parseInt(jsonMessage.getString("battery"));
+                                String status = jsonMessage.getString("status");
+                                app.updateEBikeFromEventbus(eBikeId, x, y, battery, status);
+                            }
+                        }
+                    }
+                    logger.info("Received message: " + message);
+                });
+                logger.info("WebSocket monitoring established for users changes.");
+            } else {
+                logger.severe("Failed to establish WebSocket users monitoring: " + asyncResult.cause().getMessage());
+            }
+        });
+    }
+
     private void insertEBikeInMap(Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> retMap, JsonObject jsonObj) {
         int resId = Integer.parseInt(jsonObj.getString("eBikeId"));
         var resBike = new Triple<>(new Pair<>(Integer.parseInt(jsonObj.getString("x")), Integer.parseInt(jsonObj.getString("y"))),
                 Integer.parseInt(jsonObj.getString("battery")), jsonObj.getString("status"));
         retMap.put(resId, resBike);
-    }
-
-
-    public void sendCountUpdate(int newCount) {
-        JsonObject requestPayload = new JsonObject();
-        requestPayload.put("count", newCount);  // Send the count in the JSON body
-
-        webClient.post(COUNT_UPDATE_PATH)
-                .sendJson(requestPayload, ar -> {
-                    if (ar.succeeded()) {
-                        logger.info("Count update sent: " + ar.result().bodyAsString());
-                    } else {
-                        logger.severe("Failed to send count update: " + ar.cause().getMessage());
-                    }
-                });
-    }
-
-    public Future<JsonObject> queryCount() {
-        Promise<JsonObject> promise = Promise.promise();
-
-        webClient.get(COUNT_QUERY_PATH)
-                .send(ar -> {
-                    if (ar.succeeded()) {
-                        logger.info("Count queried: " + ar.result().bodyAsString());
-                        JsonObject response = ar.result().bodyAsJsonObject();
-                        promise.complete(response);
-                    } else {
-                        logger.severe("Failed to query count: " + ar.cause().getMessage());
-                    }
-                });
-        return promise.future();
-    }
-
-    public void startMonitoringCountChanges(EBikeApp app) {
-        vertx.createHttpClient().webSocket(SERVER_PORT, SERVER_HOST, "", asyncResult -> {
-            if (asyncResult.succeeded()) {
-                WebSocket webSocket = asyncResult.result();
-                webSocket.handler(buffer -> {
-                    String message = buffer.toString();
-                    logger.info("Received message: " + message);
-                });
-                logger.info("WebSocket monitoring established for count changes.");
-            } else {
-                logger.severe("Failed to establish WebSocket monitoring: " + asyncResult.cause().getMessage());
-            }
-        });
     }
 
 }

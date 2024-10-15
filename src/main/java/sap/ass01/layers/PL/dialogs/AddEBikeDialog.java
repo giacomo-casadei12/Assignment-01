@@ -59,7 +59,6 @@ public class AddEBikeDialog extends JDialog {
 
     private void addEventHandlers() {
         okButton.addActionListener(e -> {
-            // Implement OK button behavior here
             String xCoord = xCoordField.getText();
             String yCoord = yCoordField.getText();
             app.addEBike(Integer.parseInt(xCoord), Integer.parseInt(yCoord));

@@ -48,7 +48,7 @@ public class NearbyEBikeDialog extends JDialog {
 
     private void addEventHandlers() {
         okButton.addActionListener(e -> {
-            // Implement OK button behavior here
+
             int xCoord = Integer.parseInt(xCoordField.getText());
             int yCoord = Integer.parseInt(yCoordField.getText());
             this.app.requestReadEBike(0, xCoord, yCoord, false).onComplete(x -> {
@@ -65,7 +65,7 @@ public class NearbyEBikeDialog extends JDialog {
     }
 
     private void showNonBlockingMessage() {
-        // Use SwingWorker to run the dialog on the EDT but not block the event thread
+
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -74,7 +74,6 @@ public class NearbyEBikeDialog extends JDialog {
 
             @Override
             protected void done() {
-                // Show the message dialog on the EDT
                 JOptionPane.showMessageDialog(NearbyEBikeDialog.this, "No bikes nearby", "No bikes", JOptionPane.INFORMATION_MESSAGE);
             }
         }.execute();

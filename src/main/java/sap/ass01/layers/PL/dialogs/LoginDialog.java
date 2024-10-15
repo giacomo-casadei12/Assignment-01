@@ -14,7 +14,7 @@ public class LoginDialog extends JDialog {
     private final JPasswordField passwordField;
 
     public LoginDialog(Frame parent, WebClient webClient) {
-        super(parent, "Login", true); // true to make it modal
+        super(parent, "Login", true);
         setLayout(new BorderLayout());
         setSize(300, 200);
         setLocationRelativeTo(parent);
@@ -27,41 +27,34 @@ public class LoginDialog extends JDialog {
     }
 
     private void initializeDialog() {
-        // Panel for input fields and labels
+
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns with spacing
+        inputPanel.setLayout(new GridLayout(3, 2, 10, 10));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Username field
         JLabel usernameLabel = new JLabel("Username:");
 
         inputPanel.add(usernameLabel);
         inputPanel.add(usernameField);
 
-        // Password field
         JLabel passwordLabel = new JLabel("Password:");
         inputPanel.add(passwordLabel);
         inputPanel.add(passwordField);
 
-        // Add buttons
         JButton loginButton = new JButton("Login");
         JButton createUserButton = new JButton("Create user");
 
-        // Panel for buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(loginButton);
         buttonPanel.add(createUserButton);
 
-        // Add panels to the dialog
         add(inputPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Action listeners for the buttons
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
-            // Simple validation (could be expanded)
             if (username.isEmpty() || password.isEmpty()) {
                 showNonBlockingMessage("Please enter both username and password.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -95,23 +88,23 @@ public class LoginDialog extends JDialog {
 
     }
 
-    // Method to show the message in a non-blocking way using SwingWorker
+
     private void showNonBlockingMessage(String message, String title, int messageType) {
-        // Use SwingWorker to run the dialog on the EDT but not block the event thread
+
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                // Simulate background work, if necessary
-                Thread.sleep(50); // Add a slight delay to simulate background activity
+
+                Thread.sleep(50);
                 return null;
             }
 
             @Override
             protected void done() {
-                // Show the message dialog on the EDT
+
                 JOptionPane.showMessageDialog(LoginDialog.this, message, title, messageType);
                 if (title.contains("Success")) {
-                    dispose(); // Close the dialog
+                    dispose();
                     SwingUtilities.invokeLater(() -> {
                         EBikeApp app = new EBikeApp(webClient, usernameField.getText());
                         app.setVisible(true);

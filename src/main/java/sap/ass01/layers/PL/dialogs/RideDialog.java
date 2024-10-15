@@ -69,7 +69,7 @@ public class RideDialog extends JDialog {
     }
 
     private void showNonBlockingMessage(String message, String title, int messageType) {
-        // Use SwingWorker to run the dialog on the EDT but not block the event thread
+
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -78,7 +78,6 @@ public class RideDialog extends JDialog {
 
             @Override
             protected void done() {
-                // Show the message dialog on the EDT
                 JOptionPane.showMessageDialog(RideDialog.this, message, title, messageType);
             }
         }.execute();
