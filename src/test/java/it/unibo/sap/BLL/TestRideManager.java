@@ -1,7 +1,7 @@
 package it.unibo.sap.BLL;
 
 import org.junit.jupiter.api.Test;
-import sap.ass01.layers.BLL.Logic.Pair;
+import sap.ass01.layers.utils.Pair;
 import sap.ass01.layers.BLL.Logic.RideManager;
 import sap.ass01.layers.BLL.Logic.RideManagerImpl;
 import sap.ass01.layers.BLL.Persistence.PersistenceManager;

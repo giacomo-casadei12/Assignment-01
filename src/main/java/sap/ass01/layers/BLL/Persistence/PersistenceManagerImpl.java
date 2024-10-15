@@ -2,7 +2,7 @@ package sap.ass01.layers.BLL.Persistence;
 
 import sap.ass01.layers.DAL.DB.*;
 import sap.ass01.layers.DAL.Schemas.EBike;
-import sap.ass01.layers.DAL.Schemas.EBikeState;
+import sap.ass01.layers.utils.EBikeState;
 import sap.ass01.layers.DAL.Schemas.Ride;
 import sap.ass01.layers.DAL.Schemas.User;
 
@@ -105,7 +105,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
     @Override
     public boolean updateEbikePosition(int id, int positionX, int positionY) {
         EBike bike = this.bikeDA.getEBikeById(id);
-        return this.bikeDA.updateEBike(id, bike.getBattery(), bike.getState(), positionX, positionY);
+        return this.bikeDA.updateEBike(id, bike.getBattery(), EBikeState.valueOf(bike.getState()), positionX, positionY);
     }
 
     @Override

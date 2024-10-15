@@ -1,6 +1,6 @@
 package sap.ass01.layers.PL.dialogs;
 
-import sap.ass01.layers.BLL.Logic.Triple;
+import sap.ass01.layers.utils.Triple;
 import sap.ass01.layers.PL.EBikeApp;
 
 import javax.swing.*;
@@ -112,7 +112,6 @@ public class AllUsersDialog extends JDialog {
 
             @Override
             protected void done() {
-
                 JOptionPane.showMessageDialog(AllUsersDialog.this, message, title, messageType);
             }
         }.execute();

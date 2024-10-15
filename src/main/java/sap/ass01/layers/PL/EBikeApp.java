@@ -1,8 +1,8 @@
 package sap.ass01.layers.PL;
 
 import io.vertx.core.Future;
-import sap.ass01.layers.BLL.Logic.Pair;
-import sap.ass01.layers.BLL.Logic.Triple;
+import sap.ass01.layers.utils.Pair;
+import sap.ass01.layers.utils.Triple;
 import sap.ass01.layers.PL.dialogs.*;
 import sap.ass01.layers.PL.simulation.RideSimulation;
 import sap.ass01.layers.PL.simulation.RideSimulationControlPanel;

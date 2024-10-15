@@ -6,6 +6,7 @@ import sap.ass01.layers.DAL.Schemas.EBike;
 import sap.ass01.layers.DAL.Schemas.User;
 
 import org.junit.jupiter.api.Test;
+import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;
 
@@ -87,11 +88,11 @@ public class TestPersistenceManager {
         assertNotNull(b);
         assertTrue(result.contains(b));
 
-        res = persManager.updateEBike(b.getID(), 75, sap.ass01.layers.DAL.Schemas.EBikeState.IN_USE, 10, 10);
+        res = persManager.updateEBike(b.getID(), 75, EBikeState.IN_USE, 10, 10);
         assertTrue(res);
         b = persManager.getEBike(b.getID());
         assertNotNull(b);
-        assertEquals(sap.ass01.layers.DAL.Schemas.EBikeState.IN_USE, b.getState());
+        assertEquals(EBikeState.IN_USE.toString(), b.getState());
         assertEquals(75, b.getBattery());
 
         result = persManager.getAllEBikes(0,0,true);

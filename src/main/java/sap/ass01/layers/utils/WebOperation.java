@@ -1,4 +1,4 @@
-package sap.ass01.layers.BLL.Web;
+package sap.ass01.layers.utils;
 
 public enum WebOperation {
         CREATE,

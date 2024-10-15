@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import sap.ass01.layers.DAL.DB.EBikeDA;
 import sap.ass01.layers.DAL.DB.EBikeDB;
 import sap.ass01.layers.DAL.Schemas.EBike;
-import sap.ass01.layers.DAL.Schemas.EBikeState;
+import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class TestEBikeDAL {
         EBike bi = eBikeDA.getEBikeById(id);
         assertNotNull(bi);
         assertEquals(50,bi.getBattery());
-        assertEquals(1,bi.getState().ordinal());
+        assertEquals(1,EBikeState.valueOf(bi.getState()).ordinal());
         assertEquals(50,bi.getPositionX());
         assertEquals(50,bi.getPositionY());
         b = eBikeDA.deleteEBike(id);

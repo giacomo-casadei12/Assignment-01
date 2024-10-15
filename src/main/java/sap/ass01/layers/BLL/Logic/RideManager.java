@@ -1,6 +1,8 @@
 package sap.ass01.layers.BLL.Logic;
 
 
+import sap.ass01.layers.utils.Pair;
+
 public interface RideManager {
 
     boolean startRide(int userId, int eBikeId);

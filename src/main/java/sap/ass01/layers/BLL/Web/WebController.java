@@ -12,15 +12,17 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import sap.ass01.layers.BLL.Logic.Pair;
+import sap.ass01.layers.utils.Pair;
 import sap.ass01.layers.BLL.Logic.RideManager;
 import sap.ass01.layers.BLL.Logic.RideManagerImpl;
 import sap.ass01.layers.BLL.Persistence.PersistenceManagerImpl;
 import sap.ass01.layers.BLL.Persistence.PersistenceManager;
 import sap.ass01.layers.DAL.Schemas.EBike;
-import sap.ass01.layers.DAL.Schemas.EBikeState;
+import sap.ass01.layers.utils.EBikeState;
 import sap.ass01.layers.DAL.Schemas.Ride;
 import sap.ass01.layers.DAL.Schemas.User;
+import sap.ass01.layers.utils.VertxSingleton;
+import sap.ass01.layers.utils.WebOperation;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -453,7 +455,7 @@ public class WebController extends AbstractVerticle {
         map.put("x", eb.getPositionX());
         map.put("y", eb.getPositionY());
         map.put("battery", eb.getBattery());
-        map.put("status", eb.getState().toString());
+        map.put("status", eb.getState());
         return map;
     }
 
@@ -469,7 +471,7 @@ public class WebController extends AbstractVerticle {
 
     private void checkBikeChangesAndNotifyAll(int eBikeId) {
         var bike = this.pManager.getEBike(eBikeId);
-        this.notifyEBikeChanged(eBikeId, bike.getPositionX(), bike.getPositionY(), bike.getBattery(), bike.getState().toString());
+        this.notifyEBikeChanged(eBikeId, bike.getPositionX(), bike.getPositionY(), bike.getBattery(), bike.getState());
     }
 
     private void notifyEBikeChanged(int eBikeId, int x, int y, int battery, String status) {

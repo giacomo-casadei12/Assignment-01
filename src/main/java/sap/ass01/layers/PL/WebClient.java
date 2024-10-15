@@ -4,10 +4,10 @@ import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.core.http.WebSocket;
-import sap.ass01.layers.BLL.Logic.Pair;
-import sap.ass01.layers.BLL.Logic.Triple;
-import sap.ass01.layers.BLL.Web.VertxSingleton;
-import sap.ass01.layers.BLL.Web.WebOperation;
+import sap.ass01.layers.utils.Pair;
+import sap.ass01.layers.utils.Triple;
+import sap.ass01.layers.utils.VertxSingleton;
+import sap.ass01.layers.utils.WebOperation;
 
 import java.util.HashMap;
 import java.util.Map;

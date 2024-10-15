@@ -4,8 +4,6 @@ import sap.ass01.layers.PL.EBikeApp;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class RechargeCreditDialog extends JDialog {
 
@@ -74,11 +72,7 @@ public class RechargeCreditDialog extends JDialog {
             }
         });
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent ev) {
-                dispose();
-            }
-        });
+
 
     }
 

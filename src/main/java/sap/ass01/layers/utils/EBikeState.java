@@ -1,4 +1,4 @@
-package sap.ass01.layers.DAL.Schemas;
+package sap.ass01.layers.utils;
 
 public enum EBikeState {
     AVAILABLE,

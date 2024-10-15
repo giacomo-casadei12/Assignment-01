@@ -1,7 +1,7 @@
 package sap.ass01.layers.PL;
 
-import sap.ass01.layers.BLL.Logic.Pair;
-import sap.ass01.layers.BLL.Logic.Triple;
+import sap.ass01.layers.utils.Pair;
+import sap.ass01.layers.utils.Triple;
 
 import javax.swing.*;
 import java.awt.*;

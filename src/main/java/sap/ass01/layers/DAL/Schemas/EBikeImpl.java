@@ -6,11 +6,11 @@ public class EBikeImpl implements EBike {
 
     final int ID;
     final int battery;
-    final EBikeState state;
+    final String state;
     final int positionX;
     final int positionY;
 
-    public EBikeImpl(int ID, int battery, EBikeState state, int positionX, int positionY) {
+    public EBikeImpl(int ID, int battery, String state, int positionX, int positionY) {
         this.ID = ID;
         this.battery = battery;
         this.state = state;
@@ -29,7 +29,7 @@ public class EBikeImpl implements EBike {
     }
 
     @Override
-    public EBikeState getState() {
+    public String getState() {
         return this.state;
     }
 

@@ -3,7 +3,7 @@ package sap.ass01.layers.DAL.DB;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import sap.ass01.layers.DAL.Schemas.EBike;
 import sap.ass01.layers.DAL.Schemas.EBikeImpl;
-import sap.ass01.layers.DAL.Schemas.EBikeState;
+import sap.ass01.layers.utils.EBikeState;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class EBikeDB implements EBikeDA {
             while (rs.next()) {
                 EBike bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")],
+                        EBikeState.values()[rs.getInt("State")].toString(),
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
                 bikes.add(bike);
@@ -52,7 +52,7 @@ public class EBikeDB implements EBikeDA {
             while (rs.next()) {
                 EBike bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")],
+                        EBikeState.values()[rs.getInt("State")].toString(),
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
                 bikes.add(bike);
@@ -77,7 +77,7 @@ public class EBikeDB implements EBikeDA {
             while (rs.next()) {
                 EBike bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")],
+                        EBikeState.values()[rs.getInt("State")].toString(),
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
                 bikes.add(bike);
@@ -99,7 +99,7 @@ public class EBikeDB implements EBikeDA {
             if (rs.next()) {
                 bike = new EBikeImpl(rs.getInt("ID"),
                         rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")],
+                        EBikeState.values()[rs.getInt("State")].toString(),
                         rs.getInt("PositionX"),
                         rs.getInt("PositionY"));
             }

@@ -1,4 +1,4 @@
-package sap.ass01.layers.BLL.Logic;
+package sap.ass01.layers.utils;
 
 import java.util.Objects;
 

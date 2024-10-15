@@ -1,7 +1,7 @@
 package sap.ass01.layers.DAL.DB;
 
 import sap.ass01.layers.DAL.Schemas.EBike;
-import sap.ass01.layers.DAL.Schemas.EBikeState;
+import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;
 

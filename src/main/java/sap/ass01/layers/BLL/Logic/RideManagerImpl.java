@@ -2,9 +2,10 @@ package sap.ass01.layers.BLL.Logic;
 
 import sap.ass01.layers.BLL.Persistence.PersistenceManager;
 import sap.ass01.layers.DAL.Schemas.EBike;
-import sap.ass01.layers.DAL.Schemas.EBikeState;
+import sap.ass01.layers.utils.EBikeState;
 import sap.ass01.layers.DAL.Schemas.Ride;
 import sap.ass01.layers.DAL.Schemas.User;
+import sap.ass01.layers.utils.Pair;
 
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -24,7 +25,7 @@ public class RideManagerImpl implements RideManager {
     public boolean startRide(int userId, int eBikeId) {
         EBike bike = manager.getEBike(eBikeId);
         boolean success = false;
-        if (bike.getState() == EBikeState.AVAILABLE) {
+        if (EBikeState.valueOf(bike.getState()) == EBikeState.AVAILABLE) {
             success = manager.createRide(userId, eBikeId);
 
             if (success) {
