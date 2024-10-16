@@ -15,7 +15,7 @@ public class RideManagerImpl implements RideManager {
     final private static double BATTERY_CONSUMPTION_PER_METER = 0.5;
     final private static double CREDIT_CONSUMPTION_PER_SECOND = 0.1;
     final private PersistenceManager manager;
-    final private HashMap<Pair<Integer,Integer>, Long> ongoingRides = new HashMap<>();
+    final private Map<Pair<Integer,Integer>, Long> ongoingRides = new HashMap<>();
 
     public RideManagerImpl(PersistenceManager manager) {
         this.manager = manager;
@@ -25,14 +25,14 @@ public class RideManagerImpl implements RideManager {
     public boolean startRide(int userId, int eBikeId) {
         EBike bike = manager.getEBike(eBikeId);
         boolean success = false;
-        if (EBikeState.valueOf(bike.getState()) == EBikeState.AVAILABLE) {
+        if (EBikeState.valueOf(bike.state()) == EBikeState.AVAILABLE) {
             success = manager.createRide(userId, eBikeId);
 
             if (success) {
                 this.ongoingRides.put(new Pair<>(userId, eBikeId),
                         new Date().getTime());
 
-                manager.updateEBike(eBikeId, bike.getBattery(), EBikeState.IN_USE, bike.getPositionX(), bike.getPositionY());
+                manager.updateEBike(eBikeId, bike.battery(), EBikeState.IN_USE, bike.positionX(), bike.positionY());
             }
         }
 
@@ -63,7 +63,7 @@ public class RideManagerImpl implements RideManager {
             ride = manager.getRide(0, userId);
 
             if (ride != null) {
-                rideId = ride.getID();
+                rideId = ride.ID();
                 manager.endRide(rideId);
             }
 
@@ -85,14 +85,14 @@ public class RideManagerImpl implements RideManager {
         Ride ride = manager.getRide(0, userId);
 
         if (ride != null) {
-            int rideId = ride.getID();
+            int rideId = ride.ID();
             res = manager.endRide(rideId);
         }
 
         EBike bike = manager.getEBike(eBikeId);
 
         if (bike != null) {
-            manager.updateEBike(eBikeId, bike.getBattery(), EBikeState.AVAILABLE, bike.getPositionX(), bike.getPositionY());
+            manager.updateEBike(eBikeId, bike.battery(), EBikeState.AVAILABLE, bike.positionX(), bike.positionY());
         }
 
         this.ongoingRides.remove(new Pair<>(userId, eBikeId));
@@ -106,8 +106,8 @@ public class RideManagerImpl implements RideManager {
         EBike bike = manager.getEBike(eBikeId);
 
         if (bike != null) {
-            battery = bike.getBattery();
-            distance = Point2D.distance(bike.getPositionX(), bike.getPositionY(), positionX, positionY);
+            battery = bike.battery();
+            distance = Point2D.distance(bike.positionX(), bike.positionY(), positionX, positionY);
             battery -= (int) (distance * BATTERY_CONSUMPTION_PER_METER);
 
             if (battery <= 0) {

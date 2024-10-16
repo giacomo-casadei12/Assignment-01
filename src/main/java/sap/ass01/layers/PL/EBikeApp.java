@@ -105,6 +105,7 @@ public class EBikeApp extends JFrame implements ActionListener {
         add(centralPanel,BorderLayout.CENTER);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent ev) {
                 System.exit(-1);
             }
@@ -169,7 +170,6 @@ public class EBikeApp extends JFrame implements ActionListener {
         ridingWindow.display();
         rideSimulation.start();
         this.rides.put(new Pair<>(userId, bikeId), rideSimulation);
-        log("started new Ride ");
     }
 
     public void endRide(int userId, int bikeId) {
@@ -239,9 +239,6 @@ public class EBikeApp extends JFrame implements ActionListener {
         return this.userId;
     }
 
-    private void log(String msg) {
-        System.out.println("[EBikeApp] " + msg);
-    }
 
 
 }

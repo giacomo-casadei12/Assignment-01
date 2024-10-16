@@ -18,7 +18,9 @@ public class TestRideManager {
 
     final PersistenceManager persManager;
     final RideManager rideManager;
-    int userID, eBikeID, rideID;
+    int userID;
+    int eBikeID;
+    int rideID;
 
     public TestRideManager() {
         persManager = new PersistenceManagerImpl();
@@ -33,7 +35,9 @@ public class TestRideManager {
         boolean b = rideManager.startRide(userID,eBikeID);
         assertTrue(b);
 
-        List<Ride> rs,rs2,rs3;
+        List<Ride> rs;
+        List<Ride> rs2;
+        List<Ride> rs3;
         Ride r;
         rs = persManager.getAllRides(true,0,0);
         assertNotNull(rs);
@@ -48,13 +52,13 @@ public class TestRideManager {
         assertTrue(rs2.contains(r));
         assertTrue(rs3.contains(r));
 
-        rideID = r.getID();
+        rideID = r.ID();
 
         b = rideManager.endRide(userID,eBikeID);
         assertTrue(b);
 
-        r = persManager.getRide(r.getID(),0);
-        assertNotNull(r.getEndDate());
+        r = persManager.getRide(r.ID(),0);
+        assertNotNull(r.endDate());
 
         destroyUserEBikeAndRide();
     }
@@ -69,7 +73,7 @@ public class TestRideManager {
 
         Ride r = persManager.getRide(0,userID);
         assertNotNull(r);
-        rideID = r.getID();
+        rideID = r.ID();
         Thread.sleep(10000);
         Pair<Integer,Integer> p = rideManager.updateRide(userID,eBikeID,9900,10000);
         assertEquals(50,p.second());
@@ -89,7 +93,7 @@ public class TestRideManager {
 
         persManager.createEBike(10000,10000);
         b = persManager.getAllEBikes(10000,10000,false).get(0);
-        eBikeID = b.getID();
+        eBikeID = b.ID();
     }
 
     private void destroyUserEBikeAndRide(){

@@ -21,7 +21,8 @@ public class RideSimulation extends Thread {
         this.app = app;
 		stopped = false;
 	}
-	
+
+	@Override
 	public void run() {
         double speed = 3;
 
@@ -30,33 +31,12 @@ public class RideSimulation extends Thread {
 		while (!stopped) {
 			/* update pos */
 			this.loc = this.loc.sum(this.direction.mul(speed));
-			if (this.loc.x() > 200 || this.loc.x() < -200) {
-				this.direction = new V2d(-this.direction.x(), this.direction.y());
-				if (this.loc.x() > 200) {
-					this.loc = new P2d(200, this.loc.y());
-				} else {
-					this.loc = new P2d(-200, this.loc.y());
-				}
-			}
-			if (this.loc.y() > 200 || this.loc.y() < -200) {
-				this.direction = new V2d(this.direction.x(), -this.direction.y());
-				if (this.loc.y() > 200) {
-					this.loc = new P2d(this.loc.x(), 200);
-				} else {
-					this.loc = new P2d(this.loc.x(), -200);
-				}
-			}
-			
-			/* change dir randomly */
-			
-			var elapsedTimeSinceLastChangeDir = System.currentTimeMillis() - lastTimeChangedDir;
-			if (elapsedTimeSinceLastChangeDir > 500) {
-				double angle = Math.random()*60 - 30;
-				this.direction = this.direction.rotate(angle);
-            }
+			updatePosition();
 
-			log(this.loc.toString());
-			log(this.direction.toString());
+			/* change dir randomly */
+
+			changeDirection(lastTimeChangedDir);
+
 			this.app.requestUpdateRide(this.bikeId, (int) Math.round(this.loc.x()), (int) Math.round(this.loc.y())).onComplete(x -> {
 				if (x.result() != null) {
 					if (x.result().first() <= 0 || x.result().second() <= 0) {
@@ -80,12 +60,36 @@ public class RideSimulation extends Thread {
 		});
 	}
 
+	private void updatePosition() {
+		if (this.loc.x() > 200 || this.loc.x() < -200) {
+			this.direction = new V2d(-this.direction.x(), this.direction.y());
+			if (this.loc.x() > 200) {
+				this.loc = new P2d(200, this.loc.y());
+			} else {
+				this.loc = new P2d(-200, this.loc.y());
+			}
+		}
+		if (this.loc.y() > 200 || this.loc.y() < -200) {
+			this.direction = new V2d(this.direction.x(), -this.direction.y());
+			if (this.loc.y() > 200) {
+				this.loc = new P2d(this.loc.x(), 200);
+			} else {
+				this.loc = new P2d(this.loc.x(), -200);
+			}
+		}
+	}
+
+	private void changeDirection(long lastTimeChangedDir) {
+		var elapsedTimeSinceLastChangeDir = System.currentTimeMillis() - lastTimeChangedDir;
+		if (elapsedTimeSinceLastChangeDir > 500) {
+			double angle = Math.random()*60 - 30;
+			this.direction = this.direction.rotate(angle);
+}
+	}
+
 	public void stopSimulation() {
 		stopped = true;
 		interrupt();
 	}
 
-	private void log(String msg) {
-		System.out.println("[EBikeApp] " + msg);
-	}
 }

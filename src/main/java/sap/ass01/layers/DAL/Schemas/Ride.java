@@ -1,10 +1,9 @@
 package sap.ass01.layers.DAL.Schemas;
 
 public interface Ride {
-
-    int getID();
-    String getStartDate();
-    String getEndDate();
-    int getUserID();
-    int getEBikeID();
+    int ID();
+    String startDate();
+    String endDate();
+    int userID();
+    int eBikeID();
 }

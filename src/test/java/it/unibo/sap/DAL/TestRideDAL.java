@@ -24,20 +24,20 @@ public class TestRideDAL {
         assertTrue(b);
         List<Ride> rs = rideDA.getAllOngoingRides();
         assertFalse(rs.isEmpty());
-        assertTrue(rs.stream().anyMatch(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1));
+        assertTrue(rs.stream().anyMatch(ride -> ride.userID() == 1 && ride.eBikeID() == 1));
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = rs.stream().
-                                filter(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1).
+                                filter(ride -> ride.userID() == 1 && ride.eBikeID() == 1).
                                 findFirst().
-                                get().getID();
+                                get().ID();
         Ride r = rideDA.getRideById(id);
         assertNotNull(r);
-        assertEquals(1, r.getUserID());
-        assertEquals(1, r.getEBikeID());
+        assertEquals(1, r.userID());
+        assertEquals(1, r.eBikeID());
         b = rideDA.endRide(id);
         assertTrue(b);
         rs = rideDA.getAllOngoingRides();
         if (!rs.isEmpty()) {
-            assertFalse(rs.stream().anyMatch(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1));
+            assertFalse(rs.stream().anyMatch(ride -> ride.userID() == 1 && ride.eBikeID() == 1));
         }
         b = rideDA.deleteRide(id);
         assertTrue(b);
@@ -51,11 +51,11 @@ public class TestRideDAL {
         assertTrue(b);
         List<Ride> rs = rideDA.getAllRidesByUser(1);
         assertFalse(rs.isEmpty());
-        assertTrue(rs.stream().anyMatch(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1));
+        assertTrue(rs.stream().anyMatch(ride -> ride.userID() == 1 && ride.eBikeID() == 1));
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = rs.stream().
-                filter(ride -> ride.getUserID() == 1 && ride.getEBikeID() == 1).
+                filter(ride -> ride.userID() == 1 && ride.eBikeID() == 1).
                 findFirst().
-                get().getID();
+                get().ID();
         rs = rideDA.getAllRidesByEBike(1);
         assertFalse(rs.isEmpty());
         b = rideDA.deleteRide(id);

@@ -33,11 +33,7 @@ public class V2d implements java.io.Serializable {
     public double y() {
     	return y;
     }
-    
-    public V2d sum(V2d v){
-        return new V2d(x+v.x,y+v.y);
-    }
-    
+
     public V2d rotate(double degree) {
     	var rad = degree * Math.PI/180;
     	var cs = Math.cos(rad);
@@ -45,10 +41,6 @@ public class V2d implements java.io.Serializable {
     	var x1 = x * cs - y * sn;
     	var y1 = x * sn + y * cs;
         return new V2d(x1, y1).getNormalized();
-    }
-
-    public double abs(){
-        return Math.sqrt(x*x+y*y);
     }
 
     public V2d getNormalized(){
@@ -60,6 +52,7 @@ public class V2d implements java.io.Serializable {
         return new V2d(x*fact,y*fact);
     }
 
+    @Override
     public String toString(){
         return "V2d("+x+","+y+")";
     }

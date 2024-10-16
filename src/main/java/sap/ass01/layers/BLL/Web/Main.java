@@ -1,6 +1,4 @@
-package sap.ass01.layers.BLL;
-
-import sap.ass01.layers.BLL.Web.WebController;
+package sap.ass01.layers.BLL.Web;
 
 public class Main {
 

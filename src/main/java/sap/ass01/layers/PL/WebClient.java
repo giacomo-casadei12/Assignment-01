@@ -11,6 +11,7 @@ import sap.ass01.layers.utils.WebOperation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WebClient {
@@ -45,10 +46,14 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("User created: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("User created: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.severe("Failed to create user: " + ar.cause().getMessage());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.severe("Failed to create user: " + ar.cause().getMessage());
+                            }
                             promise.complete(false);
                         }
                     }
@@ -66,10 +71,14 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("User deleted: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("User deleted: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.severe("Failed to delete user: " + ar.cause().getMessage());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.severe("Failed to delete user: " + ar.cause().getMessage());
+                            }
                             promise.complete(false);
                         }
                     }
@@ -88,10 +97,14 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("User updated: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("User updated: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.severe("Failed to update user: " + ar.cause().getMessage());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.severe("Failed to update user: " + ar.cause().getMessage());
+                            }
                             promise.complete(false);
                         }
                     }
@@ -110,14 +123,20 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("Login: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("Login: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.warning("Login failed: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.warning("Login failed: " + ar.result().bodyAsString());
+                            }
                             promise.complete(false);
                         }
                     } else {
-                        logger.severe("Failed to login: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to login: " + ar.cause().getMessage());
+                        }
                         promise.fail(ar.cause());
                     }
                 });
@@ -156,11 +175,15 @@ public class WebClient {
                             retMap.put(resId, resUser);
                             promise.complete(retMap);
                         } else {
-                            logger.warning("Error in response received from server");
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.warning("Error in response received from server");
+                            }
                             promise.complete(null);
                         }
                     } else {
-                        logger.severe("Failed to retrieve users: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to retrieve users: " + ar.cause().getMessage());
+                        }
                         promise.fail(ar.cause());
                     }
                 });
@@ -178,10 +201,14 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("EBike created: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("EBike created: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.severe("Failed to create eBike: " + ar.cause().getMessage());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.severe("Failed to create eBike: " + ar.cause().getMessage());
+                            }
                             promise.complete(false);
                         }
                     }
@@ -199,10 +226,14 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("eBike deleted: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("eBike deleted: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.severe("Failed to delete eBike: " + ar.cause().getMessage());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.severe("Failed to delete eBike: " + ar.cause().getMessage());
+                            }
                             promise.complete(false);
                         }
                     }
@@ -228,10 +259,14 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("eBike updated: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("eBike updated: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.severe("Failed to update eBike: " + ar.cause().getMessage());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.severe("Failed to update eBike: " + ar.cause().getMessage());
+                            }
                             promise.complete(false);
                         }
                     }
@@ -260,7 +295,9 @@ public class WebClient {
         webClient.get(EBIKE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("eBikes: " + ar.result().bodyAsString());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.info("eBikes: " + ar.result().bodyAsString());
+                        }
                         JsonObject res = ar.result().bodyAsJsonObject();
                         if (res.containsKey("result")) {
                             var resList = res.getJsonArray("result");
@@ -274,11 +311,15 @@ public class WebClient {
                             insertEBikeInMap(retMap, res);
                             promise.complete(retMap);
                         } else {
-                            logger.warning("Error in response received from server");
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.warning("Error in response received from server");
+                            }
                             promise.complete(null);
                         }
                     } else {
-                        logger.severe("Failed to retrieve eBikes: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to retrieve eBikes: " + ar.cause().getMessage());
+                        }
                         promise.fail(ar.cause());
                     }
                 });
@@ -295,10 +336,14 @@ public class WebClient {
         webClient.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                        logger.info("ride started: " + ar.result().bodyAsString());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.info("ride started: " + ar.result().bodyAsString());
+                        }
                         promise.complete(true);
                     } else {
-                        logger.severe("Failed to start ride: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to start ride: " + ar.cause().getMessage());
+                        }
                         promise.complete(false);
                     }
                 });
@@ -319,14 +364,18 @@ public class WebClient {
                     if (ar.succeeded()) {
                         var res = ar.result().bodyAsJsonObject();
                         if (res.containsKey("credit") && res.containsKey("battery")) {
-                            logger.info("ride updated: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("ride updated: " + ar.result().bodyAsString());
+                            }
                             promise.complete(new Pair<>(Integer.parseInt(res.getString("credit")),
                                     Integer.parseInt(res.getString("battery"))));
                         } else {
                             promise.complete(null);
                         }
                     } else {
-                        logger.severe("Failed to update ride: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to update ride: " + ar.cause().getMessage());
+                        }
                         promise.fail(ar.cause());
                     }
                 });
@@ -343,10 +392,14 @@ public class WebClient {
         webClient.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                        logger.info("ride ended: " + ar.result().bodyAsString());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.info("ride ended: " + ar.result().bodyAsString());
+                        }
                         promise.complete(true);
                     } else {
-                        logger.severe("Failed to end ride: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to end ride: " + ar.cause().getMessage());
+                        }
                         promise.complete(false);
                     }
                 });
@@ -363,10 +416,14 @@ public class WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
-                            logger.info("ride deleted: " + ar.result().bodyAsString());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.info("ride deleted: " + ar.result().bodyAsString());
+                            }
                             promise.complete(true);
                         } else {
-                            logger.severe("Failed to delete ride: " + ar.cause().getMessage());
+                            if (logger.isLoggable(Level.FINE)) {
+                                logger.severe("Failed to delete ride: " + ar.cause().getMessage());
+                            }
                             promise.complete(false);
                         }
                     }
@@ -393,7 +450,9 @@ public class WebClient {
         webClient.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("rides: " + ar.result().bodyAsString());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.info("rides: " + ar.result().bodyAsString());
+                        }
                         var res = ar.result().bodyAsJsonObject();
                         if (res.containsKey("result")) {
                             var resList = res.getJsonArray("result");
@@ -408,7 +467,9 @@ public class WebClient {
                             promise.complete(retMap);
                         }
                     } else {
-                        logger.severe("Failed to retrieve rides: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to retrieve rides: " + ar.cause().getMessage());
+                        }
                     }
                 });
         return promise.future();
@@ -428,9 +489,13 @@ public class WebClient {
         webClient.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        logger.info("ride: " + ar.result().bodyAsString());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.info("ride: " + ar.result().bodyAsString());
+                        }
                     } else {
-                        logger.severe("Failed to retrieve ride: " + ar.cause().getMessage());
+                        if (logger.isLoggable(Level.FINE)) {
+                            logger.severe("Failed to retrieve ride: " + ar.cause().getMessage());
+                        }
                     }
                 });
     }
@@ -442,9 +507,9 @@ public class WebClient {
                 webSocket.handler(buffer -> {
                     String message = buffer.toString();
                     JsonObject jsonMessage = new JsonObject(message);
-                    if (jsonMessage.containsKey("event")){
-                        if (jsonMessage.getString("event").equals("ebike-changed")){
-                            if (jsonMessage.containsKey("eBikeId") && jsonMessage.containsKey("x") &&
+                    if (jsonMessage.containsKey("event") &&
+                            jsonMessage.getString("event").equals("ebike-changed") &&
+                                jsonMessage.containsKey("eBikeId") && jsonMessage.containsKey("x") &&
                                     jsonMessage.containsKey("y") && jsonMessage.containsKey("battery") && jsonMessage.containsKey("status")){
                                 int eBikeId = Integer.parseInt(jsonMessage.getString("eBikeId"));
                                 int x = Integer.parseInt(jsonMessage.getString("x"));
@@ -452,14 +517,18 @@ public class WebClient {
                                 int battery = Integer.parseInt(jsonMessage.getString("battery"));
                                 String status = jsonMessage.getString("status");
                                 app.updateEBikeFromEventbus(eBikeId, x, y, battery, status);
-                            }
-                        }
                     }
-                    logger.info("Received message: " + message);
+                    if (logger.isLoggable(Level.FINE)) {
+                        logger.info("Received message: " + message);
+                    }
                 });
-                logger.info("WebSocket monitoring established for users changes.");
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.info("WebSocket monitoring established for users changes.");
+                }
             } else {
-                logger.severe("Failed to establish WebSocket users monitoring: " + asyncResult.cause().getMessage());
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.severe("Failed to establish WebSocket users monitoring: " + asyncResult.cause().getMessage());
+                }
             }
         });
     }

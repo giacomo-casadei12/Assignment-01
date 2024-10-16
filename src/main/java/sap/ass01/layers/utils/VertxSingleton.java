@@ -8,7 +8,7 @@ import io.vertx.core.Vertx;
  * Represents the use of the sigleton pattern for sharing the vertx instance
  *
  */
-public class VertxSingleton {
+final public class VertxSingleton {
 
     private static VertxSingleton instance;
     private final Vertx vertx;

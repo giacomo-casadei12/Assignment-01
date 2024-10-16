@@ -46,6 +46,7 @@ public class WebController extends AbstractVerticle {
         vertx.deployVerticle(this);
     }
 
+    @Override
     public void start() {
         logger.log(Level.INFO, "Web server initializing...");
         HttpServer server = vertx.createHttpServer();
@@ -64,11 +65,15 @@ public class WebController extends AbstractVerticle {
         server.webSocketHandler(webSocket -> {
             if (webSocket.path().equals("/api/ebikes/monitoring")) {
                 webSocket.accept();
-                logger.log(Level.INFO, "New ebikes monitoring observer registered.");
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.log(Level.INFO, "New ebikes monitoring observer registered.");
+                }
                 EventBus eb = vertx.eventBus();
                 eb.consumer(BIKE_CHANGE_EVENT_TOPIC, msg -> {
                     JsonObject ev = (JsonObject) msg.body();
-                    logger.log(Level.INFO, "ebikes changed: " + ev.encodePrettily());
+                    if (logger.isLoggable(Level.FINE)) {
+                        logger.log(Level.INFO, "ebikes changed: " + ev.encodePrettily());
+                    }
                     webSocket.writeTextMessage(ev.encodePrettily());
                 });
             } else {
@@ -81,12 +86,16 @@ public class WebController extends AbstractVerticle {
                 .requestHandler(router)
                 .listen(port);
 
-        logger.log(Level.INFO, "EBikeCesena web server ready on port: " + port);
+        if (logger.isLoggable(Level.FINE)) {
+            logger.log(Level.INFO, "EBikeCesena web server ready on port: " + port);
+        }
 
     }
 
     protected void processServiceUserCmd(RoutingContext context) {
-        logger.log(Level.INFO, "New request - user cmd " + context.currentRoute().getPath());
+        if (logger.isLoggable(Level.FINE)) {
+            logger.log(Level.INFO, "New request - user cmd " + context.currentRoute().getPath());
+        }
         new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
@@ -123,9 +132,9 @@ public class WebController extends AbstractVerticle {
                         }
                         break;
                     }
+                    default: invalidJSONReply(context,requestBody);
                 }
                 checkResponseAndSendReply(context, b);
-                /*notifyEBikeChanged(newCount);*/
             } else {
                 invalidJSONReply(context,requestBody);
             }
@@ -133,7 +142,9 @@ public class WebController extends AbstractVerticle {
     }
 
     protected void processServiceUserQuery(RoutingContext context) {
-        logger.log(Level.INFO, "New request - user query " + context.currentRoute().getPath());
+        if (logger.isLoggable(Level.FINE)) {
+            logger.log(Level.INFO, "New request - user query " + context.currentRoute().getPath());
+        }
         new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
@@ -142,19 +153,16 @@ public class WebController extends AbstractVerticle {
                 boolean b;
                 User u;
                 List<User> users;
-                switch (op) {
-                    case LOGIN:  {
-                        if (requestBody.containsKey("username") && requestBody.containsKey("password")) {
-                            String username = requestBody.getString("username");
-                            String password = requestBody.getString("password");
-                            b = pManager.login(username, password);
-                            checkResponseAndSendReply(context, b);
-                        } else {
-                            invalidJSONReply(context,requestBody);
-                        }
-                        break;
+                if (op == WebOperation.LOGIN) {
+                    if (requestBody.containsKey("username") && requestBody.containsKey("password")) {
+                        String username = requestBody.getString("username");
+                        String password = requestBody.getString("password");
+                        b = pManager.login(username, password);
+                        checkResponseAndSendReply(context, b);
+                    } else {
+                        invalidJSONReply(context,requestBody);
                     }
-                    case READ:  {
+                } else if(op == WebOperation.READ) {
                         if (requestBody.containsKey("userId") || requestBody.containsKey("username")) {
                             int id = requestBody.containsKey("userId") ? requestBody.getInteger("userId") : 0;
                             String username = requestBody.containsKey("username") ? requestBody.getString("username") : "";
@@ -178,8 +186,6 @@ public class WebController extends AbstractVerticle {
                             }
                             composeJSONArrayAndSendReply(context,array);
                         }
-                        break;
-                    }
                 }
             } else {
                 invalidJSONReply(context,requestBody);
@@ -188,7 +194,9 @@ public class WebController extends AbstractVerticle {
     }
 
     protected void processServiceEBikeCmd(RoutingContext context) {
-        logger.log(Level.INFO, "New request - ebike cmd " + context.currentRoute().getPath());
+        if (logger.isLoggable(Level.FINE)) {
+            logger.log(Level.INFO, "New request - ebike cmd " + context.currentRoute().getPath());
+        }
         new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
@@ -236,6 +244,7 @@ public class WebController extends AbstractVerticle {
                         }
                         break;
                     }
+                    default: invalidJSONReply(context,requestBody);
                 }
                 checkResponseAndSendReply(context, b);
                 /*notifyEBikeChanged(newCount);*/
@@ -342,8 +351,8 @@ public class WebController extends AbstractVerticle {
                         }
                         break;
                     }
+                    default: invalidJSONReply(context,requestBody);
                 }
-                /*notifyEBikeChanged(newCount);*/
             } else {
                 invalidJSONReply(context,requestBody);
             }
@@ -451,27 +460,27 @@ public class WebController extends AbstractVerticle {
 
     private Map<String, Object> buildEBikeMap(EBike eb) {
         var map = new HashMap<String, Object>();
-        map.put("eBikeId", eb.getID());
-        map.put("x", eb.getPositionX());
-        map.put("y", eb.getPositionY());
-        map.put("battery", eb.getBattery());
-        map.put("status", eb.getState());
+        map.put("eBikeId", eb.ID());
+        map.put("x", eb.positionX());
+        map.put("y", eb.positionY());
+        map.put("battery", eb.battery());
+        map.put("status", eb.state());
         return map;
     }
 
     private Map<String, Object> buildRideMap(Ride r) {
         var map = new HashMap<String, Object>();
-        map.put("rideId", r.getID());
-        map.put("userId", r.getUserID());
-        map.put("eBikeId", r.getEBikeID());
-        map.put("startDate", r.getStartDate());
-        map.put("endDate", r.getEndDate() == null ? "" : r.getEndDate());
+        map.put("rideId", r.ID());
+        map.put("userId", r.userID());
+        map.put("eBikeId", r.eBikeID());
+        map.put("startDate", r.startDate());
+        map.put("endDate", r.endDate() == null ? "" : r.endDate());
         return map;
     }
 
     private void checkBikeChangesAndNotifyAll(int eBikeId) {
         var bike = this.pManager.getEBike(eBikeId);
-        this.notifyEBikeChanged(eBikeId, bike.getPositionX(), bike.getPositionY(), bike.getBattery(), bike.getState());
+        this.notifyEBikeChanged(eBikeId, bike.positionX(), bike.positionY(), bike.battery(), bike.state());
     }
 
     private void notifyEBikeChanged(int eBikeId, int x, int y, int battery, String status) {

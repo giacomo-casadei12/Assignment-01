@@ -63,7 +63,8 @@ public class TestPersistenceManager {
 
         boolean res;
         EBike b;
-        List<EBike> bs, bs2;
+        List<EBike> bs;
+        List<EBike> bs2;
 
         res = persManager.createEBike(2,8);
         assertTrue(res);
@@ -79,29 +80,29 @@ public class TestPersistenceManager {
                 .filter(bs2::contains)
                 .toList();
         assertFalse(result.stream().filter(bb ->
-                bb.getPositionX() == 2 && bb.getPositionY() == 8).toList().isEmpty());
+                bb.positionX() == 2 && bb.positionY() == 8).toList().isEmpty());
 
         b = result.stream().filter(bb ->
-                bb.getPositionX() == 2 && bb.getPositionY() == 8).toList().get(0);
+                bb.positionX() == 2 && bb.positionY() == 8).toList().get(0);
 
-        b = persManager.getEBike(b.getID());
+        b = persManager.getEBike(b.ID());
         assertNotNull(b);
         assertTrue(result.contains(b));
 
-        res = persManager.updateEBike(b.getID(), 75, EBikeState.IN_USE, 10, 10);
+        res = persManager.updateEBike(b.ID(), 75, EBikeState.IN_USE, 10, 10);
         assertTrue(res);
-        b = persManager.getEBike(b.getID());
+        b = persManager.getEBike(b.ID());
         assertNotNull(b);
-        assertEquals(EBikeState.IN_USE.toString(), b.getState());
-        assertEquals(75, b.getBattery());
+        assertEquals(EBikeState.IN_USE.toString(), b.state());
+        assertEquals(75, b.battery());
 
         result = persManager.getAllEBikes(0,0,true);
         assertNotNull(result);
         assertFalse(result.contains(b));
 
-        res = persManager.deleteEBike(b.getID());
+        res = persManager.deleteEBike(b.ID());
         assertTrue(res);
-        b = persManager.getEBike(b.getID());
+        b = persManager.getEBike(b.ID());
         assertNull(b);
 
     }

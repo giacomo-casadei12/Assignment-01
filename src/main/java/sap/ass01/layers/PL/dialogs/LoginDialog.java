@@ -81,6 +81,7 @@ public class LoginDialog extends JDialog {
         });
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent ev) {
                 System.exit(-1);
             }

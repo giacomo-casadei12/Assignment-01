@@ -9,11 +9,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestUserDAL {
+final public class TestUserDAL {
 
     final UserDA userDA;
 
-    public TestUserDAL() {
+    private TestUserDAL() {
         userDA = new UserDB();
     }
 

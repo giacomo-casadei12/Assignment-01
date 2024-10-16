@@ -32,10 +32,10 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery("SELECT * FROM ride");
             while (rs.next()) {
                 Ride ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("StartDate"),
-                        rs.getString("EndDate"),
-                        rs.getInt("UserID"),
-                        rs.getInt("EBikeID"));
+                        rs.getString("startDate"),
+                        rs.getString("endDate"),
+                        rs.getInt("userID"),
+                        rs.getInt("eBikeID"));
                 rides.add(ride);
             }
         } catch( SQLException e) {
@@ -53,10 +53,10 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery("SELECT * FROM ride WHERE EndDate IS NULL");
             while (rs.next()) {
                 Ride ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("StartDate"),
-                        rs.getString("EndDate"),
-                        rs.getInt("UserID"),
-                        rs.getInt("EBikeID"));
+                        rs.getString("startDate"),
+                        rs.getString("endDate"),
+                        rs.getInt("userID"),
+                        rs.getInt("eBikeID"));
                 rides.add(ride);
             }
         } catch( SQLException e) {
@@ -99,10 +99,10 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery();
             if (rs.next()) {
                 ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("StartDate"),
-                        rs.getString("EndDate"),
-                        rs.getInt("UserID"),
-                        rs.getInt("EBikeID"));
+                        rs.getString("startDate"),
+                        rs.getString("endDate"),
+                        rs.getInt("userID"),
+                        rs.getInt("eBikeID"));
             }
         } catch( SQLException e) {
             throw new IllegalStateException("Problem in the query", e);
@@ -120,10 +120,10 @@ public class RideDB implements RideDA{
             rs = stmt.executeQuery();
             if (rs.next()) {
                 ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("StartDate"),
-                        rs.getString("EndDate"),
-                        rs.getInt("UserID"),
-                        rs.getInt("EBikeID"));
+                        rs.getString("startDate"),
+                        rs.getString("endDate"),
+                        rs.getInt("userID"),
+                        rs.getInt("eBikeID"));
             }
         } catch( SQLException e) {
             throw new IllegalStateException("Problem in the query", e);
@@ -181,10 +181,10 @@ public class RideDB implements RideDA{
         rs = stmt.executeQuery();
         while (rs.next()) {
             Ride ride = new RideImpl(rs.getInt("ID"),
-                    rs.getString("StartDate"),
-                    rs.getString("EndDate"),
-                    rs.getInt("UserID"),
-                    rs.getInt("EBikeID"));
+                    rs.getString("startDate"),
+                    rs.getString("endDate"),
+                    rs.getInt("userID"),
+                    rs.getInt("eBikeID"));
             rides.add(ride);
         }
     }
