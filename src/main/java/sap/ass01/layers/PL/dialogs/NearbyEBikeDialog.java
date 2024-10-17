@@ -4,6 +4,7 @@ import sap.ass01.layers.PL.EBikeApp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 
 public class NearbyEBikeDialog extends JDialog {
 
@@ -12,22 +13,23 @@ public class NearbyEBikeDialog extends JDialog {
     private JButton okButton;
     private JButton cancelButton;
     private final EBikeApp app;
+    @Serial
+    private static final long serialVersionUID = 7L;
 
     public NearbyEBikeDialog(EBikeApp app) {
         super(app, "Insert actual position", true);
         this.app = app;
-        initializeComponents();
-        setupLayout();
-        addEventHandlers();
-        pack();
-        setLocationRelativeTo(app);
     }
 
-    private void initializeComponents() {
+    public void initializeDialog() {
         xCoordField = new JTextField(15);
         yCoordField = new JTextField(15);
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
+        setupLayout();
+        addEventHandlers();
+        pack();
+        setLocationRelativeTo(app);
     }
 
     private void setupLayout() {

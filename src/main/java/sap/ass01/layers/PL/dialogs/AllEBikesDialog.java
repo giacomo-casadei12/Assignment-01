@@ -6,6 +6,7 @@ import sap.ass01.layers.PL.EBikeApp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 import java.util.Map;
 
 public class AllEBikesDialog extends JDialog {
@@ -15,6 +16,8 @@ public class AllEBikesDialog extends JDialog {
     private JPanel listPanel;
     private boolean admin = true;
     private Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes;
+    @Serial
+    private static final long serialVersionUID = 3L;
 
     public AllEBikesDialog(EBikeApp app, Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes) {
         dialog = new JDialog();
@@ -65,6 +68,7 @@ public class AllEBikesDialog extends JDialog {
             JButton newBikeButton = new JButton("Add eBike");
             newBikeButton.addActionListener(e -> {
                 var d = new AddEBikeDialog(this);
+                d.initializeDialog();
                 d.setVisible(true);
             });
             JPanel newPanel = new JPanel();

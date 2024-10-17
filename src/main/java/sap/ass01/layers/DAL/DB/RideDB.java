@@ -1,6 +1,8 @@
 package sap.ass01.layers.DAL.DB;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
+import sap.ass01.layers.DAL.Schemas.MutableRide;
+import sap.ass01.layers.DAL.Schemas.MutableRideImpl;
 import sap.ass01.layers.DAL.Schemas.Ride;
 import sap.ass01.layers.DAL.Schemas.RideImpl;
 
@@ -11,6 +13,11 @@ import java.util.List;
 
 public class RideDB implements RideDA{
 
+    private static final String START_DATE = "startDate";
+    private static final String END_DATE = "endDate";
+    private static final String USER_ID = "userID";
+    private static final String E_BIKE_ID = "eBikeID";
+    private static final String PROBLEM_IN_THE_QUERY = "Problem in the query";
     final MysqlDataSource ds;
     final SimpleDateFormat format;
 
@@ -25,42 +32,26 @@ public class RideDB implements RideDA{
 
     @Override
     public List<Ride> getAllRides() {
-        ResultSet rs;
         List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM ride");
-            while (rs.next()) {
-                Ride ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("startDate"),
-                        rs.getString("endDate"),
-                        rs.getInt("userID"),
-                        rs.getInt("eBikeID"));
-                rides.add(ride);
-            }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM ride");
+            fillRideListAndCloseSQL(rides, stmt, rs);
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rides;
     }
 
     @Override
     public List<Ride> getAllOngoingRides() {
-        ResultSet rs;
         List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM ride WHERE EndDate IS NULL");
-            while (rs.next()) {
-                Ride ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("startDate"),
-                        rs.getString("endDate"),
-                        rs.getInt("userID"),
-                        rs.getInt("eBikeID"));
-                rides.add(ride);
-            }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM ride WHERE EndDate IS NULL");
+            fillRideListAndCloseSQL(rides, stmt, rs);
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rides;
     }
@@ -70,9 +61,11 @@ public class RideDB implements RideDA{
         List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE UserID = ?");
-            getRidesAndFillList(userId, rides, stmt);
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            fillRideListAndCloseSQL(rides, stmt, rs);
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rides;
     }
@@ -82,51 +75,55 @@ public class RideDB implements RideDA{
         List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE EBikeID = ?");
-            getRidesAndFillList(eBikeId, rides, stmt);
+            stmt.setInt(1, eBikeId);
+            ResultSet rs = stmt.executeQuery();
+            fillRideListAndCloseSQL(rides, stmt, rs);
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rides;
     }
 
     @Override
     public Ride getRideById(int id) {
-        ResultSet rs;
         Ride ride = null;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE ID = ?");
             stmt.setInt(1, id);
-            rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("startDate"),
-                        rs.getString("endDate"),
-                        rs.getInt("userID"),
-                        rs.getInt("eBikeID"));
+                        rs.getString(START_DATE),
+                        rs.getString(END_DATE),
+                        rs.getInt(USER_ID),
+                        rs.getInt(E_BIKE_ID));
             }
+            rs.close();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return ride;
     }
 
     @Override
     public Ride getOngoingRideByUserId(int userId) {
-        ResultSet rs;
         Ride ride = null;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ride WHERE UserID = ? AND EndDate IS NULL");
             stmt.setInt(1, userId);
-            rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 ride = new RideImpl(rs.getInt("ID"),
-                        rs.getString("startDate"),
-                        rs.getString("endDate"),
-                        rs.getInt("userID"),
-                        rs.getInt("eBikeID"));
+                        rs.getString(START_DATE),
+                        rs.getString(END_DATE),
+                        rs.getInt(USER_ID),
+                        rs.getInt(E_BIKE_ID));
             }
+            rs.close();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return ride;
     }
@@ -142,8 +139,9 @@ public class RideDB implements RideDA{
             stmt.setInt(3, userId);
             stmt.setInt(4, eBikeId);
             rs = stmt.executeUpdate();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rs > 0;
     }
@@ -156,8 +154,9 @@ public class RideDB implements RideDA{
             stmt.setString(1, format.format(new Date(System.currentTimeMillis())));
             stmt.setInt(2, id);
             rs = stmt.executeUpdate();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rs > 0;
     }
@@ -169,25 +168,27 @@ public class RideDB implements RideDA{
             PreparedStatement stmt = connection.prepareStatement("DELETE FROM ride WHERE ID = ?");
             stmt.setInt(1, id);
             rs = stmt.executeUpdate();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rs > 0;
     }
 
-    private void getRidesAndFillList(int userId, List<Ride> rides, PreparedStatement stmt) throws SQLException {
-        ResultSet rs;
-        stmt.setInt(1, userId);
-        rs = stmt.executeQuery();
+    private void fillRideListAndCloseSQL(List<Ride> rides, Statement stmt, ResultSet rs) throws SQLException {
+        MutableRide ride = new MutableRideImpl();
         while (rs.next()) {
-            Ride ride = new RideImpl(rs.getInt("ID"),
-                    rs.getString("startDate"),
-                    rs.getString("endDate"),
-                    rs.getInt("userID"),
-                    rs.getInt("eBikeID"));
+            ride.setID(rs.getInt("ID"));
+            ride.setStartDate(rs.getString(START_DATE));
+            ride.setEndDate(rs.getString(END_DATE));
+            ride.setUserID(rs.getInt(USER_ID));
+            ride.setEBikeID(rs.getInt(E_BIKE_ID));
             rides.add(ride);
         }
+        rs.close();
+        stmt.close();
     }
+
 
     private int getLastID() {
         ResultSet rs;
@@ -199,7 +200,7 @@ public class RideDB implements RideDA{
                 lastID = rs.getInt("ID");
             }
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
 
         return lastID;

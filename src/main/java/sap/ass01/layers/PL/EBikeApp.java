@@ -13,11 +13,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EBikeApp extends JFrame implements ActionListener {
 
+    public static final int SINGLE_RESULT = 1;
     private final VisualiserPanel centralPanel;
     private final JButton rechargeCreditButton;
     private final JButton nearbyBikeButton;
@@ -26,12 +29,14 @@ public class EBikeApp extends JFrame implements ActionListener {
     private final JButton allRidesButton;
     private final JButton allBikesButton;
     private final JButton allUsersButton;
-    private Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes = new HashMap<>();
-    private final Map<Pair<Integer, Integer>, RideSimulation> rides = new HashMap<>();
+    private Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes = new ConcurrentHashMap<>();
+    private final Map<Pair<Integer, Integer>, RideSimulation> rides = new ConcurrentHashMap<>();
     private Triple<String, Integer, Boolean> user;
     private int userId;
     private final String username;
     private final WebClient webClient;
+    @Serial
+    private static final long serialVersionUID = 11L;
 
     public EBikeApp(WebClient webClient, String username) {
         this.webClient = webClient;
@@ -44,15 +49,18 @@ public class EBikeApp extends JFrame implements ActionListener {
         allUsersButton = new JButton("All Users");
         centralPanel = new VisualiserPanel(800,500,this);
         this.username = username;
+    }
+
+    public void initialize() {
         retrieveData();
         webClient.startMonitoringEBike(this);
     }
 
-    public void retrieveData() {
+    private void retrieveData() {
         this.webClient.requestReadUser(0,this.username).onComplete(res -> {
             if (res.result() != null) {
                 var result = res.result();
-                if (result.size() == 1) {
+                if (result.size() == SINGLE_RESULT) {
                     for (Integer key : result.keySet()) {
                         var element = result.get(key);
                         this.userId = key;
@@ -107,35 +115,38 @@ public class EBikeApp extends JFrame implements ActionListener {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent ev) {
-                System.exit(-1);
+                System.exit(-SINGLE_RESULT);
             }
         });
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == this.nearbyBikeButton) {
+        if (e.getSource().equals(this.nearbyBikeButton)) {
             SwingUtilities.invokeLater(() -> {
-                JDialog d = new NearbyEBikeDialog(this);
+                var d = new NearbyEBikeDialog(this);
+                d.initializeDialog();
                 d.setVisible(true);
             });
-        } else if (e.getSource() == this.rechargeCreditButton) {
+        } else if (e.getSource().equals(this.rechargeCreditButton)) {
             SwingUtilities.invokeLater(() -> {
-                JDialog d = new RechargeCreditDialog(this.userId,this.user.second(),this);
+                var d = new RechargeCreditDialog(this.userId,this.user.second(),this);
+                d.initializeDialog();
                 d.setVisible(true);
             });
-        } else if (e.getSource() == this.startRideButton) {
+        } else if (e.getSource().equals(this.startRideButton)) {
             SwingUtilities.invokeLater(() -> {
-                JDialog d = new RideDialog(this, this.userId);
+                var d = new RideDialog(this, this.userId);
+                d.initializeDialog();
                 d.setVisible(true);
             });
-        } else if (e.getSource() == this.myRidesButton) {
+        } else if (e.getSource().equals(this.myRidesButton)) {
             SwingUtilities.invokeLater(() -> new AllRideDialog(this, this.userId));
-        } else if (e.getSource() == this.allRidesButton) {
+        } else if (e.getSource().equals(this.allRidesButton)) {
             SwingUtilities.invokeLater(() -> new AllRideDialog(this, 0));
-        } else if (e.getSource() == this.allUsersButton) {
+        } else if (e.getSource().equals(this.allUsersButton)) {
             SwingUtilities.invokeLater(() -> new AllUsersDialog(this));
-        } else if (e.getSource() == this.allBikesButton) {
+        } else if (e.getSource().equals(this.allBikesButton)) {
             SwingUtilities.invokeLater(() -> new AllEBikesDialog(this, new HashMap<>()));
         }
     }
@@ -149,7 +160,7 @@ public class EBikeApp extends JFrame implements ActionListener {
         this.webClient.requestReadUser(0,this.user.first()).onComplete(res -> {
             if (res.result() != null) {
                 var result = res.result();
-                if (result.size() == 1) {
+                if (result.size() == SINGLE_RESULT) {
                     for (Integer key : result.keySet()) {
                         this.user = result.get(key);
                     }
@@ -166,7 +177,8 @@ public class EBikeApp extends JFrame implements ActionListener {
     public void startNewRide(int userId, int bikeId) {
         var bikeLocation = this.bikes.get(bikeId);
         var rideSimulation = new RideSimulation(bikeId, bikeLocation.first().first(), bikeLocation.first().second(),this);
-        RideSimulationControlPanel ridingWindow = new RideSimulationControlPanel(userId, bikeId, this);
+        var ridingWindow = new RideSimulationControlPanel(userId, bikeId, this);
+        ridingWindow.initialize();
         ridingWindow.display();
         rideSimulation.start();
         this.rides.put(new Pair<>(userId, bikeId), rideSimulation);

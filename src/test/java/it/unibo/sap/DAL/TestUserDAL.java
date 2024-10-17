@@ -1,6 +1,6 @@
 package it.unibo.sap.DAL;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import sap.ass01.layers.DAL.DB.UserDA;
 import sap.ass01.layers.DAL.DB.UserDB;
 import sap.ass01.layers.DAL.Schemas.User;
@@ -9,11 +9,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-final public class TestUserDAL {
+public class TestUserDAL {
 
     final UserDA userDA;
 
-    private TestUserDAL() {
+    public TestUserDAL() {
         userDA = new UserDB();
     }
 
@@ -22,14 +22,14 @@ final public class TestUserDAL {
     public void getAtLeastOneUser() {
         List<User> x = userDA.getAllUsers();
         assertFalse(x.isEmpty());
-        assertTrue(x.get(0).isAdmin());
+        assertTrue(x.get(0).admin());
     }
 
     @Test
     public void getFirstUser() {
         User x = userDA.getUserById(1);
         assertNotNull(x);
-        assertEquals(1, x.getID());
+        assertEquals(1, x.ID());
     }
 
     @Test
@@ -51,13 +51,13 @@ final public class TestUserDAL {
         assertTrue(b);
         User u = userDA.getUserByName("Giangurgulo");
         assertNotNull(u);
-        assertEquals("Giangurgulo", u.getName());
-        int id = u.getID();
+        assertEquals("Giangurgulo", u.userName());
+        int id = u.ID();
         b = userDA.updateUser(id,200);
         assertTrue(b);
         u = userDA.getUserById(id);
         assertNotNull(u);
-        assertEquals(200,u.getCredit());
+        assertEquals(200,u.credit());
         b = userDA.deleteUser(id);
         assertTrue(b);
         u = userDA.getUserById(id);

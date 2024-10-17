@@ -5,12 +5,15 @@ import sap.ass01.layers.utils.Triple;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 import java.util.Map;
 
 public class VisualiserPanel extends JPanel {
     private final long dx;
     private final long dy;
     private final EBikeApp app;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public VisualiserPanel(int w, int h, EBikeApp app){
         setSize(w,h);

@@ -2,6 +2,7 @@ package sap.ass01.layers.PL.dialogs;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 
 /**
  * 
@@ -23,15 +24,20 @@ public class AddEBikeDialog extends JDialog {
     private JButton okButton;
     private JButton cancelButton;
     private final AllEBikesDialog app;
+    @Serial
+    private static final long serialVersionUID = 2L;
     
     public AddEBikeDialog(AllEBikesDialog owner) {
         super(owner, "Adding E-Bike", true);
         this.app = owner;
+    }
+
+    public void initializeDialog() {
         initializeComponents();
         setupLayout();
         addEventHandlers();
         pack();
-        setLocationRelativeTo(owner);
+        setLocationRelativeTo(app);
     }
 
     private void initializeComponents() {

@@ -4,6 +4,7 @@ import sap.ass01.layers.PL.EBikeApp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 
 /**
  * Adapted from AddEBikeDialog
@@ -17,16 +18,22 @@ public class RideDialog extends JDialog {
     private final EBikeApp app;
     private final int userId;
     private int bikeId;
+    @Serial
+    private static final long serialVersionUID = 9L;
 
     public RideDialog(EBikeApp owner, int userId) {
         super(owner, "Start Riding an EBike", true);
         this.userId = userId;
+        app = owner;
+    }
+
+    public void initializeDialog() {
         initializeComponents();
         setupLayout();
         addEventHandlers();
         pack();
-        setLocationRelativeTo(owner);
-        app = owner;
+        setLocationRelativeTo(app);
+
     }
 
     private void initializeComponents() {

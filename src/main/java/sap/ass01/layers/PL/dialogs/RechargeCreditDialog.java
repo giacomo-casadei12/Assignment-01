@@ -4,6 +4,7 @@ import sap.ass01.layers.PL.EBikeApp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 
 public class RechargeCreditDialog extends JDialog {
 
@@ -11,21 +12,23 @@ public class RechargeCreditDialog extends JDialog {
     private final int userId;
     private final int actualCredit;
     private final EBikeApp app;
+    @Serial
+    private static final long serialVersionUID = 8L;
 
     public RechargeCreditDialog(int userId, int actualCredit, EBikeApp parent) {
         super(parent, "Login", true);
         this.app = parent;
-        setLayout(new BorderLayout());
-        setSize(300, 200);
-        setLocationRelativeTo(parent);
         creditField = new JTextField();
         this.userId = userId;
         this.actualCredit = actualCredit;
-        initializeDialog();
-
     }
 
-    private void initializeDialog() {
+    public void initializeDialog() {
+
+        setLayout(new BorderLayout());
+        setSize(300, 200);
+        setLocationRelativeTo(app);
+
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(3, 2, 10, 10));

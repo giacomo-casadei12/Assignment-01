@@ -14,11 +14,15 @@ import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 @AnalyzeClasses(packages = "sap.ass01.layers")
 public class ArchitectureTest {
 
+    private static final String DAL_LAYER = "sap.ass01.layers.DAL..";
+    private static final String BLL_LAYER = "sap.ass01.layers.BLL..";
+    private static final String PL_LAYER = "sap.ass01.layers.PL..";
+
     @ArchTest
     public static final ArchRule layeredArchitectureAccessRule = layeredArchitecture().consideringAllDependencies()
-            .layer("Persistence").definedBy("sap.ass01.layers.DAL..")
-            .layer("Logic").definedBy("sap.ass01.layers.BLL..")
-            .layer("Presentation").definedBy("sap.ass01.layers.PL..")
+            .layer("Persistence").definedBy(DAL_LAYER)
+            .layer("Logic").definedBy(BLL_LAYER)
+            .layer("Presentation").definedBy(PL_LAYER)
             .whereLayer("Presentation").mayNotBeAccessedByAnyLayer()
             .whereLayer("Logic").mayOnlyBeAccessedByLayers("Presentation")
             .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Logic")
@@ -26,22 +30,22 @@ public class ArchitectureTest {
 
     @ArchTest
     public static final ArchRule businessLayerDependsOnlyFromDataAccessLayer =
-            classes().that().resideInAPackage("sap.ass01.layers.BLL..")
+            classes().that().resideInAPackage(BLL_LAYER)
             .should().onlyDependOnClassesThat()
-            .resideInAnyPackage("sap.ass01.layers.DAL..","java.*..",
-                    "sap.ass01.layers.BLL..","sap.ass01.layers.utils..","io.vertx..");
+            .resideInAnyPackage(DAL_LAYER,"java.*..",
+                    BLL_LAYER,"sap.ass01.layers.utils..","io.vertx..");
 
     @ArchTest
     public static final ArchRule dataAccessLayerDoesntDependsOnLayers =
-            classes().that().resideInAPackage("sap.ass01.layers.DAL..")
+            classes().that().resideInAPackage(DAL_LAYER)
             .should().onlyDependOnClassesThat()
-            .resideInAnyPackage("java.*..","sap.ass01.layers.DAL..","com.mysql..",
+            .resideInAnyPackage("java.*..", DAL_LAYER,"com.mysql..",
                     "sap.ass01.layers.utils..");
 
     @ArchTest
     public static final ArchRule presentationLayerDependsOnlyFromBusinessLayer =
-            classes().that().resideInAPackage("sap.ass01.layers.PL..")
+            classes().that().resideInAPackage(PL_LAYER)
             .should().onlyDependOnClassesThat()
-            .resideInAnyPackage("sap.ass01.layers.BLL..","java.*..",
-                    "sap.ass01.layers.PL..","javax.*..","io.vertx..","sap.ass01.layers.utils..");
+            .resideInAnyPackage(BLL_LAYER,"java.*..",
+                    PL_LAYER,"javax.*..","io.vertx..","sap.ass01.layers.utils..");
 }

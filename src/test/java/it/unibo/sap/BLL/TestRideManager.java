@@ -1,6 +1,6 @@
 package it.unibo.sap.BLL;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import sap.ass01.layers.utils.Pair;
 import sap.ass01.layers.BLL.Logic.RideManager;
 import sap.ass01.layers.BLL.Logic.RideManagerImpl;
@@ -88,8 +88,8 @@ public class TestRideManager {
 
         persManager.createUser("TestoRide","NotImportant");
         u = persManager.getUser(0,"TestoRide");
-        persManager.updateUser(u.getID(),100);
-        userID = u.getID();
+        persManager.updateUser(u.ID(),100);
+        userID = u.ID();
 
         persManager.createEBike(10000,10000);
         b = persManager.getAllEBikes(10000,10000,false).get(0);

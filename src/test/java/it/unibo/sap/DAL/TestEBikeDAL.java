@@ -1,6 +1,6 @@
 package it.unibo.sap.DAL;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import sap.ass01.layers.DAL.DB.EBikeDA;
 import sap.ass01.layers.DAL.DB.EBikeDB;
 import sap.ass01.layers.DAL.Schemas.EBike;

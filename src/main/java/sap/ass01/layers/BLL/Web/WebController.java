@@ -28,10 +28,12 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static sap.ass01.layers.utils.JsonFieldsConstants.*;
+
 public class WebController extends AbstractVerticle {
 
     private final int port;
-    static Logger logger = Logger.getLogger("[EBikeCesena]");
+    private static final Logger logger = Logger.getLogger("[EBikeCesena]");
     private static final String BIKE_CHANGE_EVENT_TOPIC = "user-Change";
     final Vertx vertx;
     final private RideManager rManager;
@@ -51,7 +53,6 @@ public class WebController extends AbstractVerticle {
         logger.log(Level.INFO, "Web server initializing...");
         HttpServer server = vertx.createHttpServer();
         Router router = Router.router(vertx);
-        /* static files by default searched in "webroot" directory */
         router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
         router.route().handler(BodyHandler.create());
 
@@ -97,16 +98,15 @@ public class WebController extends AbstractVerticle {
             logger.log(Level.INFO, "New request - user cmd " + context.currentRoute().getPath());
         }
         new Thread(() -> {
-            // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
-            if (requestBody != null && requestBody.containsKey("operation")) {
-                WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
+            if (requestBody != null && requestBody.containsKey(OPERATION)) {
+                WebOperation op = WebOperation.values()[requestBody.getInteger(OPERATION)];
                 boolean b = false;
                 switch (op) {
                     case CREATE:  {
-                        if (requestBody.containsKey("username") && requestBody.containsKey("password")) {
-                            String username = requestBody.getString("username");
-                            String password = requestBody.getString("password");
+                        if (requestBody.containsKey(USERNAME) && requestBody.containsKey(PASSWORD)) {
+                            String username = requestBody.getString(USERNAME);
+                            String password = requestBody.getString(PASSWORD);
                             b = pManager.createUser(username, password);
                         } else {
                             invalidJSONReply(context,requestBody);
@@ -114,9 +114,9 @@ public class WebController extends AbstractVerticle {
                         break;
                     }
                     case UPDATE:  {
-                        if (requestBody.containsKey("userId") && requestBody.containsKey("credit")) {
-                            int id = requestBody.getInteger("userId");
-                            int credit = requestBody.getInteger("credit");
+                        if (requestBody.containsKey(USER_ID) && requestBody.containsKey(CREDIT)) {
+                            int id = requestBody.getInteger(USER_ID);
+                            int credit = requestBody.getInteger(CREDIT);
                             b = pManager.updateUser(id,credit);
                         } else {
                             invalidJSONReply(context,requestBody);
@@ -124,8 +124,8 @@ public class WebController extends AbstractVerticle {
                         break;
                     }
                     case DELETE:  {
-                        if (requestBody.containsKey("userId")) {
-                            int id = requestBody.getInteger("userId");
+                        if (requestBody.containsKey(USER_ID)) {
+                            int id = requestBody.getInteger(USER_ID);
                             b = pManager.deleteUser(id);
                         } else {
                             invalidJSONReply(context,requestBody);
@@ -148,40 +148,40 @@ public class WebController extends AbstractVerticle {
         new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
-            if (requestBody != null && requestBody.containsKey("operation")) {
-                WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
+            if (requestBody != null && requestBody.containsKey(OPERATION)) {
+                WebOperation op = WebOperation.values()[requestBody.getInteger(OPERATION)];
                 boolean b;
                 User u;
                 List<User> users;
                 if (op == WebOperation.LOGIN) {
-                    if (requestBody.containsKey("username") && requestBody.containsKey("password")) {
-                        String username = requestBody.getString("username");
-                        String password = requestBody.getString("password");
+                    if (requestBody.containsKey(USERNAME) && requestBody.containsKey(PASSWORD)) {
+                        String username = requestBody.getString(USERNAME);
+                        String password = requestBody.getString(PASSWORD);
                         b = pManager.login(username, password);
                         checkResponseAndSendReply(context, b);
                     } else {
                         invalidJSONReply(context,requestBody);
                     }
                 } else if(op == WebOperation.READ) {
-                        if (requestBody.containsKey("userId") || requestBody.containsKey("username")) {
-                            int id = requestBody.containsKey("userId") ? requestBody.getInteger("userId") : 0;
-                            String username = requestBody.containsKey("username") ? requestBody.getString("username") : "";
+                        if (requestBody.containsKey(USER_ID) || requestBody.containsKey(USERNAME)) {
+                            int id = requestBody.containsKey(USER_ID) ? requestBody.getInteger(USER_ID) : 0;
+                            String username = requestBody.containsKey(USERNAME) ? requestBody.getString(USERNAME) : "";
                             u = pManager.getUser(id,username);
                             var map = new HashMap<String, Object>();
-                            map.put("userId", u.getID());
-                            map.put("username", u.getName());
-                            map.put("credit", u.getCredit());
-                            map.put("admin", u.isAdmin());
+                            map.put(USER_ID, u.ID());
+                            map.put(USERNAME, u.userName());
+                            map.put(CREDIT, u.credit());
+                            map.put("admin", u.admin());
                             composeJSONAndSendReply(context,map);
                         } else {
                             users = pManager.getAllUsers();
                             var array = new ArrayList<Map<String,Object>>();
                             for (User user : users) {
                                 var map = new HashMap<String, Object>();
-                                map.put("userId", user.getID());
-                                map.put("username", user.getName());
-                                map.put("credit", user.getCredit());
-                                map.put("admin", user.isAdmin());
+                                map.put(USER_ID, user.ID());
+                                map.put(USERNAME, user.userName());
+                                map.put(CREDIT, user.credit());
+                                map.put("admin", user.admin());
                                 array.add(map);
                             }
                             composeJSONArrayAndSendReply(context,array);
@@ -200,14 +200,14 @@ public class WebController extends AbstractVerticle {
         new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
-            if (requestBody != null && requestBody.containsKey("operation")) {
-                WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
+            if (requestBody != null && requestBody.containsKey(OPERATION)) {
+                WebOperation op = WebOperation.values()[requestBody.getInteger(OPERATION)];
                 boolean b = false;
                 switch (op) {
                     case CREATE:  {
-                        if (requestBody.containsKey("x") && requestBody.containsKey("y")) {
-                            int x = requestBody.getInteger("x");
-                            int y = requestBody.getInteger("y");
+                        if (requestBody.containsKey(POSITION_X) && requestBody.containsKey(POSITION_Y)) {
+                            int x = requestBody.getInteger(POSITION_X);
+                            int y = requestBody.getInteger(POSITION_Y);
                             b = pManager.createEBike(x, y);
                         } else {
                             invalidJSONReply(context,requestBody);
@@ -215,17 +215,17 @@ public class WebController extends AbstractVerticle {
                         break;
                     }
                     case UPDATE:  {
-                        if (requestBody.containsKey("eBikeId") && requestBody.containsKey("x") && requestBody.containsKey("y") && !requestBody.containsKey("battery")) {
-                            int id = requestBody.getInteger("eBikeId");
-                            int x = requestBody.getInteger("x");
-                            int y = requestBody.getInteger("y");
+                        if (requestBody.containsKey(E_BIKE_ID) && requestBody.containsKey(POSITION_X) && requestBody.containsKey(POSITION_Y) && !requestBody.containsKey(BATTERY)) {
+                            int id = requestBody.getInteger(E_BIKE_ID);
+                            int x = requestBody.getInteger(POSITION_X);
+                            int y = requestBody.getInteger(POSITION_Y);
                             b = pManager.updateEbikePosition(id,x,y);
-                        } else if (requestBody.containsKey("eBikeId") && requestBody.containsKey("battery") && requestBody.containsKey("state")) {
-                            int id = requestBody.getInteger("eBikeId");
-                            int battery = requestBody.getInteger("battery");
-                            EBikeState state = EBikeState.valueOf(requestBody.getString("state"));
-                            int x = requestBody.getInteger("x");
-                            int y = requestBody.getInteger("y");
+                        } else if (requestBody.containsKey(E_BIKE_ID) && requestBody.containsKey(BATTERY) && requestBody.containsKey(STATE)) {
+                            int id = requestBody.getInteger(E_BIKE_ID);
+                            int battery = requestBody.getInteger(BATTERY);
+                            EBikeState state = EBikeState.valueOf(requestBody.getString(STATE));
+                            int x = requestBody.getInteger(POSITION_X);
+                            int y = requestBody.getInteger(POSITION_Y);
                             b = pManager.updateEBike(id,battery,state, x, y);
                             if (b) {
                                 notifyEBikeChanged(id, x, y, battery, state.toString());
@@ -236,8 +236,8 @@ public class WebController extends AbstractVerticle {
                         break;
                     }
                     case DELETE:  {
-                        if (requestBody.containsKey("eBikeId")) {
-                            int id = requestBody.getInteger("eBikeId");
+                        if (requestBody.containsKey(E_BIKE_ID)) {
+                            int id = requestBody.getInteger(E_BIKE_ID);
                             b = pManager.deleteEBike(id);
                         } else {
                             invalidJSONReply(context,requestBody);
@@ -259,20 +259,20 @@ public class WebController extends AbstractVerticle {
             new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
-            if (requestBody != null && requestBody.containsKey("operation")) {
-                WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
+            if (requestBody != null && requestBody.containsKey(OPERATION)) {
+                WebOperation op = WebOperation.values()[requestBody.getInteger(OPERATION)];
                 EBike eb;
                 List<EBike> bikes;
                 if (Objects.requireNonNull(op) == WebOperation.READ) {
-                    if (requestBody.containsKey("eBikeId")) {
-                        int id = requestBody.getInteger("eBikeId");
+                    if (requestBody.containsKey(E_BIKE_ID)) {
+                        int id = requestBody.getInteger(E_BIKE_ID);
                         eb = pManager.getEBike(id);
                         var map = buildEBikeMap(eb);
                         composeJSONAndSendReply(context,map);
                     } else {
-                        if (requestBody.containsKey("x") || requestBody.containsKey("y")) {
-                            int x = requestBody.containsKey("x") ? requestBody.getInteger("x") : 0;
-                            int y = requestBody.containsKey("y") ? requestBody.getInteger("y") : 0;
+                        if (requestBody.containsKey(POSITION_X) || requestBody.containsKey(POSITION_Y)) {
+                            int x = requestBody.containsKey(POSITION_X) ? requestBody.getInteger(POSITION_X) : 0;
+                            int y = requestBody.containsKey(POSITION_Y) ? requestBody.getInteger(POSITION_Y) : 0;
                             bikes = pManager.getAllEBikes(x,y,false);
                         } else if (requestBody.containsKey("available")) {
                             boolean avail = requestBody.getBoolean("available");
@@ -301,14 +301,14 @@ public class WebController extends AbstractVerticle {
         new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
-            if (requestBody != null && requestBody.containsKey("operation")) {
-                WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
+            if (requestBody != null && requestBody.containsKey(OPERATION)) {
+                WebOperation op = WebOperation.values()[requestBody.getInteger(OPERATION)];
                 boolean b;
                 switch (op) {
                     case CREATE:  {
-                        if (requestBody.containsKey("userId") && requestBody.containsKey("eBikeId")) {
-                            int userId = requestBody.getInteger("userId");
-                            int eBikeId = requestBody.getInteger("eBikeId");
+                        if (requestBody.containsKey(USER_ID) && requestBody.containsKey(E_BIKE_ID)) {
+                            int userId = requestBody.getInteger(USER_ID);
+                            int eBikeId = requestBody.getInteger(E_BIKE_ID);
                             b = rManager.startRide(userId, eBikeId);
                             this.checkBikeChangesAndNotifyAll(eBikeId);
                             checkResponseAndSendReply(context, b);
@@ -318,17 +318,17 @@ public class WebController extends AbstractVerticle {
                         break;
                     }
                     case UPDATE:  {
-                        if (requestBody.containsKey("userId") && requestBody.containsKey("eBikeId") &&
-                                requestBody.containsKey("x") && requestBody.containsKey("y")) {
-                            int userId = requestBody.getInteger("userId");
-                            int eBikeId = requestBody.getInteger("eBikeId");
-                            int x = requestBody.getInteger("x");
-                            int y = requestBody.getInteger("y");
+                        if (requestBody.containsKey(USER_ID) && requestBody.containsKey(E_BIKE_ID) &&
+                                requestBody.containsKey(POSITION_X) && requestBody.containsKey(POSITION_Y)) {
+                            int userId = requestBody.getInteger(USER_ID);
+                            int eBikeId = requestBody.getInteger(E_BIKE_ID);
+                            int x = requestBody.getInteger(POSITION_X);
+                            int y = requestBody.getInteger(POSITION_Y);
                             Pair<Integer, Integer> p = rManager.updateRide(userId,eBikeId,x,y);
                             this.checkBikeChangesAndNotifyAll(eBikeId);
                             var map = new HashMap<String, Object>();
-                            map.put("credit", p.first());
-                            map.put("battery", p.second());
+                            map.put(CREDIT, p.first());
+                            map.put(BATTERY, p.second());
                             composeJSONAndSendReply(context,map);
                         } else {
                             invalidJSONReply(context,requestBody);
@@ -336,14 +336,14 @@ public class WebController extends AbstractVerticle {
                         break;
                     }
                     case DELETE:  {
-                        if (requestBody.containsKey("userId") && requestBody.containsKey("eBikeId")) {
-                            int userId = requestBody.getInteger("userId");
-                            int eBikeId = requestBody.getInteger("eBikeId");
+                        if (requestBody.containsKey(USER_ID) && requestBody.containsKey(E_BIKE_ID)) {
+                            int userId = requestBody.getInteger(USER_ID);
+                            int eBikeId = requestBody.getInteger(E_BIKE_ID);
                             b = rManager.endRide(userId,eBikeId);
                             this.checkBikeChangesAndNotifyAll(eBikeId);
                             checkResponseAndSendReply(context, b);
-                        } else if (requestBody.containsKey("rideId")) {
-                            int rideId = requestBody.getInteger("rideId");
+                        } else if (requestBody.containsKey(RIDE_ID)) {
+                            int rideId = requestBody.getInteger(RIDE_ID);
                             b = pManager.deleteRide(rideId);
                             checkResponseAndSendReply(context, b);
                         } else {
@@ -364,8 +364,8 @@ public class WebController extends AbstractVerticle {
         new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
-            if (requestBody != null && requestBody.containsKey("operation")) {
-                WebOperation op = WebOperation.values()[requestBody.getInteger("operation")];
+            if (requestBody != null && requestBody.containsKey(OPERATION)) {
+                WebOperation op = WebOperation.values()[requestBody.getInteger(OPERATION)];
                 Ride r;
                 List<Ride> rides;
                 if (Objects.requireNonNull(op) == WebOperation.READ) {
@@ -373,11 +373,11 @@ public class WebController extends AbstractVerticle {
                         if (requestBody.containsKey("ongoing")) {
                             boolean ongoing = requestBody.getBoolean("ongoing");
                             rides = pManager.getAllRides(ongoing,0,0);
-                        } else if (requestBody.containsKey("userId")) {
-                            int userId = requestBody.getInteger("userId");
+                        } else if (requestBody.containsKey(USER_ID)) {
+                            int userId = requestBody.getInteger(USER_ID);
                             rides = pManager.getAllRides(false,userId,0);
-                        } else if (requestBody.containsKey("eBikeId")) {
-                            int eBikeId = requestBody.getInteger("eBikeId");
+                        } else if (requestBody.containsKey(E_BIKE_ID)) {
+                            int eBikeId = requestBody.getInteger(E_BIKE_ID);
                             rides = pManager.getAllRides(false,0,eBikeId);
                         } else {
                             rides = pManager.getAllRides(false,0,0);
@@ -389,15 +389,15 @@ public class WebController extends AbstractVerticle {
                         }
                         composeJSONArrayAndSendReply(context,array);
                     } else {
-                        if (requestBody.containsKey("rideId")) {
-                            int rideId = requestBody.getInteger("rideId");
+                        if (requestBody.containsKey(RIDE_ID)) {
+                            int rideId = requestBody.getInteger(RIDE_ID);
                             r = pManager.getRide(rideId, 0);
                             var array = new ArrayList<Map<String,Object>>();
                             var map = buildRideMap(r);
                             array.add(map);
                             composeJSONArrayAndSendReply(context,array);
-                        } else if (requestBody.containsKey("userId")) {
-                            int userId = requestBody.getInteger("userId");
+                        } else if (requestBody.containsKey(USER_ID)) {
+                            int userId = requestBody.getInteger(USER_ID);
                             r = pManager.getRide(0, userId);
                             var array = new ArrayList<Map<String,Object>>();
                             var map = buildRideMap(r);
@@ -419,9 +419,9 @@ public class WebController extends AbstractVerticle {
     private void checkResponseAndSendReply(RoutingContext context, boolean b) {
         JsonObject reply = new JsonObject();
         if (b) {
-            reply.put("result", "ok");
+            reply.put(RESULT, "ok");
         } else {
-            reply.put("result", "error");
+            reply.put(RESULT, "error");
         }
         sendReply(context, reply);
     }
@@ -438,7 +438,7 @@ public class WebController extends AbstractVerticle {
             JsonObject json = composeJSONFromFieldsMap(map);
             replyArray.add(json);
         }
-        reply.put("result", replyArray);
+        reply.put(RESULT, replyArray);
         sendReply(context, reply);
     }
 
@@ -454,25 +454,25 @@ public class WebController extends AbstractVerticle {
     private void invalidJSONReply(RoutingContext context, JsonObject requestBody) {
         logger.warning("Received invalid JSON payload: " + requestBody);
         JsonObject reply = new JsonObject();
-        reply.put("result", "not ok");
+        reply.put(RESULT, "not ok");
         sendReply(context, reply);
     }
 
     private Map<String, Object> buildEBikeMap(EBike eb) {
         var map = new HashMap<String, Object>();
-        map.put("eBikeId", eb.ID());
-        map.put("x", eb.positionX());
-        map.put("y", eb.positionY());
-        map.put("battery", eb.battery());
+        map.put(E_BIKE_ID, eb.ID());
+        map.put(POSITION_X, eb.positionX());
+        map.put(POSITION_Y, eb.positionY());
+        map.put(BATTERY, eb.battery());
         map.put("status", eb.state());
         return map;
     }
 
     private Map<String, Object> buildRideMap(Ride r) {
         var map = new HashMap<String, Object>();
-        map.put("rideId", r.ID());
-        map.put("userId", r.userID());
-        map.put("eBikeId", r.eBikeID());
+        map.put(RIDE_ID, r.ID());
+        map.put(USER_ID, r.userID());
+        map.put(E_BIKE_ID, r.eBikeID());
         map.put("startDate", r.startDate());
         map.put("endDate", r.endDate() == null ? "" : r.endDate());
         return map;
@@ -489,10 +489,10 @@ public class WebController extends AbstractVerticle {
 
         JsonObject obj = new JsonObject();
         obj.put("event", "ebike-changed");
-        obj.put("eBikeId", eBikeId);
-        obj.put("x", x);
-        obj.put("y", y);
-        obj.put("battery", battery);
+        obj.put(E_BIKE_ID, eBikeId);
+        obj.put(POSITION_X, x);
+        obj.put(POSITION_Y, y);
+        obj.put(BATTERY, battery);
         obj.put("status", status);
         eb.publish(BIKE_CHANGE_EVENT_TOPIC, obj);
     }

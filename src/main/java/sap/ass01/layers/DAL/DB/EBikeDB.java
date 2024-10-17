@@ -3,6 +3,8 @@ package sap.ass01.layers.DAL.DB;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import sap.ass01.layers.DAL.Schemas.EBike;
 import sap.ass01.layers.DAL.Schemas.EBikeImpl;
+import sap.ass01.layers.DAL.Schemas.MutableEBike;
+import sap.ass01.layers.DAL.Schemas.MutableEBikeImpl;
 import sap.ass01.layers.utils.EBikeState;
 
 import java.sql.*;
@@ -11,6 +13,11 @@ import java.util.List;
 
 public class EBikeDB implements EBikeDA {
 
+    private static final String PROBLEM_IN_THE_QUERY = "Problem in the query";
+    private static final String BATTERY = "Battery";
+    private static final String STATE = "State";
+    private static final String POSITION_X = "PositionX";
+    private static final String POSITION_Y = "PositionY";
     final MysqlDataSource ds;
     static final private int NEARBY_RANGE = 10;
 
@@ -23,49 +30,46 @@ public class EBikeDB implements EBikeDA {
 
     @Override
     public List<EBike> getAllEBikes() {
-        ResultSet rs;
         List<EBike> bikes = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM ebike");
-            while (rs.next()) {
-                EBike bike = new EBikeImpl(rs.getInt("ID"),
-                        rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")].toString(),
-                        rs.getInt("PositionX"),
-                        rs.getInt("PositionY"));
-                bikes.add(bike);
-            }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM ebike");
+            fillBikeListAndCloseSQL(bikes, stmt, rs);
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return bikes;
     }
 
     @Override
     public List<EBike> getAllAvailableEBikes() {
-        ResultSet rs;
         List<EBike> bikes = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM ebike WHERE State = 0");
-            while (rs.next()) {
-                EBike bike = new EBikeImpl(rs.getInt("ID"),
-                        rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")].toString(),
-                        rs.getInt("PositionX"),
-                        rs.getInt("PositionY"));
-                bikes.add(bike);
-            }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM ebike WHERE State = 0");
+            fillBikeListAndCloseSQL(bikes, stmt, rs);
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return bikes;
     }
 
+    private void fillBikeListAndCloseSQL(List<EBike> bikes, Statement stmt, ResultSet rs) throws SQLException {
+        MutableEBike bike = new MutableEBikeImpl();
+        while (rs.next()) {
+            bike.setID(rs.getInt("ID"));
+            bike.setBattery(rs.getInt(BATTERY));
+            bike.setState(EBikeState.values()[rs.getInt(STATE)].toString());
+            bike.setPositionX(rs.getInt(POSITION_X));
+            bike.setPositionY(rs.getInt(POSITION_Y));
+            bikes.add(bike);
+        }
+        rs.close();
+        stmt.close();
+    }
+
     @Override
     public List<EBike> getAllEBikesNearby(int positionX, int positionY ) {
-        ResultSet rs;
         List<EBike> bikes = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ebike WHERE PositionX BETWEEN ? AND ? AND PositionY BETWEEN ? AND ?");
@@ -73,38 +77,32 @@ public class EBikeDB implements EBikeDA {
             stmt.setInt(2, positionX + NEARBY_RANGE);
             stmt.setInt(3, positionY - NEARBY_RANGE);
             stmt.setInt(4, positionY + NEARBY_RANGE);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                EBike bike = new EBikeImpl(rs.getInt("ID"),
-                        rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")].toString(),
-                        rs.getInt("PositionX"),
-                        rs.getInt("PositionY"));
-                bikes.add(bike);
-            }
+            ResultSet rs = stmt.executeQuery();
+            fillBikeListAndCloseSQL(bikes, stmt, rs);
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return bikes;
     }
 
     @Override
     public EBike getEBikeById(int id) {
-        ResultSet rs;
         EBike bike = null;
         try (Connection connection = ds.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ebike WHERE ID = ?");
             stmt.setInt(1, id);
-            rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 bike = new EBikeImpl(rs.getInt("ID"),
-                        rs.getInt("Battery"),
-                        EBikeState.values()[rs.getInt("State")].toString(),
-                        rs.getInt("PositionX"),
-                        rs.getInt("PositionY"));
+                        rs.getInt(BATTERY),
+                        EBikeState.values()[rs.getInt(STATE)].toString(),
+                        rs.getInt(POSITION_X),
+                        rs.getInt(POSITION_Y));
             }
+            rs.close();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return bike;
     }
@@ -119,8 +117,9 @@ public class EBikeDB implements EBikeDA {
             stmt.setInt(2, positionX);
             stmt.setInt(3, positionY);
             rs = stmt.executeUpdate();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rs > 0;
     }
@@ -136,8 +135,9 @@ public class EBikeDB implements EBikeDA {
             stmt.setInt(4, positionY);
             stmt.setInt(5, id);
             rs = stmt.executeUpdate();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rs > 0;
     }
@@ -149,8 +149,9 @@ public class EBikeDB implements EBikeDA {
             PreparedStatement stmt = connection.prepareStatement("DELETE FROM ebike WHERE ID = ?");
             stmt.setInt(1, id);
             rs = stmt.executeUpdate();
+            stmt.close();
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
         return rs > 0;
     }
@@ -165,7 +166,7 @@ public class EBikeDB implements EBikeDA {
                 lastID = rs.getInt("ID");
             }
         } catch( SQLException e) {
-            throw new IllegalStateException("Problem in the query", e);
+            throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
         }
 
         return lastID;

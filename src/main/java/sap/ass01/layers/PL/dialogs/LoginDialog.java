@@ -7,26 +7,30 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 
 public class LoginDialog extends JDialog {
+    private final Frame parent;
     private final WebClient webClient;
     private final JTextField usernameField;
     private final JPasswordField passwordField;
+    @Serial
+    private static final long serialVersionUID = 6L;
 
     public LoginDialog(Frame parent, WebClient webClient) {
         super(parent, "Login", true);
-        setLayout(new BorderLayout());
-        setSize(300, 200);
-        setLocationRelativeTo(parent);
+        this.parent = parent;
         usernameField = new JTextField();
         passwordField = new JPasswordField();
         this.webClient = webClient;
 
-        initializeDialog();
-
     }
 
-    private void initializeDialog() {
+    public void initializeDialog() {
+
+        setLayout(new BorderLayout());
+        setSize(300, 200);
+        setLocationRelativeTo(parent);
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(3, 2, 10, 10));
@@ -94,9 +98,7 @@ public class LoginDialog extends JDialog {
 
         new SwingWorker<Void, Void>() {
             @Override
-            protected Void doInBackground() throws Exception {
-
-                Thread.sleep(50);
+            protected Void doInBackground() {
                 return null;
             }
 
@@ -107,7 +109,8 @@ public class LoginDialog extends JDialog {
                 if (title.contains("Success")) {
                     dispose();
                     SwingUtilities.invokeLater(() -> {
-                        EBikeApp app = new EBikeApp(webClient, usernameField.getText());
+                        var app = new EBikeApp(webClient, usernameField.getText());
+                        app.initialize();
                         app.setVisible(true);
                     });
                 }

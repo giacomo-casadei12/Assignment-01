@@ -9,10 +9,12 @@ import sap.ass01.layers.utils.Triple;
 import sap.ass01.layers.utils.VertxSingleton;
 import sap.ass01.layers.utils.WebOperation;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static sap.ass01.layers.utils.JsonFieldsConstants.*;
 
 public class WebClient {
 
@@ -26,26 +28,27 @@ public class WebClient {
     private static final String RIDE_COMMAND_PATH = "/api/ride/command";
     private static final String RIDE_QUERY_PATH = "/api/ride/query";
 
-    private final io.vertx.ext.web.client.WebClient webClient;
+
+    private final io.vertx.ext.web.client.WebClient client;
     private final Vertx vertx;
 
     public WebClient() {
         vertx = VertxSingleton.getInstance().getVertx();
         WebClientOptions options = new WebClientOptions().setDefaultHost(SERVER_HOST).setDefaultPort(SERVER_PORT);
-        webClient = io.vertx.ext.web.client.WebClient.create(vertx, options);
+        client = io.vertx.ext.web.client.WebClient.create(vertx, options);
     }
 
     public Future<Boolean> requestCreateUser(String username, String password) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("username", username);
-        requestPayload.put("password", password);
-        requestPayload.put("operation", WebOperation.CREATE.ordinal());
+        requestPayload.put(USERNAME, username);
+        requestPayload.put(PASSWORD, password);
+        requestPayload.put(OPERATION, WebOperation.CREATE.ordinal());
 
-        webClient.post(USER_COMMAND_PATH)
+        client.post(USER_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("User created: " + ar.result().bodyAsString());
                             }
@@ -64,13 +67,13 @@ public class WebClient {
     public Future<Boolean> requestDeleteUser(int userId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("userId", userId);
-        requestPayload.put("operation", WebOperation.DELETE.ordinal());
+        requestPayload.put(USER_ID, userId);
+        requestPayload.put(OPERATION, WebOperation.DELETE.ordinal());
 
-        webClient.post(USER_COMMAND_PATH)
+        client.post(USER_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("User deleted: " + ar.result().bodyAsString());
                             }
@@ -89,14 +92,14 @@ public class WebClient {
     public Future<Boolean> requestUpdateUser(int userId, int credit) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("userId", userId);
-        requestPayload.put("credit", credit);
-        requestPayload.put("operation", WebOperation.UPDATE.ordinal());
+        requestPayload.put(USER_ID, userId);
+        requestPayload.put(CREDIT, credit);
+        requestPayload.put(OPERATION, WebOperation.UPDATE.ordinal());
 
-        webClient.post(USER_COMMAND_PATH)
+        client.post(USER_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("User updated: " + ar.result().bodyAsString());
                             }
@@ -115,14 +118,14 @@ public class WebClient {
     public Future<Boolean> requestLogin(String username, String password) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("username", username);
-        requestPayload.put("password", password);
-        requestPayload.put("operation", WebOperation.LOGIN.ordinal());
+        requestPayload.put(USERNAME, username);
+        requestPayload.put(PASSWORD, password);
+        requestPayload.put(OPERATION, WebOperation.LOGIN.ordinal());
 
-        webClient.get(USER_QUERY_PATH)
+        client.get(USER_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("Login: " + ar.result().bodyAsString());
                             }
@@ -146,32 +149,32 @@ public class WebClient {
     public Future<Map<Integer,Triple<String,Integer,Boolean>>> requestReadUser(int userId, String username) {
         Promise<Map<Integer,Triple<String,Integer,Boolean>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        Map<Integer, Triple<String, Integer, Boolean>> retMap = new HashMap<>();
+        Map<Integer, Triple<String, Integer, Boolean>> retMap = new ConcurrentHashMap<>();
         if (userId > 0) {
-            requestPayload.put("userId", userId);
+            requestPayload.put(USER_ID, userId);
         }
         if (!username.isBlank()) {
-            requestPayload.put("username", username);
+            requestPayload.put(USERNAME, username);
         }
-        requestPayload.put("operation", WebOperation.READ.ordinal());
+        requestPayload.put(OPERATION, WebOperation.READ.ordinal());
 
-        webClient.get(USER_QUERY_PATH)
+        client.get(USER_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         JsonObject res = ar.result().bodyAsJsonObject();
-                        if (res.containsKey("result")) {
-                            var resList = res.getJsonArray("result");
+                        if (res.containsKey(RESULT)) {
+                            var resList = res.getJsonArray(RESULT);
                             var it = resList.stream().iterator();
                             while (it.hasNext()) {
                                 var jsonObj = (JsonObject) it.next();
-                                int resId = Integer.parseInt(jsonObj.getString("userId"));
-                                var resUser = new Triple<>(jsonObj.getString("username"), Integer.parseInt(jsonObj.getString("credit")), Boolean.parseBoolean(jsonObj.getString("isAdmin")));
+                                int resId = Integer.parseInt(jsonObj.getString(USER_ID));
+                                var resUser = new Triple<>(jsonObj.getString(USERNAME), Integer.parseInt(jsonObj.getString(CREDIT)), Boolean.parseBoolean(jsonObj.getString("isAdmin")));
                                 retMap.put(resId, resUser);
                             }
                             promise.complete(retMap);
-                        } else if (res.containsKey("userId")) {
-                            int resId = Integer.parseInt(res.getString("userId"));
-                            var resUser = new Triple<>(res.getString("username"), Integer.parseInt(res.getString("credit")), Boolean.parseBoolean(res.getString("admin")));
+                        } else if (res.containsKey(USER_ID)) {
+                            int resId = Integer.parseInt(res.getString(USER_ID));
+                            var resUser = new Triple<>(res.getString(USERNAME), Integer.parseInt(res.getString(CREDIT)), Boolean.parseBoolean(res.getString("admin")));
                             retMap.put(resId, resUser);
                             promise.complete(retMap);
                         } else {
@@ -193,14 +196,14 @@ public class WebClient {
     public Future<Boolean> requestCreateEBike(int x, int y) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("x", x);
-        requestPayload.put("y", y);
-        requestPayload.put("operation", WebOperation.CREATE.ordinal());
+        requestPayload.put(POSITION_X, x);
+        requestPayload.put(POSITION_Y, y);
+        requestPayload.put(OPERATION, WebOperation.CREATE.ordinal());
 
-        webClient.post(EBIKE_COMMAND_PATH)
+        client.post(EBIKE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("EBike created: " + ar.result().bodyAsString());
                             }
@@ -219,13 +222,13 @@ public class WebClient {
     public Future<Boolean> requestDeleteEBike(int eBikeId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("eBikeId", eBikeId);
-        requestPayload.put("operation", WebOperation.DELETE.ordinal());
+        requestPayload.put(E_BIKE_ID, eBikeId);
+        requestPayload.put(OPERATION, WebOperation.DELETE.ordinal());
 
-        webClient.post(EBIKE_COMMAND_PATH)
+        client.post(EBIKE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("eBike deleted: " + ar.result().bodyAsString());
                             }
@@ -244,21 +247,21 @@ public class WebClient {
     public Future<Boolean> requestUpdateEBike(int eBikeId, int battery, String state, int x, int y) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("eBikeId", eBikeId);
-        requestPayload.put("x", x);
-        requestPayload.put("y", y);
+        requestPayload.put(E_BIKE_ID, eBikeId);
+        requestPayload.put(POSITION_X, x);
+        requestPayload.put(POSITION_Y, y);
         if (battery > 0) {
-            requestPayload.put("battery", battery);
+            requestPayload.put(BATTERY, battery);
         }
         if (state != null) {
             requestPayload.put("state", state);
         }
-        requestPayload.put("operation", WebOperation.UPDATE.ordinal());
+        requestPayload.put(OPERATION, WebOperation.UPDATE.ordinal());
 
-        webClient.post(EBIKE_COMMAND_PATH)
+        client.post(EBIKE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("eBike updated: " + ar.result().bodyAsString());
                             }
@@ -277,37 +280,37 @@ public class WebClient {
     public Future<Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>>> requestReadEBike(int eBikeId, int x, int y, boolean available) {
         Promise<Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> retMap = new HashMap<>();
+        Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> retMap = new ConcurrentHashMap<>();
         if (eBikeId > 0) {
-            requestPayload.put("eBikeId", eBikeId);
+            requestPayload.put(E_BIKE_ID, eBikeId);
         } else {
             requestPayload.put("available", available);
         }
         if (x > 0) {
-            requestPayload.put("x", x);
+            requestPayload.put(POSITION_X, x);
         }
         if (y > 0) {
-            requestPayload.put("y", y);
+            requestPayload.put(POSITION_Y, y);
         }
 
-        requestPayload.put("operation", WebOperation.READ.ordinal());
+        requestPayload.put(OPERATION, WebOperation.READ.ordinal());
 
-        webClient.get(EBIKE_QUERY_PATH)
+        client.get(EBIKE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (logger.isLoggable(Level.FINE)) {
                             logger.info("eBikes: " + ar.result().bodyAsString());
                         }
                         JsonObject res = ar.result().bodyAsJsonObject();
-                        if (res.containsKey("result")) {
-                            var resList = res.getJsonArray("result");
+                        if (res.containsKey(RESULT)) {
+                            var resList = res.getJsonArray(RESULT);
                             var it = resList.stream().iterator();
                             while (it.hasNext()) {
                                 var jsonObj = (JsonObject) it.next();
                                 insertEBikeInMap(retMap, jsonObj);
                             }
                             promise.complete(retMap);
-                        } else if (res.containsKey("eBikeId")) {
+                        } else if (res.containsKey(E_BIKE_ID)) {
                             insertEBikeInMap(retMap, res);
                             promise.complete(retMap);
                         } else {
@@ -329,13 +332,13 @@ public class WebClient {
     public Future<Boolean> requestStartRide(int userId, int eBikeId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("userId", userId);
-        requestPayload.put("eBikeId", eBikeId);
-        requestPayload.put("operation", WebOperation.CREATE.ordinal());
+        requestPayload.put(USER_ID, userId);
+        requestPayload.put(E_BIKE_ID, eBikeId);
+        requestPayload.put(OPERATION, WebOperation.CREATE.ordinal());
 
-        webClient.post(RIDE_COMMAND_PATH)
+        client.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
-                    if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                    if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                         if (logger.isLoggable(Level.FINE)) {
                             logger.info("ride started: " + ar.result().bodyAsString());
                         }
@@ -353,22 +356,22 @@ public class WebClient {
     public Future<Pair<Integer,Integer>> requestUpdateRide(int userId, int eBikeId, int x, int y) {
         Promise<Pair<Integer,Integer>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("userId", userId);
-        requestPayload.put("eBikeId", eBikeId);
-        requestPayload.put("x", x);
-        requestPayload.put("y", y);
-        requestPayload.put("operation", WebOperation.UPDATE.ordinal());
+        requestPayload.put(USER_ID, userId);
+        requestPayload.put(E_BIKE_ID, eBikeId);
+        requestPayload.put(POSITION_X, x);
+        requestPayload.put(POSITION_Y, y);
+        requestPayload.put(OPERATION, WebOperation.UPDATE.ordinal());
 
-        webClient.post(RIDE_COMMAND_PATH)
+        client.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         var res = ar.result().bodyAsJsonObject();
-                        if (res.containsKey("credit") && res.containsKey("battery")) {
+                        if (res.containsKey(CREDIT) && res.containsKey(BATTERY)) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("ride updated: " + ar.result().bodyAsString());
                             }
-                            promise.complete(new Pair<>(Integer.parseInt(res.getString("credit")),
-                                    Integer.parseInt(res.getString("battery"))));
+                            promise.complete(new Pair<>(Integer.parseInt(res.getString(CREDIT)),
+                                    Integer.parseInt(res.getString(BATTERY))));
                         } else {
                             promise.complete(null);
                         }
@@ -385,13 +388,13 @@ public class WebClient {
     public Future<Boolean> requestEndRide(int userId, int eBikeId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        requestPayload.put("userId", userId);
-        requestPayload.put("eBikeId", eBikeId);
-        requestPayload.put("operation", WebOperation.DELETE.ordinal());
+        requestPayload.put(USER_ID, userId);
+        requestPayload.put(E_BIKE_ID, eBikeId);
+        requestPayload.put(OPERATION, WebOperation.DELETE.ordinal());
 
-        webClient.post(RIDE_COMMAND_PATH)
+        client.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
-                    if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                    if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                         if (logger.isLoggable(Level.FINE)) {
                             logger.info("ride ended: " + ar.result().bodyAsString());
                         }
@@ -410,12 +413,12 @@ public class WebClient {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
         requestPayload.put("rideId", rideId);
-        requestPayload.put("operation", WebOperation.DELETE.ordinal());
+        requestPayload.put(OPERATION, WebOperation.DELETE.ordinal());
 
-        webClient.post(RIDE_COMMAND_PATH)
+        client.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (ar.result().bodyAsJsonObject().getValue("result").toString().equals("ok")) {
+                        if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
                             if (logger.isLoggable(Level.FINE)) {
                                 logger.info("ride deleted: " + ar.result().bodyAsString());
                             }
@@ -434,33 +437,33 @@ public class WebClient {
     public Future<Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>>> requestMultipleReadRide(int userId, int eBikeId, boolean ongoing) {
         Promise<Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
-        Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>> retMap = new HashMap<>();
+        Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>> retMap = new ConcurrentHashMap<>();
         if (eBikeId > 0) {
-            requestPayload.put("eBikeId", eBikeId);
+            requestPayload.put(E_BIKE_ID, eBikeId);
         }
         if (userId > 0) {
-            requestPayload.put("userId", userId);
+            requestPayload.put(USER_ID, userId);
         }
         if (ongoing) {
             requestPayload.put("ongoing", true);
         }
         requestPayload.put("multiple", true);
-        requestPayload.put("operation", WebOperation.READ.ordinal());
+        requestPayload.put(OPERATION, WebOperation.READ.ordinal());
 
-        webClient.get(RIDE_QUERY_PATH)
+        client.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (logger.isLoggable(Level.FINE)) {
                             logger.info("rides: " + ar.result().bodyAsString());
                         }
                         var res = ar.result().bodyAsJsonObject();
-                        if (res.containsKey("result")) {
-                            var resList = res.getJsonArray("result");
+                        if (res.containsKey(RESULT)) {
+                            var resList = res.getJsonArray(RESULT);
                             var it = resList.stream().iterator();
                             while (it.hasNext()) {
                                 var jsonObj = (JsonObject) it.next();
                                 int resId = Integer.parseInt(jsonObj.getString("rideId"));
-                                var resUser = new Pair<>(new Pair<>(Integer.parseInt(jsonObj.getString("userId")),Integer.parseInt(jsonObj.getString("eBikeId"))),
+                                var resUser = new Pair<>(new Pair<>(Integer.parseInt(jsonObj.getString(USER_ID)),Integer.parseInt(jsonObj.getString(E_BIKE_ID))),
                                         new Pair<>(jsonObj.getString("startDate"), jsonObj.getString("endDate")));
                                 retMap.put(resId, resUser);
                             }
@@ -481,12 +484,12 @@ public class WebClient {
             requestPayload.put("rideId", rideId);
         }
         if (userId > 0) {
-            requestPayload.put("userId", userId);
+            requestPayload.put(USER_ID, userId);
         }
         requestPayload.put("multiple", false);
-        requestPayload.put("operation", WebOperation.READ.ordinal());
+        requestPayload.put(OPERATION, WebOperation.READ.ordinal());
 
-        webClient.get(RIDE_QUERY_PATH)
+        client.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (logger.isLoggable(Level.FINE)) {
@@ -509,12 +512,12 @@ public class WebClient {
                     JsonObject jsonMessage = new JsonObject(message);
                     if (jsonMessage.containsKey("event") &&
                             jsonMessage.getString("event").equals("ebike-changed") &&
-                                jsonMessage.containsKey("eBikeId") && jsonMessage.containsKey("x") &&
-                                    jsonMessage.containsKey("y") && jsonMessage.containsKey("battery") && jsonMessage.containsKey("status")){
-                                int eBikeId = Integer.parseInt(jsonMessage.getString("eBikeId"));
-                                int x = Integer.parseInt(jsonMessage.getString("x"));
-                                int y = Integer.parseInt(jsonMessage.getString("y"));
-                                int battery = Integer.parseInt(jsonMessage.getString("battery"));
+                                jsonMessage.containsKey(E_BIKE_ID) && jsonMessage.containsKey(POSITION_X) &&
+                                    jsonMessage.containsKey(POSITION_Y) && jsonMessage.containsKey(BATTERY) && jsonMessage.containsKey("status")){
+                                int eBikeId = Integer.parseInt(jsonMessage.getString(E_BIKE_ID));
+                                int x = Integer.parseInt(jsonMessage.getString(POSITION_X));
+                                int y = Integer.parseInt(jsonMessage.getString(POSITION_Y));
+                                int battery = Integer.parseInt(jsonMessage.getString(BATTERY));
                                 String status = jsonMessage.getString("status");
                                 app.updateEBikeFromEventbus(eBikeId, x, y, battery, status);
                     }
@@ -534,9 +537,9 @@ public class WebClient {
     }
 
     private void insertEBikeInMap(Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> retMap, JsonObject jsonObj) {
-        int resId = Integer.parseInt(jsonObj.getString("eBikeId"));
-        var resBike = new Triple<>(new Pair<>(Integer.parseInt(jsonObj.getString("x")), Integer.parseInt(jsonObj.getString("y"))),
-                Integer.parseInt(jsonObj.getString("battery")), jsonObj.getString("status"));
+        int resId = Integer.parseInt(jsonObj.getString(E_BIKE_ID));
+        var resBike = new Triple<>(new Pair<>(Integer.parseInt(jsonObj.getString(POSITION_X)), Integer.parseInt(jsonObj.getString(POSITION_Y))),
+                Integer.parseInt(jsonObj.getString(BATTERY)), jsonObj.getString("status"));
         retMap.put(resId, resBike);
     }
 

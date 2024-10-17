@@ -1,11 +1,11 @@
 package it.unibo.sap.BLL;
 
+import org.junit.Test;
 import sap.ass01.layers.BLL.Persistence.PersistenceManager;
 import sap.ass01.layers.BLL.Persistence.PersistenceManagerImpl;
 import sap.ass01.layers.DAL.Schemas.EBike;
 import sap.ass01.layers.DAL.Schemas.User;
 
-import org.junit.jupiter.api.Test;
 import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;
@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPersistenceManager {
 
+    public static final String TEST_USERNAME = "Testabile";
+    public static final String TEST_PASSWORD = "Testatone";
     final PersistenceManager persManager;
 
     public TestPersistenceManager() {
@@ -26,34 +28,34 @@ public class TestPersistenceManager {
         User u;
         List<User> us;
 
-        res = persManager.login("Testabile","Testatone");
+        res = persManager.login(TEST_USERNAME, TEST_PASSWORD);
         assertFalse(res);
 
-        res = persManager.createUser("Testabile", "Testatone");
+        res = persManager.createUser(TEST_USERNAME, TEST_PASSWORD);
         assertTrue(res);
 
-        res = persManager.login("Testabile","Testatone");
+        res = persManager.login(TEST_USERNAME, TEST_PASSWORD);
         assertTrue(res);
 
-        u = persManager.getUser(0,"Testabile");
+        u = persManager.getUser(0, TEST_USERNAME);
         assertNotNull(u);
-        assertEquals("Testabile", u.getName());
-        assertEquals(0, u.getCredit());
+        assertEquals(TEST_USERNAME, u.userName());
+        assertEquals(0, u.credit());
 
         us = persManager.getAllUsers();
         assertNotNull(us);
         assertTrue(us.contains(u));
 
-        res = persManager.updateUser(u.getID(), 75);
+        res = persManager.updateUser(u.ID(), 75);
         assertTrue(res);
-        u = persManager.getUser(u.getID(),"");
+        u = persManager.getUser(u.ID(),"");
         assertNotNull(u);
-        assertEquals("Testabile", u.getName());
-        assertEquals(75, u.getCredit());
+        assertEquals(TEST_USERNAME, u.userName());
+        assertEquals(75, u.credit());
 
-        res = persManager.deleteUser(u.getID());
+        res = persManager.deleteUser(u.ID());
         assertTrue(res);
-        u = persManager.getUser(u.getID(),"");
+        u = persManager.getUser(u.ID(),"");
         assertNull(u);
 
     }

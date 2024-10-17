@@ -9,13 +9,14 @@ import sap.ass01.layers.utils.Pair;
 
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RideManagerImpl implements RideManager {
 
     final private static double BATTERY_CONSUMPTION_PER_METER = 0.5;
     final private static double CREDIT_CONSUMPTION_PER_SECOND = 0.1;
     final private PersistenceManager manager;
-    final private Map<Pair<Integer,Integer>, Long> ongoingRides = new HashMap<>();
+    final private Map<Pair<Integer,Integer>, Long> ongoingRides = new ConcurrentHashMap<>();
 
     public RideManagerImpl(PersistenceManager manager) {
         this.manager = manager;
@@ -124,7 +125,7 @@ public class RideManagerImpl implements RideManager {
         int credit = 0;
 
         if (user != null) {
-            credit = user.getCredit();
+            credit = user.credit();
             var now = new Date().getTime();
             var last = ongoingRides.get(new Pair<>(userId, eBikeId));
             long timeElapsed = now - last;

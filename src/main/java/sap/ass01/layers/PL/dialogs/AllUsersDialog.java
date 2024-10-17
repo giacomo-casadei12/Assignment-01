@@ -5,6 +5,7 @@ import sap.ass01.layers.PL.EBikeApp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 import java.util.Map;
 
 public class AllUsersDialog extends JDialog {
@@ -12,6 +13,8 @@ public class AllUsersDialog extends JDialog {
     private final EBikeApp app;
     private final JDialog dialog;
     private Map<Integer, Triple<String, Integer, Boolean>> users;
+    @Serial
+    private static final long serialVersionUID = 5L;
 
     public AllUsersDialog(EBikeApp app) {
 

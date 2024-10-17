@@ -5,7 +5,9 @@ import sap.ass01.layers.PL.EBikeApp;
 import javax.swing.*;
 
 public class RideSimulation extends Thread {
-	
+
+	private static final int DEFAULT_POSITION_VALUE = 200;
+	private static final int DEFAULT_TIME_TO_CHANGE_DIRECTION = 500;
 	private final int bikeId;
 
 
@@ -61,27 +63,27 @@ public class RideSimulation extends Thread {
 	}
 
 	private void updatePosition() {
-		if (this.loc.x() > 200 || this.loc.x() < -200) {
+		if (this.loc.x() > DEFAULT_POSITION_VALUE || this.loc.x() < -DEFAULT_POSITION_VALUE) {
 			this.direction = new V2d(-this.direction.x(), this.direction.y());
-			if (this.loc.x() > 200) {
-				this.loc = new P2d(200, this.loc.y());
+			if (this.loc.x() > DEFAULT_POSITION_VALUE) {
+				this.loc = new P2d(DEFAULT_POSITION_VALUE, this.loc.y());
 			} else {
-				this.loc = new P2d(-200, this.loc.y());
+				this.loc = new P2d(-DEFAULT_POSITION_VALUE, this.loc.y());
 			}
 		}
-		if (this.loc.y() > 200 || this.loc.y() < -200) {
+		if (this.loc.y() > DEFAULT_POSITION_VALUE || this.loc.y() < -DEFAULT_POSITION_VALUE) {
 			this.direction = new V2d(this.direction.x(), -this.direction.y());
-			if (this.loc.y() > 200) {
-				this.loc = new P2d(this.loc.x(), 200);
+			if (this.loc.y() > DEFAULT_POSITION_VALUE) {
+				this.loc = new P2d(this.loc.x(), DEFAULT_POSITION_VALUE);
 			} else {
-				this.loc = new P2d(this.loc.x(), -200);
+				this.loc = new P2d(this.loc.x(), -DEFAULT_POSITION_VALUE);
 			}
 		}
 	}
 
 	private void changeDirection(long lastTimeChangedDir) {
 		var elapsedTimeSinceLastChangeDir = System.currentTimeMillis() - lastTimeChangedDir;
-		if (elapsedTimeSinceLastChangeDir > 500) {
+		if (elapsedTimeSinceLastChangeDir > DEFAULT_TIME_TO_CHANGE_DIRECTION) {
 			double angle = Math.random()*60 - 30;
 			this.direction = this.direction.rotate(angle);
 }
