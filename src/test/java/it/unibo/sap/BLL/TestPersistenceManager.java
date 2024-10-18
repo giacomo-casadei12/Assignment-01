@@ -1,10 +1,10 @@
 package it.unibo.sap.BLL;
 
 import org.junit.Test;
-import sap.ass01.layers.BLL.Persistence.PersistenceManager;
-import sap.ass01.layers.BLL.Persistence.PersistenceManagerImpl;
-import sap.ass01.layers.DAL.Schemas.EBike;
-import sap.ass01.layers.DAL.Schemas.User;
+import sap.ass01.layers.PersistenceL.Persistence.PersistenceManager;
+import sap.ass01.layers.PersistenceL.Persistence.PersistenceManagerImpl;
+import sap.ass01.layers.PersistenceL.Entities.EBike;
+import sap.ass01.layers.PersistenceL.Entities.User;
 
 import sap.ass01.layers.utils.EBikeState;
 

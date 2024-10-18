@@ -2,13 +2,13 @@ package it.unibo.sap.BLL;
 
 import org.junit.Test;
 import sap.ass01.layers.utils.Pair;
-import sap.ass01.layers.BLL.Logic.RideManager;
-import sap.ass01.layers.BLL.Logic.RideManagerImpl;
-import sap.ass01.layers.BLL.Persistence.PersistenceManager;
-import sap.ass01.layers.BLL.Persistence.PersistenceManagerImpl;
-import sap.ass01.layers.DAL.Schemas.EBike;
-import sap.ass01.layers.DAL.Schemas.Ride;
-import sap.ass01.layers.DAL.Schemas.User;
+import sap.ass01.layers.BusinessLogicL.Logic.RideManager;
+import sap.ass01.layers.BusinessLogicL.Logic.RideManagerImpl;
+import sap.ass01.layers.PersistenceL.Persistence.PersistenceManager;
+import sap.ass01.layers.PersistenceL.Persistence.PersistenceManagerImpl;
+import sap.ass01.layers.PersistenceL.Entities.EBike;
+import sap.ass01.layers.PersistenceL.Entities.Ride;
+import sap.ass01.layers.PersistenceL.Entities.User;
 
 import java.util.List;
 

@@ -1,9 +1,10 @@
 package it.unibo.sap.DAL;
 
 import org.junit.Test;
-import sap.ass01.layers.DAL.DB.EBikeDA;
-import sap.ass01.layers.DAL.DB.EBikeDB;
-import sap.ass01.layers.DAL.Schemas.EBike;
+import sap.ass01.layers.DataAccessL.DB.EBikeDA;
+import sap.ass01.layers.DataAccessL.DB.EBikeDB;
+import sap.ass01.layers.DataAccessL.Schemas.MutableEBike;
+import sap.ass01.layers.PersistenceL.Entities.EBike;
 import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class TestEBikeDAL {
     //there's should always be at least one bike
     @Test
     public void getAllEBikes() {
-        List<EBike> x = eBikeDA.getAllEBikes();
+        List<MutableEBike> x = eBikeDA.getAllEBikes();
         assertFalse(x.isEmpty());
     }
 
@@ -29,7 +30,7 @@ public class TestEBikeDAL {
     public void createUpdateDeleteEBike() {
         boolean b = eBikeDA.createEBike(22,22);
         assertTrue(b);
-        List<EBike> bis = eBikeDA.getAllEBikesNearby(30,30);
+        List<MutableEBike> bis = eBikeDA.getAllEBikesNearby(30,30);
         assertFalse(bis.isEmpty());
         assertTrue(bis.stream().anyMatch(eBike -> eBike.positionX() == 22 && eBike.positionY() == 22));
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = bis.stream().

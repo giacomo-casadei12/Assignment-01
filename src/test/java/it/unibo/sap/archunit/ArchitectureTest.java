@@ -14,26 +14,36 @@ import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 @AnalyzeClasses(packages = "sap.ass01.layers")
 public class ArchitectureTest {
 
-    private static final String DAL_LAYER = "sap.ass01.layers.DAL..";
-    private static final String BLL_LAYER = "sap.ass01.layers.BLL..";
-    private static final String PL_LAYER = "sap.ass01.layers.PL..";
+    private static final String DAL_LAYER = "sap.ass01.layers.DataAccessL..";
+    private static final String BLL_LAYER = "sap.ass01.layers.BusinessLogicL..";
+    private static final String PreL_LAYER = "sap.ass01.layers.PresentationL..";
+    private static final String PerL_LAYER = "sap.ass01.layers.PersistenceL..";
 
     @ArchTest
     public static final ArchRule layeredArchitectureAccessRule = layeredArchitecture().consideringAllDependencies()
-            .layer("Persistence").definedBy(DAL_LAYER)
+            .layer("DB").definedBy(DAL_LAYER)
+            .layer("Persistence").definedBy(PerL_LAYER)
             .layer("Logic").definedBy(BLL_LAYER)
-            .layer("Presentation").definedBy(PL_LAYER)
+            .layer("Presentation").definedBy(PreL_LAYER)
             .whereLayer("Presentation").mayNotBeAccessedByAnyLayer()
             .whereLayer("Logic").mayOnlyBeAccessedByLayers("Presentation")
             .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Logic")
+            .whereLayer("DB").mayOnlyBeAccessedByLayers("Persistence")
             .ignoreDependency(java.lang.Object.class, Object.class);
 
     @ArchTest
-    public static final ArchRule businessLayerDependsOnlyFromDataAccessLayer =
+    public static final ArchRule businessLayerDependsOnlyFromPersistentLayer =
             classes().that().resideInAPackage(BLL_LAYER)
             .should().onlyDependOnClassesThat()
-            .resideInAnyPackage(DAL_LAYER,"java.*..",
+            .resideInAnyPackage(PerL_LAYER,"java.*..",
                     BLL_LAYER,"sap.ass01.layers.utils..","io.vertx..");
+
+    @ArchTest
+    public static final ArchRule persistenceLayerDependsOnlyFromDBLayer =
+            classes().that().resideInAPackage(PerL_LAYER)
+                    .should().onlyDependOnClassesThat()
+                    .resideInAnyPackage(DAL_LAYER,"java.*..",
+                            PerL_LAYER,"sap.ass01.layers.utils..","io.vertx..");
 
     @ArchTest
     public static final ArchRule dataAccessLayerDoesntDependsOnLayers =
@@ -44,8 +54,8 @@ public class ArchitectureTest {
 
     @ArchTest
     public static final ArchRule presentationLayerDependsOnlyFromBusinessLayer =
-            classes().that().resideInAPackage(PL_LAYER)
+            classes().that().resideInAPackage(PreL_LAYER)
             .should().onlyDependOnClassesThat()
             .resideInAnyPackage(BLL_LAYER,"java.*..",
-                    PL_LAYER,"javax.*..","io.vertx..","sap.ass01.layers.utils..");
+                    PreL_LAYER,"javax.*..","io.vertx..","sap.ass01.layers.utils..");
 }

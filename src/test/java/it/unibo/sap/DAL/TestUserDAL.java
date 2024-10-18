@@ -1,9 +1,10 @@
 package it.unibo.sap.DAL;
 
 import org.junit.Test;
-import sap.ass01.layers.DAL.DB.UserDA;
-import sap.ass01.layers.DAL.DB.UserDB;
-import sap.ass01.layers.DAL.Schemas.User;
+import sap.ass01.layers.DataAccessL.DB.UserDA;
+import sap.ass01.layers.DataAccessL.DB.UserDB;
+import sap.ass01.layers.DataAccessL.Schemas.MutableUser;
+import sap.ass01.layers.PersistenceL.Entities.User;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class TestUserDAL {
     //there is always at least the admin
     @Test
     public void getAtLeastOneUser() {
-        List<User> x = userDA.getAllUsers();
+        List<MutableUser> x = userDA.getAllUsers();
         assertFalse(x.isEmpty());
         assertTrue(x.get(0).admin());
     }
