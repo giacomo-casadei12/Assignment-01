@@ -4,7 +4,6 @@ import org.junit.Test;
 import sap.ass01.layers.DataAccessL.DB.EBikeDA;
 import sap.ass01.layers.DataAccessL.DB.EBikeDB;
 import sap.ass01.layers.DataAccessL.Schemas.MutableEBike;
-import sap.ass01.layers.PersistenceL.Entities.EBike;
 import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;
@@ -39,7 +38,7 @@ public class TestEBikeDAL {
                                                                      get().ID();
         b = eBikeDA.updateEBike(id,50, EBikeState.IN_USE,50,50);
         assertTrue(b);
-        EBike bi = eBikeDA.getEBikeById(id);
+        MutableEBike bi = eBikeDA.getEBikeById(id);
         assertNotNull(bi);
         assertEquals(50,bi.battery());
         assertEquals(1,EBikeState.valueOf(bi.state()).ordinal());

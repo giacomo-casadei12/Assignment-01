@@ -1,9 +1,8 @@
 package sap.ass01.layers.PersistenceL.Entities;
 
-public interface User {
-    int ID();
-    String userName();
-    int credit();
-    boolean admin();
+import sap.ass01.layers.DataAccessL.Schemas.MutableUser;
+
+public interface User extends MutableUser {
+
 }
 

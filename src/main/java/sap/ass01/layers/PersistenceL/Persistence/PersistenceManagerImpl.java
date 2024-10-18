@@ -3,10 +3,9 @@ package sap.ass01.layers.PersistenceL.Persistence;
 import sap.ass01.layers.DataAccessL.DB.*;
 import sap.ass01.layers.DataAccessL.Schemas.MutableEBike;
 import sap.ass01.layers.DataAccessL.Schemas.MutableRide;
-import sap.ass01.layers.PersistenceL.Entities.EBike;
+import sap.ass01.layers.DataAccessL.Schemas.MutableUser;
+import sap.ass01.layers.PersistenceL.Entities.*;
 import sap.ass01.layers.utils.EBikeState;
-import sap.ass01.layers.PersistenceL.Entities.Ride;
-import sap.ass01.layers.PersistenceL.Entities.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,13 +35,13 @@ public class PersistenceManagerImpl implements PersistenceManager {
         }
 
         return res.stream()
-                .map(x -> (EBike) x)
+                .map(this::convertMutableEBikeToEBike)
                 .collect(Collectors.toList());
     }
 
     @Override
     public EBike getEBike(int id) {
-        return this.bikeDA.getEBikeById(id);
+        return convertMutableEBikeToEBike(this.bikeDA.getEBikeById(id));
     }
 
     @Override
@@ -60,25 +59,28 @@ public class PersistenceManagerImpl implements PersistenceManager {
         }
 
         return res.stream()
-                .map(x -> (Ride) x)
+                .map(this::convertMutableRideToRide)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Ride getRide(int rideId, int userId) {
-        return rideId != 0 && userId == 0 ? this.rideDA.getRideById(rideId) : this.rideDA.getOngoingRideByUserId(userId);
+        return rideId != 0 && userId == 0 ?
+                convertMutableRideToRide(this.rideDA.getRideById(rideId)) :
+                convertMutableRideToRide(this.rideDA.getOngoingRideByUserId(userId));
     }
 
     @Override
     public List<User> getAllUsers() {
         return this.userDA.getAllUsers().stream()
-                .map(x -> (User) x)
+                .map(this::convertMutableUserToUser)
                 .collect(Collectors.toList());
     }
 
     @Override
     public User getUser(int id, String userName) {
-        return id != 0 ? this.userDA.getUserById(id) : this.userDA.getUserByName(userName);
+        return id != 0 ? convertMutableUserToUser(this.userDA.getUserById(id)) :
+                convertMutableUserToUser(this.userDA.getUserByName(userName));
     }
 
     @Override
@@ -113,7 +115,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
 
     @Override
     public boolean updateEbikePosition(int id, int positionX, int positionY) {
-        EBike bike = this.bikeDA.getEBikeById(id);
+        MutableEBike bike = this.bikeDA.getEBikeById(id);
         return this.bikeDA.updateEBike(id, bike.battery(), EBikeState.valueOf(bike.state()), positionX, positionY);
     }
 
@@ -135,5 +137,31 @@ public class PersistenceManagerImpl implements PersistenceManager {
     @Override
     public boolean deleteRide(int id) {
         return this.rideDA.deleteRide(id);
+    }
+
+    private User convertMutableUserToUser(MutableUser mutableUser) {
+       return mutableUser != null ? new UserImpl(mutableUser.ID(),
+                mutableUser.userName(),
+                mutableUser.credit(),
+                mutableUser.admin()) :
+               null;
+    }
+
+    private EBike convertMutableEBikeToEBike(MutableEBike mutableEBike) {
+        return mutableEBike != null ? new EBikeImpl(mutableEBike.ID(),
+                mutableEBike.battery(),
+                mutableEBike.state(),
+                mutableEBike.positionX(),
+                mutableEBike.positionY()) :
+                null;
+    }
+
+    private Ride convertMutableRideToRide(MutableRide mutableRide) {
+        return mutableRide != null ? new RideImpl(mutableRide.ID(),
+                mutableRide.startDate(),
+                mutableRide.endDate(),
+                mutableRide.userID(),
+                mutableRide.eBikeID()) :
+                null;
     }
 }

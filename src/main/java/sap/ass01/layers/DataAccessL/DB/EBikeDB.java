@@ -1,8 +1,6 @@
 package sap.ass01.layers.DataAccessL.DB;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
-import sap.ass01.layers.PersistenceL.Entities.EBike;
-import sap.ass01.layers.PersistenceL.Entities.EBikeImpl;
 import sap.ass01.layers.DataAccessL.Schemas.MutableEBike;
 import sap.ass01.layers.DataAccessL.Schemas.MutableEBikeImpl;
 import sap.ass01.layers.utils.EBikeState;
@@ -55,8 +53,8 @@ public class EBikeDB implements EBikeDA {
     }
 
     private void fillBikeListAndCloseSQL(List<MutableEBike> bikes, Statement stmt, ResultSet rs) throws SQLException {
-        MutableEBike bike = new MutableEBikeImpl();
         while (rs.next()) {
+            MutableEBike bike = new MutableEBikeImpl();
             bike.setID(rs.getInt("ID"));
             bike.setBattery(rs.getInt(BATTERY));
             bike.setState(EBikeState.values()[rs.getInt(STATE)].toString());

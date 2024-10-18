@@ -17,4 +17,28 @@ public record RideImpl(int ID, String startDate, String endDate, int userID, int
         return Objects.hashCode(ID);
     }
 
+    @Override
+    public void setID(int id) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setStartDate(String startDate) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setEndDate(String endDate) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setUserID(int userID) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setEBikeID(int bikeID) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
 }

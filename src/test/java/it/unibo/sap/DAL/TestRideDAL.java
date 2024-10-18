@@ -4,7 +4,6 @@ import org.junit.Test;
 import sap.ass01.layers.DataAccessL.DB.RideDA;
 import sap.ass01.layers.DataAccessL.DB.RideDB;
 import sap.ass01.layers.DataAccessL.Schemas.MutableRide;
-import sap.ass01.layers.PersistenceL.Entities.Ride;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class TestRideDAL {
                                 filter(ride -> ride.userID() == 1 && ride.eBikeID() == 1).
                                 findFirst().
                                 get().ID();
-        Ride r = rideDA.getRideById(id);
+        MutableRide r = rideDA.getRideById(id);
         assertNotNull(r);
         assertEquals(1, r.userID());
         assertEquals(1, r.eBikeID());
@@ -61,7 +60,7 @@ public class TestRideDAL {
         assertFalse(rs.isEmpty());
         b = rideDA.deleteRide(id);
         assertTrue(b);
-        Ride r = rideDA.getRideById(id);
+        MutableRide r = rideDA.getRideById(id);
         assertNull(r);
     }
 

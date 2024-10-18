@@ -3,8 +3,6 @@ package sap.ass01.layers.DataAccessL.DB;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import sap.ass01.layers.DataAccessL.Schemas.MutableUser;
 import sap.ass01.layers.DataAccessL.Schemas.MutableUserImpl;
-import sap.ass01.layers.PersistenceL.Entities.User;
-import sap.ass01.layers.PersistenceL.Entities.UserImpl;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,8 +28,8 @@ public class UserDB implements UserDA{
         try (Connection connection = ds.getConnection()) {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM users");
-            MutableUser user = new MutableUserImpl();
             while (rs.next()) {
+                MutableUser user = new MutableUserImpl();
                 user.setID(rs.getInt("ID"));
                 user.setName(rs.getString(USER_NAME));
                 user.setCredit(rs.getInt(CREDIT));

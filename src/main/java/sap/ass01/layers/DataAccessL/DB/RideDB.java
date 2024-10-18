@@ -3,8 +3,6 @@ package sap.ass01.layers.DataAccessL.DB;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import sap.ass01.layers.DataAccessL.Schemas.MutableRide;
 import sap.ass01.layers.DataAccessL.Schemas.MutableRideImpl;
-import sap.ass01.layers.PersistenceL.Entities.Ride;
-import sap.ass01.layers.PersistenceL.Entities.RideImpl;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -174,8 +172,8 @@ public class RideDB implements RideDA{
     }
 
     private void fillRideListAndCloseSQL(List<MutableRide> rides, Statement stmt, ResultSet rs) throws SQLException {
-        MutableRide ride = new MutableRideImpl();
         while (rs.next()) {
+            MutableRide ride = new MutableRideImpl();
             ride.setID(rs.getInt("ID"));
             ride.setStartDate(rs.getString(START_DATE));
             ride.setEndDate(rs.getString(END_DATE));

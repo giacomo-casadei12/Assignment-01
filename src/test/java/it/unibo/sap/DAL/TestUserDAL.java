@@ -4,7 +4,6 @@ import org.junit.Test;
 import sap.ass01.layers.DataAccessL.DB.UserDA;
 import sap.ass01.layers.DataAccessL.DB.UserDB;
 import sap.ass01.layers.DataAccessL.Schemas.MutableUser;
-import sap.ass01.layers.PersistenceL.Entities.User;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class TestUserDAL {
 
     @Test
     public void getFirstUser() {
-        User x = userDA.getUserById(1);
+        MutableUser x = userDA.getUserById(1);
         assertNotNull(x);
         assertEquals(1, x.ID());
     }
@@ -50,7 +49,7 @@ public class TestUserDAL {
     public void createUpdateDeleteUser() {
         boolean b = userDA.createUser("Giangurgulo","Pulcinella");
         assertTrue(b);
-        User u = userDA.getUserByName("Giangurgulo");
+        MutableUser u = userDA.getUserByName("Giangurgulo");
         assertNotNull(u);
         assertEquals("Giangurgulo", u.userName());
         int id = u.ID();

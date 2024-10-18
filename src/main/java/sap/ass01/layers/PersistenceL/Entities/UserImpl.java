@@ -16,4 +16,25 @@ public record UserImpl(int ID, String userName, int credit, boolean admin) imple
     public int hashCode() {
         return Objects.hashCode(ID());
     }
+
+    @Override
+    public void setID(int id) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setName(String username) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setCredit(int credit) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setIsAdmin(boolean isAdmin) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
 }

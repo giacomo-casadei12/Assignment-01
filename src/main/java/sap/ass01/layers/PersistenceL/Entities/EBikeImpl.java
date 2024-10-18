@@ -16,4 +16,29 @@ public record EBikeImpl(int ID, int battery, String state, int positionX, int po
     public int hashCode() {
         return Objects.hashCode(ID());
     }
+
+    @Override
+    public void setID(int id) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setBattery(int battery) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setState(String state) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setPositionX(int x) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
+
+    @Override
+    public void setPositionY(int y) {
+        throw new UnsupportedOperationException("This is an immutable class");
+    }
 }
