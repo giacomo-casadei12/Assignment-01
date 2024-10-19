@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RideManagerImpl implements RideManager {
 
     final private static double BATTERY_CONSUMPTION_PER_METER = 0.5;
-    final private static double CREDIT_CONSUMPTION_PER_SECOND = 0.1;
+    final private static double CREDIT_CONSUMPTION_PER_SECOND = 1;
     final private PersistenceManager manager;
     final private Map<Pair<Integer,Integer>, Long> ongoingRides = new ConcurrentHashMap<>();
 
@@ -101,7 +101,7 @@ public class RideManagerImpl implements RideManager {
 
         EBike bike = manager.getEBike(eBikeId);
 
-        if (bike != null) {
+        if (bike != null && bike.battery() > 0) {
             manager.updateEBike(eBikeId, bike.battery(), EBikeState.AVAILABLE, bike.positionX(), bike.positionY());
         }
 
@@ -138,7 +138,7 @@ public class RideManagerImpl implements RideManager {
             var now = new Date().getTime();
             var last = ongoingRides.get(new Pair<>(userId, eBikeId));
             long timeElapsed = now - last;
-            credit -= (int) (((double) timeElapsed / 1000) * CREDIT_CONSUMPTION_PER_SECOND);
+            credit = credit - (int) (((double) timeElapsed / 1000) * CREDIT_CONSUMPTION_PER_SECOND);
             ongoingRides.put(new Pair<>(userId, eBikeId),now);
             manager.updateUser(userId, credit);
         }

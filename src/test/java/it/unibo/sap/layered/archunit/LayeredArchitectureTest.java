@@ -12,11 +12,11 @@ import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
 @RunWith(ArchUnitRunner.class)
 @AnalyzeClasses(packages = "sap.ass01.layers")
-public class ArchitectureTest {
+public class LayeredArchitectureTest {
 
     private static final String DAL_LAYER = "sap.ass01.layers.DataAccessL..";
     private static final String BLL_LAYER = "sap.ass01.layers.BusinessLogicL..";
-    private static final String PreL_LAYER = "sap.ass01.layers.PresentationL..";
+    private static final String PreL_LAYER = "sap.ass01.layers.GUI..";
     private static final String PerL_LAYER = "sap.ass01.layers.PersistenceL..";
 
     @ArchTest

@@ -1,14 +1,16 @@
-package sap.ass01.layers.PresentationL.Web;
+package sap.ass01.clean.infrastructure.Web;
 
-import io.vertx.core.*;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
+import io.vertx.core.http.WebSocket;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
-import io.vertx.core.http.WebSocket;
-import sap.ass01.layers.PresentationL.EBikeApp;
-import sap.ass01.layers.utils.Pair;
-import sap.ass01.layers.utils.Triple;
-import sap.ass01.layers.utils.VertxSingleton;
-import sap.ass01.layers.utils.WebOperation;
+import sap.ass01.clean.infrastructure.GUI.EBikeApp;
+import sap.ass01.clean.utils.Pair;
+import sap.ass01.clean.utils.Triple;
+import sap.ass01.clean.utils.VertxSingleton;
+import sap.ass01.clean.utils.WebOperation;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +32,6 @@ public class WebClientImpl implements WebClient {
     private static final String RIDE_QUERY_PATH = "/api/ride/query";
     private static final String BIKE_CHANGE_EVENT_TOPIC = "ebike-Change";
     private static final String USER_CHANGE_EVENT_TOPIC = "users-Change";
-
 
     private final io.vertx.ext.web.client.WebClient client;
     private final Vertx vertx;

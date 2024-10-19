@@ -1,7 +1,7 @@
-package sap.ass01.layers.PresentationL;
+package sap.ass01.clean.infrastructure.GUI;
 
-import sap.ass01.layers.utils.Pair;
-import sap.ass01.layers.utils.Triple;
+import sap.ass01.clean.utils.Pair;
+import sap.ass01.clean.utils.Triple;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +64,6 @@ public class VisualiserPanel extends JPanel {
             g2.drawRect(10, 20, 20, 20);
             g2.drawString("#" + userId + " " + hm.first() + " - credit: " + credit, 35, 35);
         }
-
     }
 
     /**

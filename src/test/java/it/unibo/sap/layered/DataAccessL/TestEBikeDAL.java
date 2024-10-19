@@ -1,4 +1,4 @@
-package it.unibo.sap.layered.DAL;
+package it.unibo.sap.layered.DataAccessL;
 
 import org.junit.Test;
 import sap.ass01.layers.DataAccessL.DB.EBikeDA;

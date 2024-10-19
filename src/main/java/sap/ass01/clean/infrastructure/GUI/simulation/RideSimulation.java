@@ -1,6 +1,6 @@
-package sap.ass01.layers.PresentationL.simulation;
+package sap.ass01.clean.infrastructure.GUI.simulation;
 
-import sap.ass01.layers.PresentationL.EBikeApp;
+import sap.ass01.clean.infrastructure.GUI.EBikeApp;
 
 import javax.swing.*;
 

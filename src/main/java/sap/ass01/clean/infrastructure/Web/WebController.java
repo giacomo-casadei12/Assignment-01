@@ -1,4 +1,4 @@
-package sap.ass01.layers.BusinessLogicL.Web;
+package sap.ass01.clean.infrastructure.Web;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -12,17 +12,14 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import sap.ass01.layers.utils.Pair;
-import sap.ass01.layers.BusinessLogicL.Logic.RideManager;
-import sap.ass01.layers.BusinessLogicL.Logic.RideManagerImpl;
-import sap.ass01.layers.PersistenceL.Persistence.PersistenceManagerImpl;
-import sap.ass01.layers.PersistenceL.Persistence.PersistenceManager;
-import sap.ass01.layers.PersistenceL.Entities.EBike;
-import sap.ass01.layers.utils.EBikeState;
-import sap.ass01.layers.PersistenceL.Entities.Ride;
-import sap.ass01.layers.PersistenceL.Entities.User;
-import sap.ass01.layers.utils.VertxSingleton;
-import sap.ass01.layers.utils.WebOperation;
+import sap.ass01.clean.domain.entities.EBike;
+import sap.ass01.clean.domain.entities.Ride;
+import sap.ass01.clean.domain.entities.User;
+import sap.ass01.clean.domain.ports.AppManager;
+import sap.ass01.clean.utils.EBikeState;
+import sap.ass01.clean.utils.Pair;
+import sap.ass01.clean.utils.VertxSingleton;
+import sap.ass01.clean.utils.WebOperation;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -44,17 +41,15 @@ public class WebController extends AbstractVerticle {
      * The Vertx.
      */
     final Vertx vertx;
-    final private RideManager rManager;
-    final private PersistenceManager pManager;
+    final private AppManager pManager;
 
     /**
      * Instantiates a new Web controller.
      */
-    public WebController() {
+    public WebController(AppManager appManager) {
         this.port = 8080;
         logger.setLevel(Level.FINE);
-        this.pManager = new PersistenceManagerImpl();
-        this.rManager = new RideManagerImpl(this.pManager);
+        this.pManager = appManager;
         vertx = VertxSingleton.getInstance().getVertx();
         vertx.deployVerticle(this);
     }
@@ -308,7 +303,7 @@ public class WebController extends AbstractVerticle {
         if (logger.isLoggable(Level.FINE)) {
             logger.log(Level.INFO, "New request - ebike query " + context.currentRoute().getPath());
         }
-         new Thread(() -> {
+        new Thread(() -> {
             // Parse the JSON body
             JsonObject requestBody = context.body().asJsonObject();
             if (requestBody != null && requestBody.containsKey(OPERATION)) {
@@ -369,7 +364,7 @@ public class WebController extends AbstractVerticle {
                         if (requestBody.containsKey(USER_ID) && requestBody.containsKey(E_BIKE_ID)) {
                             int userId = requestBody.getInteger(USER_ID);
                             int eBikeId = requestBody.getInteger(E_BIKE_ID);
-                            b = rManager.startRide(userId, eBikeId);
+                            b = pManager.startRide(userId, eBikeId);
                             this.checkBikeChangesAndNotifyAll(eBikeId);
                             checkResponseAndSendReply(context, b);
                         } else {
@@ -384,7 +379,7 @@ public class WebController extends AbstractVerticle {
                             int eBikeId = requestBody.getInteger(E_BIKE_ID);
                             int x = requestBody.getInteger(POSITION_X);
                             int y = requestBody.getInteger(POSITION_Y);
-                            Pair<Integer, Integer> p = rManager.updateRide(userId,eBikeId,x,y);
+                            Pair<Integer, Integer> p = pManager.updateRide(userId, eBikeId, x, y);
                             this.checkBikeChangesAndNotifyAll(eBikeId);
                             this.notifyUserChanged(userId, p.first());
                             var map = new HashMap<String, Object>();
@@ -400,7 +395,7 @@ public class WebController extends AbstractVerticle {
                         if (requestBody.containsKey(USER_ID) && requestBody.containsKey(E_BIKE_ID)) {
                             int userId = requestBody.getInteger(USER_ID);
                             int eBikeId = requestBody.getInteger(E_BIKE_ID);
-                            b = rManager.endRide(userId,eBikeId);
+                            b = pManager.endRide(userId, eBikeId);
                             this.checkBikeChangesAndNotifyAll(eBikeId);
                             checkResponseAndSendReply(context, b);
                         } else if (requestBody.containsKey(RIDE_ID)) {

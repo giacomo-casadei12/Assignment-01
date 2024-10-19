@@ -1,4 +1,4 @@
-package it.unibo.sap.layered.BLL;
+package it.unibo.sap.layered.BusinessLogicL;
 
 import org.junit.Test;
 import sap.ass01.layers.utils.Pair;
@@ -77,7 +77,7 @@ public class TestRideManager {
         Thread.sleep(10000);
         Pair<Integer,Integer> p = rideManager.updateRide(userID,eBikeID,9900,10000);
         assertEquals(50,p.second());
-        assertEquals(99,p.first());
+        assertEquals(90,p.first());
 
         destroyUserEBikeAndRide();
     }

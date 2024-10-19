@@ -1,12 +1,12 @@
-package sap.ass01.layers.PresentationL;
+package sap.ass01.clean.infrastructure.GUI;
 
 import io.vertx.core.Future;
-import sap.ass01.layers.PresentationL.Web.WebClient;
-import sap.ass01.layers.utils.Pair;
-import sap.ass01.layers.utils.Triple;
-import sap.ass01.layers.PresentationL.dialogs.*;
-import sap.ass01.layers.PresentationL.simulation.RideSimulation;
-import sap.ass01.layers.PresentationL.simulation.RideSimulationControlPanel;
+import sap.ass01.clean.infrastructure.Web.WebClient;
+import sap.ass01.clean.infrastructure.GUI.dialogs.*;
+import sap.ass01.clean.infrastructure.GUI.simulation.RideSimulation;
+import sap.ass01.clean.infrastructure.GUI.simulation.RideSimulationControlPanel;
+import sap.ass01.clean.utils.Pair;
+import sap.ass01.clean.utils.Triple;
 
 import javax.swing.*;
 import java.awt.*;
@@ -130,13 +130,11 @@ public class EBikeApp extends JFrame implements ActionListener {
         topPanel.add(nearbyBikeButton);
         topPanel.add(startRideButton);
         topPanel.add(myRidesButton);
-        topPanel.add(allRidesButton);
-        topPanel.add(allUsersButton);
-        topPanel.add(allBikesButton);
 
         allRidesButton.setVisible(false);
         allBikesButton.setVisible(false);
         allUsersButton.setVisible(false);
+
 
         add(topPanel,BorderLayout.NORTH);
 

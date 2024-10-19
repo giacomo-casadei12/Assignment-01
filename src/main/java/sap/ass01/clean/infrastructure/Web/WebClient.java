@@ -1,9 +1,9 @@
-package sap.ass01.layers.PresentationL.Web;
+package sap.ass01.clean.infrastructure.Web;
 
 import io.vertx.core.Future;
-import sap.ass01.layers.PresentationL.EBikeApp;
-import sap.ass01.layers.utils.Pair;
-import sap.ass01.layers.utils.Triple;
+import sap.ass01.clean.infrastructure.GUI.EBikeApp;
+import sap.ass01.clean.utils.Pair;
+import sap.ass01.clean.utils.Triple;
 
 import java.util.Map;
 
