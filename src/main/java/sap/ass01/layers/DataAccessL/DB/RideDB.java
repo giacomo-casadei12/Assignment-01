@@ -9,6 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The implementation of the RideDA interface.
+ */
 public class RideDB implements RideDA{
 
     private static final String START_DATE = "startDate";
@@ -16,9 +19,12 @@ public class RideDB implements RideDA{
     private static final String USER_ID = "userID";
     private static final String E_BIKE_ID = "eBikeID";
     private static final String PROBLEM_IN_THE_QUERY = "Problem in the query";
-    final MysqlDataSource ds;
-    final SimpleDateFormat format;
+    private final MysqlDataSource ds;
+    private final SimpleDateFormat format;
 
+    /**
+     * Instantiates a new RideDB.
+     */
     public RideDB() {
         ds = new MysqlDataSource();
         ds.setUser("root");

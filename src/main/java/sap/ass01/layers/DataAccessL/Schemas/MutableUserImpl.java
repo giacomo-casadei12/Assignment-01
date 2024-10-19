@@ -2,6 +2,9 @@ package sap.ass01.layers.DataAccessL.Schemas;
 
 import java.util.Objects;
 
+/**
+ * The implementation of the MutableUser interface.
+ */
 public class MutableUserImpl implements MutableUser{
 
     private int ID;

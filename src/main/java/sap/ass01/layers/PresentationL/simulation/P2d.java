@@ -6,6 +6,12 @@ package sap.ass01.layers.PresentationL.simulation;
  */
 public record P2d(double x, double y) implements java.io.Serializable {
 
+    /**
+     * Sum p 2 d.
+     *
+     * @param v the v
+     * @return the p 2 d
+     */
     public P2d sum(V2d v) {
         return new P2d(x + v.x(), y + v.y());
     }

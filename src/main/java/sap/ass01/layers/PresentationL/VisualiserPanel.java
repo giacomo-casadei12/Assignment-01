@@ -8,6 +8,10 @@ import java.awt.*;
 import java.io.Serial;
 import java.util.Map;
 
+/**
+ * The main Panel that displays the bikes in their coordinates,
+ * their statuses and battery charge as well as the current user.
+ */
 public class VisualiserPanel extends JPanel {
     private final long dx;
     private final long dy;
@@ -15,6 +19,13 @@ public class VisualiserPanel extends JPanel {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new Visualiser panel.
+     *
+     * @param w   the width in pixel
+     * @param h   the height in pixel
+     * @param app the EBikeApp
+     */
     public VisualiserPanel(int w, int h, EBikeApp app){
         setSize(w,h);
         dx = w/2 - 20;
@@ -54,6 +65,9 @@ public class VisualiserPanel extends JPanel {
 
     }
 
+    /**
+     * Refresh the panel.
+     */
     public void refresh(){
         repaint();
     }

@@ -8,13 +8,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The implementation of the UserDA interface.
+ */
 public class UserDB implements UserDA{
     private static final String USER_NAME = "UserName";
     private static final String CREDIT = "Credit";
     private static final String IS_ADMIN = "IsAdmin";
     private static final String PROBLEM_IN_THE_QUERY = "Problem in the query";
-    final MysqlDataSource ds;
+    private final MysqlDataSource ds;
 
+    /**
+     * Instantiates a new UserDB.
+     */
     public UserDB() {
         ds = new MysqlDataSource();
         ds.setUser("root");

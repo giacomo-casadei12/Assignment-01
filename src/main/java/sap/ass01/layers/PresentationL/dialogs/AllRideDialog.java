@@ -8,6 +8,11 @@ import java.awt.*;
 import java.io.Serial;
 import java.util.Map;
 
+/**
+ * A Dialog that contains all the rides made by the requesting user.
+ * If the user is an Admin, it shows all rides registered in the system
+ * with the choice to delete each of them
+ */
 public class AllRideDialog extends JDialog {
 
     private final EBikeApp app;
@@ -17,6 +22,13 @@ public class AllRideDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 4L;
 
+
+    /**
+     * Instantiates a new All ride dialog.
+     *
+     * @param app    the EBikeApp
+     * @param userId the user id of the current user
+     */
     public AllRideDialog(EBikeApp app, int userId) {
 
         dialog = new JDialog();

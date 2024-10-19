@@ -8,6 +8,11 @@ import java.awt.*;
 import java.io.Serial;
 import java.util.Map;
 
+/**
+ * A Dialog exclusive for the Admins
+ * it shows all the users registered in the system,
+ * it permits the admin to delete them
+ */
 public class AllUsersDialog extends JDialog {
 
     private final EBikeApp app;
@@ -16,6 +21,11 @@ public class AllUsersDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 5L;
 
+    /**
+     * Instantiates a new All users' dialog.
+     *
+     * @param app the EBikeApp
+     */
     public AllUsersDialog(EBikeApp app) {
 
         dialog = new JDialog();

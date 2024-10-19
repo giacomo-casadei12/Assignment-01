@@ -5,7 +5,8 @@ import sap.ass01.layers.PersistenceL.Entities.Ride;
 import java.util.List;
 
 /**
- * The interface Ride persistence.
+ * The interface exposing method for retrieve
+ * info from the Data Access Layer regarding the rides.
  */
 public interface RidePersistence {
     /**

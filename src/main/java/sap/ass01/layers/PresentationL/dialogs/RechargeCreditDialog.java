@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serial;
 
+/**
+ * The Dialog that permits the user to
+ * recharge its credit.
+ */
 public class RechargeCreditDialog extends JDialog {
 
     private final JTextField creditField;
@@ -15,6 +19,13 @@ public class RechargeCreditDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 8L;
 
+    /**
+     * Instantiates a new Recharge credit dialog.
+     *
+     * @param userId       the user id of the requesting user
+     * @param actualCredit the actual credit of the user
+     * @param parent       the EBikeApp
+     */
     public RechargeCreditDialog(int userId, int actualCredit, EBikeApp parent) {
         super(parent, "Login", true);
         this.app = parent;
@@ -23,6 +34,9 @@ public class RechargeCreditDialog extends JDialog {
         this.actualCredit = actualCredit;
     }
 
+    /**
+     * Initialize the dialog.
+     */
     public void initializeDialog() {
 
         setLayout(new BorderLayout());

@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serial;
 
+/**
+ * The Dialog that permits the user to specify
+ * its position to find nearby bikes.
+ */
 public class NearbyEBikeDialog extends JDialog {
 
     private JTextField xCoordField;
@@ -16,11 +20,19 @@ public class NearbyEBikeDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 7L;
 
+    /**
+     * Instantiates a new Nearby e bike dialog.
+     *
+     * @param app the EBikeApp
+     */
     public NearbyEBikeDialog(EBikeApp app) {
         super(app, "Insert actual position", true);
         this.app = app;
     }
 
+    /**
+     * Initialize the dialog.
+     */
     public void initializeDialog() {
         xCoordField = new JTextField(15);
         yCoordField = new JTextField(15);

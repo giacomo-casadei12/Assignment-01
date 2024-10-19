@@ -9,6 +9,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The implementation of the EBikeDA interface.
+ */
 public class EBikeDB implements EBikeDA {
 
     private static final String PROBLEM_IN_THE_QUERY = "Problem in the query";
@@ -16,9 +19,12 @@ public class EBikeDB implements EBikeDA {
     private static final String STATE = "State";
     private static final String POSITION_X = "PositionX";
     private static final String POSITION_Y = "PositionY";
-    final MysqlDataSource ds;
+    private final MysqlDataSource ds;
     static final private int NEARBY_RANGE = 10;
 
+    /**
+     * Instantiates a new EBikeDB.
+     */
     public EBikeDB() {
         ds = new MysqlDataSource();
         ds.setUser("root");

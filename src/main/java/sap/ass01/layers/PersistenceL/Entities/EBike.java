@@ -3,7 +3,8 @@ package sap.ass01.layers.PersistenceL.Entities;
 import sap.ass01.layers.DataAccessL.Schemas.MutableEBike;
 
 /**
- *  Represent an immutable Electric Bike (abbreviated to EBike)
+ *  The Immutable representation of Electric Bike
+ *  used in Persistence Layer and above.
  */
 public interface EBike extends MutableEBike {
 

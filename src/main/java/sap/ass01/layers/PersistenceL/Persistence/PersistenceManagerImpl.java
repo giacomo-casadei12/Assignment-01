@@ -10,12 +10,20 @@ import sap.ass01.layers.utils.EBikeState;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The implementation of the PersistenceManager interface.
+ */
 public class PersistenceManagerImpl implements PersistenceManager {
 
     private final EBikeDA bikeDA;
     private final RideDA rideDA;
     private final UserDA userDA;
 
+    /**
+     * Instantiates a new Persistence manager by
+     * creating an instance of all objects required
+     * to handle persistence of Bikes, Users and Rides.
+     */
     public PersistenceManagerImpl() {
         this.bikeDA = new EBikeDB();
         this.rideDA = new RideDB();

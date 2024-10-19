@@ -2,6 +2,9 @@ package sap.ass01.layers.DataAccessL.Schemas;
 
 import java.util.Objects;
 
+/**
+ * The implementation of the MutableEBike interface.
+ */
 public class MutableEBikeImpl implements MutableEBike {
 
     private int ID;

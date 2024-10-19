@@ -1,9 +1,10 @@
-package sap.ass01.layers.PresentationL;
+package sap.ass01.layers.PresentationL.Web;
 
 import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.core.http.WebSocket;
+import sap.ass01.layers.PresentationL.EBikeApp;
 import sap.ass01.layers.utils.Pair;
 import sap.ass01.layers.utils.Triple;
 import sap.ass01.layers.utils.VertxSingleton;
@@ -16,9 +17,9 @@ import java.util.logging.Logger;
 
 import static sap.ass01.layers.utils.JsonFieldsConstants.*;
 
-public class WebClient {
+public class WebClientImpl implements WebClient {
 
-    private static final Logger logger = Logger.getLogger(WebClient.class.getName());
+    private static final Logger logger = Logger.getLogger(WebClientImpl.class.getName());
     private static final String SERVER_HOST = "localhost";
     private static final int SERVER_PORT = 8080;
     private static final String USER_COMMAND_PATH = "/api/user/command";
@@ -32,12 +33,13 @@ public class WebClient {
     private final io.vertx.ext.web.client.WebClient client;
     private final Vertx vertx;
 
-    public WebClient() {
+    public WebClientImpl() {
         vertx = VertxSingleton.getInstance().getVertx();
         WebClientOptions options = new WebClientOptions().setDefaultHost(SERVER_HOST).setDefaultPort(SERVER_PORT);
         client = io.vertx.ext.web.client.WebClient.create(vertx, options);
     }
 
+    @Override
     public Future<Boolean> requestCreateUser(String username, String password) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -64,6 +66,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestDeleteUser(int userId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -89,6 +92,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestUpdateUser(int userId, int credit) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -115,6 +119,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestLogin(String username, String password) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -146,6 +151,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Map<Integer,Triple<String,Integer,Boolean>>> requestReadUser(int userId, String username) {
         Promise<Map<Integer,Triple<String,Integer,Boolean>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -193,6 +199,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestCreateEBike(int x, int y) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -219,6 +226,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestDeleteEBike(int eBikeId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -244,6 +252,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestUpdateEBike(int eBikeId, int battery, String state, int x, int y) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -277,6 +286,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>>> requestReadEBike(int eBikeId, int x, int y, boolean available) {
         Promise<Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -329,6 +339,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestStartRide(int userId, int eBikeId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -353,6 +364,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Pair<Integer,Integer>> requestUpdateRide(int userId, int eBikeId, int x, int y) {
         Promise<Pair<Integer,Integer>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -385,6 +397,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestEndRide(int userId, int eBikeId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -409,6 +422,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Boolean> requestDeleteRide(int rideId) {
         Promise<Boolean> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -434,6 +448,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public Future<Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>>> requestMultipleReadRide(int userId, int eBikeId, boolean ongoing) {
         Promise<Map<Integer,Pair<Pair<Integer, Integer>,Pair<String, String>>>> promise = Promise.promise();
         JsonObject requestPayload = new JsonObject();
@@ -478,6 +493,7 @@ public class WebClient {
         return promise.future();
     }
 
+    @Override
     public void requestSingleReadRide(int rideId, int userId) {
         JsonObject requestPayload = new JsonObject();
         if (rideId > 0) {
@@ -503,6 +519,7 @@ public class WebClient {
                 });
     }
 
+    @Override
     public void startMonitoringEBike(EBikeApp app) {
         vertx.createHttpClient().webSocket(SERVER_PORT, SERVER_HOST, "/api/ebikes/monitoring", asyncResult -> {
             if (asyncResult.succeeded()) {

@@ -7,7 +7,8 @@ import java.awt.*;
 import java.io.Serial;
 
 /**
- * Adapted from AddEBikeDialog
+ * A Dialog that make the user insert which
+ * bike they want to use for their ride
  * 
  */
 public class RideDialog extends JDialog {
@@ -21,12 +22,21 @@ public class RideDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 9L;
 
+    /**
+     * Instantiates a new Ride dialog.
+     *
+     * @param owner  the EBikeApp
+     * @param userId the user id tht is requesting the ride
+     */
     public RideDialog(EBikeApp owner, int userId) {
         super(owner, "Start Riding an EBike", true);
         this.userId = userId;
         app = owner;
     }
 
+    /**
+     * Initialize the dialog.
+     */
     public void initializeDialog() {
         initializeComponents();
         setupLayout();

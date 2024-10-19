@@ -4,9 +4,7 @@ package sap.ass01.layers.utils;
 import io.vertx.core.Vertx;
 
 /**
- *
- * Represents the use of the sigleton pattern for sharing the vertx instance
- *
+ * Represents the use of the singleton pattern for sharing the vertx instance
  */
 final public class VertxSingleton {
 

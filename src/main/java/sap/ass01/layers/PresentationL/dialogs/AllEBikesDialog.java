@@ -9,6 +9,12 @@ import java.awt.*;
 import java.io.Serial;
 import java.util.Map;
 
+/**
+ * A Dialog exclusive for the Admins
+ * it shows all the bikes registered in the system,
+ * it permits the admin to delete them, recharge them
+ * or add a new one
+ */
 public class AllEBikesDialog extends JDialog {
 
     private final EBikeApp app;
@@ -19,6 +25,13 @@ public class AllEBikesDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 3L;
 
+    /**
+     * Instantiates a new All e bikes dialog.
+     *
+     * @param app   the EBikeApp
+     * @param bikes a Map of Integer -> Triple of Pair<Integer, Integer>, Integer, String
+     *              BikeID -> (X coord, Y coord), battery level, Status
+     */
     public AllEBikesDialog(EBikeApp app, Map<Integer, Triple<Pair<Integer, Integer>, Integer, String>> bikes) {
         dialog = new JDialog();
         this.app = app;
@@ -38,6 +51,12 @@ public class AllEBikesDialog extends JDialog {
         }
     }
 
+    /**
+     * Add a new bike.
+     *
+     * @param x the starting x coordinate
+     * @param y the starting y coordinate
+     */
     public void addEBike(int x, int y){
         this.app.requestCreateEBike(x, y).onComplete(res -> {
             if (res.result()) {

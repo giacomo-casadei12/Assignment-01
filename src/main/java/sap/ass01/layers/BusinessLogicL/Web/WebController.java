@@ -30,15 +30,25 @@ import java.util.logging.Logger;
 
 import static sap.ass01.layers.utils.JsonFieldsConstants.*;
 
+/**
+ * The Vertx Server that handles all request
+ * coming from clients.
+ */
 public class WebController extends AbstractVerticle {
 
     private final int port;
     private static final Logger logger = Logger.getLogger("[EBikeCesena]");
     private static final String BIKE_CHANGE_EVENT_TOPIC = "user-Change";
+    /**
+     * The Vertx.
+     */
     final Vertx vertx;
     final private RideManager rManager;
     final private PersistenceManager pManager;
 
+    /**
+     * Instantiates a new Web controller.
+     */
     public WebController() {
         this.port = 8080;
         logger.setLevel(Level.INFO);
@@ -93,6 +103,12 @@ public class WebController extends AbstractVerticle {
 
     }
 
+    /**
+     * Process a request that will need to WRITE
+     * the user persistence system.
+     *
+     * @param context the RoutingContext
+     */
     protected void processServiceUserCmd(RoutingContext context) {
         if (logger.isLoggable(Level.FINE)) {
             logger.log(Level.INFO, "New request - user cmd " + context.currentRoute().getPath());
@@ -141,6 +157,12 @@ public class WebController extends AbstractVerticle {
         }).start();
     }
 
+    /**
+     * Process a request that will need to READ
+     * the user persistence system.
+     *
+     * @param context the RoutingContext
+     */
     protected void processServiceUserQuery(RoutingContext context) {
         if (logger.isLoggable(Level.FINE)) {
             logger.log(Level.INFO, "New request - user query " + context.currentRoute().getPath());
@@ -193,6 +215,12 @@ public class WebController extends AbstractVerticle {
         }).start();
     }
 
+    /**
+     * Process a request that will need to WRITE
+     * the EBike persistence system.
+     *
+     * @param context the RoutingContext
+     */
     protected void processServiceEBikeCmd(RoutingContext context) {
         if (logger.isLoggable(Level.FINE)) {
             logger.log(Level.INFO, "New request - ebike cmd " + context.currentRoute().getPath());
@@ -254,6 +282,12 @@ public class WebController extends AbstractVerticle {
         }).start();
     }
 
+    /**
+     * Process a request that will need to READ
+     * the EBike persistence system.
+     *
+     * @param context the RoutingContext
+     */
     protected void processServiceEBikeQuery(RoutingContext context) {
         logger.log(Level.INFO, "New request - ebike query " + context.currentRoute().getPath());
             new Thread(() -> {
@@ -296,6 +330,12 @@ public class WebController extends AbstractVerticle {
         }).start();
     }
 
+    /**
+     * Process a request that will need to WRITE
+     * the Ride persistence system.
+     *
+     * @param context the RoutingContext
+     */
     protected void processServiceRideCmd(RoutingContext context) {
         logger.log(Level.INFO, "New request - ride cmd " + context.currentRoute().getPath());
         new Thread(() -> {
@@ -359,6 +399,12 @@ public class WebController extends AbstractVerticle {
         }).start();
     }
 
+    /**
+     * Process a request that will need to READ
+     * the Ride persistence system.
+     *
+     * @param context the RoutingContext
+     */
     protected void processServiceRideQuery(RoutingContext context) {
         logger.log(Level.INFO, "New request - ride query " + context.currentRoute().getPath());
         new Thread(() -> {

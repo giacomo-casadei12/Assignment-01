@@ -26,12 +26,20 @@ public class AddEBikeDialog extends JDialog {
     private final AllEBikesDialog app;
     @Serial
     private static final long serialVersionUID = 2L;
-    
+
+    /**
+     * Instantiates a new Add EBike dialog.
+     *
+     * @param owner the AllEBikesDialog from which this has been called
+     */
     public AddEBikeDialog(AllEBikesDialog owner) {
         super(owner, "Adding E-Bike", true);
         this.app = owner;
     }
 
+    /**
+     * Initialize the dialog.
+     */
     public void initializeDialog() {
         initializeComponents();
         setupLayout();

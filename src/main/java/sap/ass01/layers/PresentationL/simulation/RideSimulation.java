@@ -4,6 +4,9 @@ import sap.ass01.layers.PresentationL.EBikeApp;
 
 import javax.swing.*;
 
+/**
+ * Simulation of a Ride.
+ */
 public class RideSimulation extends Thread {
 
 	private static final int DEFAULT_POSITION_VALUE = 200;
@@ -16,7 +19,15 @@ public class RideSimulation extends Thread {
 
     private final EBikeApp app;
 	private volatile boolean stopped;
-	
+
+	/**
+	 * Instantiates a new Ride simulation.
+	 *
+	 * @param bikeId the bike id of the chosen bike
+	 * @param bikeX  the starting x coordinate of the bike
+	 * @param bikeY  the starting y coordinate of the bike
+	 * @param app    the EBikeApp
+	 */
 	public RideSimulation(int bikeId, int bikeX, int bikeY, EBikeApp app) {
 		this.bikeId = bikeId;
 		this.loc = new P2d(bikeX, bikeY);
@@ -89,6 +100,9 @@ public class RideSimulation extends Thread {
 }
 	}
 
+	/**
+	 * Stop the simulation.
+	 */
 	public void stopSimulation() {
 		stopped = true;
 		interrupt();

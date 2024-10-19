@@ -11,6 +11,9 @@ import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Implementation of RideManager interface.
+ */
 public class RideManagerImpl implements RideManager {
 
     final private static double BATTERY_CONSUMPTION_PER_METER = 0.5;
@@ -18,6 +21,12 @@ public class RideManagerImpl implements RideManager {
     final private PersistenceManager manager;
     final private Map<Pair<Integer,Integer>, Long> ongoingRides = new ConcurrentHashMap<>();
 
+    /**
+     * Instantiates a new Ride manager.
+     *
+     * @param manager the PersistenceManager that will
+     *                handle the persistence of objects
+     */
     public RideManagerImpl(PersistenceManager manager) {
         this.manager = manager;
     }

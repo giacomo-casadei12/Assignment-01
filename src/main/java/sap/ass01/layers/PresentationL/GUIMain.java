@@ -1,12 +1,22 @@
 package sap.ass01.layers.PresentationL;
 
+import sap.ass01.layers.PresentationL.Web.WebClient;
+import sap.ass01.layers.PresentationL.Web.WebClientImpl;
 import sap.ass01.layers.PresentationL.dialogs.LoginDialog;
 
 import javax.swing.*;
 
+/**
+ * The entry point for the GUI.
+ */
 public class GUIMain {
+    /**
+     * The main method for launching the GUI.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
-        WebClient client = new WebClient();
+        WebClient client = new WebClientImpl();
         SwingUtilities.invokeLater(() -> {
             var dialog = new LoginDialog(null, client);
             dialog.initializeDialog();

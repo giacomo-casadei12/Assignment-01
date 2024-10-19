@@ -1,7 +1,7 @@
 package sap.ass01.layers.PresentationL.dialogs;
 
 import sap.ass01.layers.PresentationL.EBikeApp;
-import sap.ass01.layers.PresentationL.WebClient;
+import sap.ass01.layers.PresentationL.Web.WebClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +9,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
 
+/**
+ * The Dialog that permits the user
+ * to sign in in the system or create a new user.
+ */
 public class LoginDialog extends JDialog {
     private final Frame parent;
     private final WebClient webClient;
@@ -17,6 +21,12 @@ public class LoginDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 6L;
 
+    /**
+     * Instantiates a new Login dialog.
+     *
+     * @param parent    the parent Frame
+     * @param webClient the web client connected to the server
+     */
     public LoginDialog(Frame parent, WebClient webClient) {
         super(parent, "Login", true);
         this.parent = parent;
@@ -26,6 +36,9 @@ public class LoginDialog extends JDialog {
 
     }
 
+    /**
+     * Initialize the dialog.
+     */
     public void initializeDialog() {
 
         setLayout(new BorderLayout());

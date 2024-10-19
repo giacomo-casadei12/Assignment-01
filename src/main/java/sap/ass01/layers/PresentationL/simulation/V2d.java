@@ -15,6 +15,12 @@ package sap.ass01.layers.PresentationL.simulation;
  */
 public record V2d(double x, double y) implements java.io.Serializable {
 
+    /**
+     * Rotate v 2 d.
+     *
+     * @param degree the degree
+     * @return the v 2 d
+     */
     public V2d rotate(double degree) {
         var rad = degree * Math.PI / 180;
         var cs = Math.cos(rad);
@@ -24,11 +30,22 @@ public record V2d(double x, double y) implements java.io.Serializable {
         return new V2d(x1, y1).getNormalized();
     }
 
+    /**
+     * Gets normalized.
+     *
+     * @return the normalized
+     */
     public V2d getNormalized() {
         double module = Math.sqrt(x * x + y * y);
         return new V2d(x / module, y / module);
     }
 
+    /**
+     * Mul v 2 d.
+     *
+     * @param fact the fact
+     * @return the v 2 d
+     */
     public V2d mul(double fact) {
         return new V2d(x * fact, y * fact);
     }

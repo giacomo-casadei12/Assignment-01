@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serial;
 
+/**
+ * The Panel showing that a ride is in progress.
+ */
 public class RideSimulationControlPanel extends JFrame {
 
     private final int userId;
@@ -14,6 +17,13 @@ public class RideSimulationControlPanel extends JFrame {
     @Serial
     private static final long serialVersionUID = 10L;
 
+    /**
+     * Instantiates a new Ride simulation control panel.
+     *
+     * @param userId the user id of the current user
+     * @param bikeId the bike id of the selected bike
+     * @param app    the EBikeApp
+     */
     public RideSimulationControlPanel(int userId, int bikeId, EBikeApp app) {
         super("Ongoing Ride: " + userId);
         this.userId = userId;
@@ -21,6 +31,9 @@ public class RideSimulationControlPanel extends JFrame {
         bikeApp = app;
     }
 
+    /**
+     * Initialize the panel.
+     */
     public void initialize(){
         setSize(400, 200);
 
@@ -42,7 +55,10 @@ public class RideSimulationControlPanel extends JFrame {
             dispose();
         });
     }
-    
+
+    /**
+     * Shows the panel.
+     */
     public void display() {
     	SwingUtilities.invokeLater(() -> this.setVisible(true));
     }
