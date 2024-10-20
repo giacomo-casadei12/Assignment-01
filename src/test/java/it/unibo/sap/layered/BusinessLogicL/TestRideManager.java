@@ -4,11 +4,11 @@ import org.junit.Test;
 import sap.ass01.layers.utils.Pair;
 import sap.ass01.layers.BusinessLogicL.Logic.RideManager;
 import sap.ass01.layers.BusinessLogicL.Logic.RideManagerImpl;
-import sap.ass01.layers.PersistenceL.Persistence.PersistenceManager;
-import sap.ass01.layers.PersistenceL.Persistence.PersistenceManagerImpl;
-import sap.ass01.layers.PersistenceL.Entities.EBike;
-import sap.ass01.layers.PersistenceL.Entities.Ride;
-import sap.ass01.layers.PersistenceL.Entities.User;
+import sap.ass01.layers.BusinessLogicL.Persistence.PersistenceManager;
+import sap.ass01.layers.BusinessLogicL.Persistence.PersistenceManagerImpl;
+import sap.ass01.layers.BusinessLogicL.Entities.EBike;
+import sap.ass01.layers.BusinessLogicL.Entities.Ride;
+import sap.ass01.layers.BusinessLogicL.Entities.User;
 
 import java.util.List;
 

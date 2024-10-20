@@ -1,10 +1,10 @@
-package sap.ass01.layers.PersistenceL.Persistence;
+package sap.ass01.layers.BusinessLogicL.Persistence;
 
+import sap.ass01.layers.BusinessLogicL.Entities.*;
 import sap.ass01.layers.DataAccessL.DB.*;
 import sap.ass01.layers.DataAccessL.Schemas.MutableEBike;
 import sap.ass01.layers.DataAccessL.Schemas.MutableRide;
 import sap.ass01.layers.DataAccessL.Schemas.MutableUser;
-import sap.ass01.layers.PersistenceL.Entities.*;
 import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;

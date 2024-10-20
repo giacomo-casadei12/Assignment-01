@@ -1,6 +1,6 @@
-package sap.ass01.layers.PersistenceL.Persistence;
+package sap.ass01.layers.BusinessLogicL.Persistence;
 
-import sap.ass01.layers.PersistenceL.Entities.EBike;
+import sap.ass01.layers.BusinessLogicL.Entities.EBike;
 import sap.ass01.layers.utils.EBikeState;
 
 import java.util.List;

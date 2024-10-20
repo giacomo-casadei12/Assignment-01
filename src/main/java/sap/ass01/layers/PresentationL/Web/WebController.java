@@ -1,4 +1,4 @@
-package sap.ass01.layers.BusinessLogicL.Web;
+package sap.ass01.layers.PresentationL.Web;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -15,12 +15,12 @@ import io.vertx.ext.web.handler.StaticHandler;
 import sap.ass01.layers.utils.Pair;
 import sap.ass01.layers.BusinessLogicL.Logic.RideManager;
 import sap.ass01.layers.BusinessLogicL.Logic.RideManagerImpl;
-import sap.ass01.layers.PersistenceL.Persistence.PersistenceManagerImpl;
-import sap.ass01.layers.PersistenceL.Persistence.PersistenceManager;
-import sap.ass01.layers.PersistenceL.Entities.EBike;
+import sap.ass01.layers.BusinessLogicL.Persistence.PersistenceManagerImpl;
+import sap.ass01.layers.BusinessLogicL.Persistence.PersistenceManager;
+import sap.ass01.layers.BusinessLogicL.Entities.EBike;
 import sap.ass01.layers.utils.EBikeState;
-import sap.ass01.layers.PersistenceL.Entities.Ride;
-import sap.ass01.layers.PersistenceL.Entities.User;
+import sap.ass01.layers.BusinessLogicL.Entities.Ride;
+import sap.ass01.layers.BusinessLogicL.Entities.User;
 import sap.ass01.layers.utils.VertxSingleton;
 import sap.ass01.layers.utils.WebOperation;
 

@@ -1,4 +1,4 @@
-package sap.ass01.layers.PersistenceL.Entities;
+package sap.ass01.layers.BusinessLogicL.Entities;
 
 import java.util.Objects;
 

@@ -1,20 +1,20 @@
-package sap.ass01.layers.PersistenceL.Entities;
+package sap.ass01.layers.BusinessLogicL.Entities;
 
 import java.util.Objects;
 
-public record RideImpl(int ID, String startDate, String endDate, int userID, int eBikeID) implements Ride {
+public record EBikeImpl(int ID, int battery, String state, int positionX, int positionY) implements EBike {
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RideImpl ride = (RideImpl) o;
-        return ID == ride.ID;
+        EBikeImpl eBike = (EBikeImpl) o;
+        return ID() == eBike.ID();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(ID);
+        return Objects.hashCode(ID());
     }
 
     @Override
@@ -23,22 +23,22 @@ public record RideImpl(int ID, String startDate, String endDate, int userID, int
     }
 
     @Override
-    public void setStartDate(String startDate) {
+    public void setBattery(int battery) {
         throw new UnsupportedOperationException("This is an immutable class");
     }
 
     @Override
-    public void setEndDate(String endDate) {
+    public void setState(String state) {
         throw new UnsupportedOperationException("This is an immutable class");
     }
 
     @Override
-    public void setUserID(int userID) {
+    public void setPositionX(int x) {
         throw new UnsupportedOperationException("This is an immutable class");
     }
 
     @Override
-    public void setEBikeID(int bikeID) {
+    public void setPositionY(int y) {
         throw new UnsupportedOperationException("This is an immutable class");
     }
 }
