@@ -1,4 +1,4 @@
-package it.unibo.sap.layered.archunit;
+package it.unibo.sap.layered.architecture;
 
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.junit.AnalyzeClasses;

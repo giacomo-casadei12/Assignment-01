@@ -130,14 +130,14 @@ public class EBikeApp extends JFrame implements ActionListener {
         topPanel.add(nearbyBikeButton);
         topPanel.add(startRideButton);
         topPanel.add(myRidesButton);
-        topPanel.add(allRidesButton);
-        topPanel.add(allUsersButton);
-        topPanel.add(allBikesButton);
+        allRidesButton.setVisible(false);
+        allBikesButton.setVisible(false);
+        allUsersButton.setVisible(false);
 
-        if (this.user != null && !this.user.third()) {
-            allRidesButton.setVisible(false);
-            allBikesButton.setVisible(false);
-            allUsersButton.setVisible(false);
+        if (this.user != null && this.user.third()) {
+            allRidesButton.setVisible(true);
+            allBikesButton.setVisible(true);
+            allUsersButton.setVisible(true);
         }
 
         add(topPanel,BorderLayout.NORTH);

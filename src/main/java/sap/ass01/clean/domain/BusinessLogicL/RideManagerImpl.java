@@ -91,7 +91,7 @@ public class RideManagerImpl implements RideManager {
 
     private void updatedBattery(EBike bike, int positionX, int positionY) {
         double distance;
-        int battery = 0;
+        int battery;
 
         battery = bike.battery();
         distance = Point2D.distance(bike.positionX(), bike.positionY(), positionX, positionY);
@@ -99,6 +99,7 @@ public class RideManagerImpl implements RideManager {
 
         bike.setPositionX(positionX);
         bike.setPositionY(positionY);
+        bike.setBattery(battery);
 
         if (battery <= 0) {
             bike.setState(EBikeState.OUT_OF_CHARGE.toString());

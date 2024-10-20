@@ -194,7 +194,7 @@ public class AppManagerImpl implements AppManager, PersistenceNotificationServic
         var now = new Date().getTime();
         long last = rideUpdateTimes.get(new Pair<>(user.ID(), eBike.ID()));
         long timeElapsed = now - last;
-        rideUpdateTimes.put(new Pair<>(user.ID(), eBike.ID()), timeElapsed);
+        rideUpdateTimes.put(new Pair<>(user.ID(), eBike.ID()), now);
         return this.rideManager.updateRide(user, eBike, x, y, timeElapsed);
     }
 

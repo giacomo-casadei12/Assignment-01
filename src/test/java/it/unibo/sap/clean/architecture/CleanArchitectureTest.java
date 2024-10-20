@@ -1,4 +1,4 @@
-package it.unibo.sap.layered.archunit;
+package it.unibo.sap.clean.architecture;
 
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
