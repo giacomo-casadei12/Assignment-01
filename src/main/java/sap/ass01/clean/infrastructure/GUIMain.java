@@ -1,4 +1,4 @@
-package sap.ass01.clean;
+package sap.ass01.clean.infrastructure;
 
 import sap.ass01.clean.infrastructure.Web.WebClient;
 import sap.ass01.clean.infrastructure.Web.WebClientImpl;

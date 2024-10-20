@@ -1,4 +1,4 @@
-package sap.ass01.clean.infrastructure.DataAccessL;
+package sap.ass01.clean.domain.ports.dataAccessPorts;
 
 import sap.ass01.clean.domain.entities.User;
 

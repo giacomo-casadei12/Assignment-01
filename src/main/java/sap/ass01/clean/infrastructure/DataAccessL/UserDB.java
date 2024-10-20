@@ -3,6 +3,7 @@ package sap.ass01.clean.infrastructure.DataAccessL;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import sap.ass01.clean.domain.entities.User;
 import sap.ass01.clean.domain.entities.UserImpl;
+import sap.ass01.clean.domain.ports.dataAccessPorts.UserDA;
 
 import java.sql.*;
 import java.util.ArrayList;

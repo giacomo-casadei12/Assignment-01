@@ -21,8 +21,8 @@ public class CleanArchitectureTest {
     public static final ArchRule cleanArchitectureAccessRule = layeredArchitecture().consideringAllDependencies()
             .layer("Domain").definedBy(DOMAIN_LAYER)
             .layer("Infrastructure").definedBy(INFRASTRUCTURE_LAYER)
-            .whereLayer("Infrastructure").mayNotBeAccessedByAnyLayer()
-            .whereLayer("Domain").mayOnlyBeAccessedByLayers("Infrastructure")
+            .whereLayer("Infrastructure").mayOnlyBeAccessedByLayers("Infrastructure")
+            .whereLayer("Domain").mayOnlyBeAccessedByLayers("Infrastructure","Domain")
             .ignoreDependency(Object.class, Object.class);
 
     @ArchTest
@@ -38,5 +38,5 @@ public class CleanArchitectureTest {
             .should().onlyDependOnClassesThat()
             .resideInAnyPackage(DOMAIN_LAYER,"java.*..",
                     INFRASTRUCTURE_LAYER,"javax.*..","io.vertx..","sap.ass01.clean.utils..",
-                    "io.vertx..");
+                    "io.vertx..", "com.mysql..");
 }

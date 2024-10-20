@@ -3,6 +3,7 @@ package sap.ass01.clean.infrastructure.DataAccessL;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import sap.ass01.clean.domain.entities.EBike;
 import sap.ass01.clean.domain.entities.EBikeImpl;
+import sap.ass01.clean.domain.ports.dataAccessPorts.EBikeDA;
 import sap.ass01.clean.utils.EBikeState;
 
 import java.sql.*;

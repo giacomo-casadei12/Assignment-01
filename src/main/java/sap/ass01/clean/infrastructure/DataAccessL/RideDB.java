@@ -3,6 +3,7 @@ package sap.ass01.clean.infrastructure.DataAccessL;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import sap.ass01.clean.domain.entities.Ride;
 import sap.ass01.clean.domain.entities.RideImpl;
+import sap.ass01.clean.domain.ports.dataAccessPorts.RideDA;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;

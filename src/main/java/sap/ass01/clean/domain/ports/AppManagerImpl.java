@@ -3,7 +3,9 @@ package sap.ass01.clean.domain.ports;
 import sap.ass01.clean.domain.BusinessLogicL.PersistenceNotificationService;
 import sap.ass01.clean.domain.BusinessLogicL.RideManager;
 import sap.ass01.clean.domain.entities.*;
-import sap.ass01.clean.infrastructure.DataAccessL.*;
+import sap.ass01.clean.domain.ports.dataAccessPorts.EBikeDA;
+import sap.ass01.clean.domain.ports.dataAccessPorts.RideDA;
+import sap.ass01.clean.domain.ports.dataAccessPorts.UserDA;
 import sap.ass01.clean.utils.EBikeState;
 import sap.ass01.clean.utils.Pair;
 
@@ -13,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The implementation of the PersistenceManager interface.
+ * The implementation of the AppManager interface.
  */
 public class AppManagerImpl implements AppManager, PersistenceNotificationService {
 
@@ -24,14 +26,17 @@ public class AppManagerImpl implements AppManager, PersistenceNotificationServic
     private final Map<Pair<Integer, Integer>, Long> rideUpdateTimes = new ConcurrentHashMap<>();
 
     /**
-     * Instantiates a new Persistence manager by
-     * creating an instance of all objects required
-     * to handle persistence of Bikes, Users and Rides.
+     * Instantiates a new App Manager
+     *
+     * @param rideManager the logic for handle rides
+     * @param rideDA      the persistence abstraction for rides
+     * @param bikeDA      the persistence abstraction for bikes
+     * @param userDA      the persistence abstraction for users
      */
-    public AppManagerImpl(RideManager rideManager) {
-        this.bikeDA = new EBikeDB();
-        this.rideDA = new RideDB();
-        this.userDA = new UserDB();
+    public AppManagerImpl(RideManager rideManager, RideDA rideDA, EBikeDA bikeDA, UserDA userDA) {
+        this.bikeDA = bikeDA;
+        this.rideDA = rideDA;
+        this.userDA = userDA;
         this.rideManager = rideManager;
     }
 
