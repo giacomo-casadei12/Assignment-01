@@ -59,7 +59,7 @@ public class AllUsersDialog extends JDialog {
         backPanel.add(backButton);
         dialog.add(backPanel, BorderLayout.SOUTH);
 
-        dialog.setSize(400, users.size()*100);
+        dialog.setSize(400, 400);
 
         dialog.setVisible(true);
     }

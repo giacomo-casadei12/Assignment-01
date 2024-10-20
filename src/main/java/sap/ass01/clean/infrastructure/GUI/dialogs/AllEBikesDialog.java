@@ -100,7 +100,7 @@ public class AllEBikesDialog extends JDialog {
         dialog.add(backPanel, BorderLayout.SOUTH);
 
 
-        dialog.setSize(600, bikes.size()*150);
+        dialog.setSize(600, 400);
 
         dialog.setVisible(true);
     }

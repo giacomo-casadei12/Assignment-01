@@ -86,9 +86,9 @@ public class EBikeApp extends JFrame implements ActionListener {
                         this.userId = key;
                         this.user = element;
                         if (this.user.third()) {
-                            allRidesButton.setVisible(false);
-                            allBikesButton.setVisible(false);
-                            allUsersButton.setVisible(false);
+                            allRidesButton.setVisible(true);
+                            allBikesButton.setVisible(true);
+                            allUsersButton.setVisible(true);
                         }
                         refreshView();
                     }
@@ -131,9 +131,11 @@ public class EBikeApp extends JFrame implements ActionListener {
         topPanel.add(startRideButton);
         topPanel.add(myRidesButton);
 
-        allRidesButton.setVisible(false);
-        allBikesButton.setVisible(false);
-        allUsersButton.setVisible(false);
+        if (this.user != null && !this.user.third()) {
+            allRidesButton.setVisible(false);
+            allBikesButton.setVisible(false);
+            allUsersButton.setVisible(false);
+        }
 
 
         add(topPanel,BorderLayout.NORTH);

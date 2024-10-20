@@ -63,7 +63,7 @@ public class AllRideDialog extends JDialog {
         backPanel.add(backButton);
         dialog.add(backPanel, BorderLayout.SOUTH);
 
-        dialog.setSize(1000, rides.size()*150);
+        dialog.setSize(1000, 400);
 
         dialog.setVisible(true);
     }
