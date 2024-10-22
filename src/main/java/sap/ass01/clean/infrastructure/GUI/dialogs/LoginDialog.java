@@ -59,7 +59,7 @@ public class LoginDialog extends JDialog {
         inputPanel.add(passwordField);
 
         JButton loginButton = new JButton("Login");
-        JButton createUserButton = new JButton("Create user");
+        JButton createUserButton = new JButton("Register");
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(loginButton);
