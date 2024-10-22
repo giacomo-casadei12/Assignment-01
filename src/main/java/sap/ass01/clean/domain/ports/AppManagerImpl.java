@@ -124,7 +124,7 @@ public class AppManagerImpl implements AppManager, PersistenceNotificationServic
     public boolean updateEBike(int id, int battery, EBikeState state, int positionX, int positionY) {
         EBike bike = new EBikeImpl();
         bike.setBattery(battery);
-        bike.setID(id);
+        bike.setId(id);
         bike.setPositionX(positionX);
         bike.setPositionY(positionY);
         bike.setState(state.toString());
@@ -159,19 +159,19 @@ public class AppManagerImpl implements AppManager, PersistenceNotificationServic
 
     @Override
     public void notifyUpdateUser(User user) {
-        this.updateUser(user.ID(), user.credit());
+        this.updateUser(user.id(), user.credit());
     }
 
     @Override
     public void notifyUpdateEBike(EBike bike) {
-        this.updateEBike(bike.ID(), bike.battery(), EBikeState.valueOf(bike.state()),
+        this.updateEBike(bike.id(), bike.battery(), EBikeState.valueOf(bike.state()),
                 bike.positionX(), bike.positionY());
     }
 
     @Override
     public void notifyEndRide(User user, EBike bike) {
-        Ride ride = this.getRide(0, user.ID());
-        this.endRide(ride.ID());
+        Ride ride = this.getRide(0, user.id());
+        this.endRide(ride.id());
     }
 
     @Override
@@ -179,7 +179,7 @@ public class AppManagerImpl implements AppManager, PersistenceNotificationServic
         User user = this.userDA.getUserById(userID);
         EBike eBike = this.bikeDA.getEBikeById(bikeID);
         var now = new Date().getTime();
-        rideUpdateTimes.put(new Pair<>(user.ID(), eBike.ID()), now);
+        rideUpdateTimes.put(new Pair<>(user.id(), eBike.id()), now);
         boolean success = this.rideManager.startRide(user,eBike);
         if (success) {
             success = this.rideDA.createRide(userID, bikeID);
@@ -192,9 +192,9 @@ public class AppManagerImpl implements AppManager, PersistenceNotificationServic
         User user = this.userDA.getUserById(userID);
         EBike eBike = this.bikeDA.getEBikeById(bikeID);
         var now = new Date().getTime();
-        long last = rideUpdateTimes.get(new Pair<>(user.ID(), eBike.ID()));
+        long last = rideUpdateTimes.get(new Pair<>(user.id(), eBike.id()));
         long timeElapsed = now - last;
-        rideUpdateTimes.put(new Pair<>(user.ID(), eBike.ID()), now);
+        rideUpdateTimes.put(new Pair<>(user.id(), eBike.id()), now);
         return this.rideManager.updateRide(user, eBike, x, y, timeElapsed);
     }
 

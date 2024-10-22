@@ -29,7 +29,7 @@ public class TestUserDAL {
     public void getFirstUser() {
         MutableUser x = userDA.getUserById(1);
         assertNotNull(x);
-        assertEquals(1, x.ID());
+        assertEquals(1, x.id());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class TestUserDAL {
         MutableUser u = userDA.getUserByName("Giangurgulo");
         assertNotNull(u);
         assertEquals("Giangurgulo", u.userName());
-        int id = u.ID();
+        int id = u.id();
         b = userDA.updateUser(id,200);
         assertTrue(b);
         u = userDA.getUserById(id);

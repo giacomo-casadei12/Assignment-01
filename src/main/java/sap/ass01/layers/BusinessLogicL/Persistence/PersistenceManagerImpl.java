@@ -148,7 +148,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
     }
 
     private User convertMutableUserToUser(MutableUser mutableUser) {
-       return mutableUser != null ? new UserImpl(mutableUser.ID(),
+       return mutableUser != null ? new UserImpl(mutableUser.id(),
                 mutableUser.userName(),
                 mutableUser.credit(),
                 mutableUser.admin()) :
@@ -156,7 +156,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
     }
 
     private EBike convertMutableEBikeToEBike(MutableEBike mutableEBike) {
-        return mutableEBike != null ? new EBikeImpl(mutableEBike.ID(),
+        return mutableEBike != null ? new EBikeImpl(mutableEBike.id(),
                 mutableEBike.battery(),
                 mutableEBike.state(),
                 mutableEBike.positionX(),
@@ -165,7 +165,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
     }
 
     private Ride convertMutableRideToRide(MutableRide mutableRide) {
-        return mutableRide != null ? new RideImpl(mutableRide.ID(),
+        return mutableRide != null ? new RideImpl(mutableRide.id(),
                 mutableRide.startDate(),
                 mutableRide.endDate(),
                 mutableRide.userID(),

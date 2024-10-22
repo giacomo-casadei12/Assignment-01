@@ -19,7 +19,7 @@ import static sap.ass01.layers.utils.JsonFieldsConstants.*;
 
 public class WebClientImpl implements WebClient {
 
-    private static final Logger logger = Logger.getLogger(WebClientImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WebClientImpl.class.getName());
     private static final String SERVER_HOST = "localhost";
     private static final int SERVER_PORT = 8080;
     private static final String USER_COMMAND_PATH = "/api/user/command";
@@ -39,7 +39,7 @@ public class WebClientImpl implements WebClient {
         vertx = VertxSingleton.getInstance().getVertx();
         WebClientOptions options = new WebClientOptions().setDefaultHost(SERVER_HOST).setDefaultPort(SERVER_PORT);
         client = io.vertx.ext.web.client.WebClient.create(vertx, options);
-        logger.setLevel(Level.FINE);
+        LOGGER.setLevel(Level.FINE);
     }
 
     @Override
@@ -54,13 +54,13 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("User created: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("User created: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.severe("Failed to create user: " + ar.cause().getMessage());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.severe("Failed to create user: " + ar.cause().getMessage());
                             }
                             promise.complete(false);
                         }
@@ -80,13 +80,13 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("User deleted: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("User deleted: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.severe("Failed to delete user: " + ar.cause().getMessage());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.severe("Failed to delete user: " + ar.cause().getMessage());
                             }
                             promise.complete(false);
                         }
@@ -107,13 +107,13 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("User updated: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("User updated: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.severe("Failed to update user: " + ar.cause().getMessage());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.severe("Failed to update user: " + ar.cause().getMessage());
                             }
                             promise.complete(false);
                         }
@@ -134,19 +134,19 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("Login: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("Login: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.warning("Login failed: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.warning("Login failed: " + ar.result().bodyAsString());
                             }
                             promise.complete(false);
                         }
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to login: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to login: " + ar.cause().getMessage());
                         }
                         promise.fail(ar.cause());
                     }
@@ -187,14 +187,14 @@ public class WebClientImpl implements WebClient {
                             retMap.put(resId, resUser);
                             promise.complete(retMap);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.warning("Error in response received from server");
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.warning("Error in response received from server");
                             }
                             promise.complete(null);
                         }
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to retrieve users: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to retrieve users: " + ar.cause().getMessage());
                         }
                         promise.fail(ar.cause());
                     }
@@ -214,13 +214,13 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("EBike created: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("EBike created: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.severe("Failed to create eBike: " + ar.cause().getMessage());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.severe("Failed to create eBike: " + ar.cause().getMessage());
                             }
                             promise.complete(false);
                         }
@@ -240,13 +240,13 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("eBike deleted: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("eBike deleted: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.severe("Failed to delete eBike: " + ar.cause().getMessage());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.severe("Failed to delete eBike: " + ar.cause().getMessage());
                             }
                             promise.complete(false);
                         }
@@ -274,13 +274,13 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("eBike updated: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("eBike updated: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.severe("Failed to update eBike: " + ar.cause().getMessage());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.severe("Failed to update eBike: " + ar.cause().getMessage());
                             }
                             promise.complete(false);
                         }
@@ -311,8 +311,8 @@ public class WebClientImpl implements WebClient {
         client.get(EBIKE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.info("eBikes: " + ar.result().bodyAsString());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.info("eBikes: " + ar.result().bodyAsString());
                         }
                         JsonObject res = ar.result().bodyAsJsonObject();
                         if (res.containsKey(RESULT)) {
@@ -327,14 +327,14 @@ public class WebClientImpl implements WebClient {
                             insertEBikeInMap(retMap, res);
                             promise.complete(retMap);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.warning("Error in response received from server");
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.warning("Error in response received from server");
                             }
                             promise.complete(null);
                         }
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to retrieve eBikes: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to retrieve eBikes: " + ar.cause().getMessage());
                         }
                         promise.fail(ar.cause());
                     }
@@ -353,13 +353,13 @@ public class WebClientImpl implements WebClient {
         client.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.info("ride started: " + ar.result().bodyAsString());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.info("ride started: " + ar.result().bodyAsString());
                         }
                         promise.complete(true);
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to start ride: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to start ride: " + ar.cause().getMessage());
                         }
                         promise.complete(false);
                     }
@@ -382,8 +382,8 @@ public class WebClientImpl implements WebClient {
                     if (ar.succeeded()) {
                         var res = ar.result().bodyAsJsonObject();
                         if (res.containsKey(CREDIT) && res.containsKey(BATTERY)) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("ride updated: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("ride updated: " + ar.result().bodyAsString());
                             }
                             promise.complete(new Pair<>(Integer.parseInt(res.getString(CREDIT)),
                                     Integer.parseInt(res.getString(BATTERY))));
@@ -391,8 +391,8 @@ public class WebClientImpl implements WebClient {
                             promise.complete(null);
                         }
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to update ride: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to update ride: " + ar.cause().getMessage());
                         }
                         promise.fail(ar.cause());
                     }
@@ -411,13 +411,13 @@ public class WebClientImpl implements WebClient {
         client.post(RIDE_COMMAND_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded() && ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.info("ride ended: " + ar.result().bodyAsString());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.info("ride ended: " + ar.result().bodyAsString());
                         }
                         promise.complete(true);
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to end ride: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to end ride: " + ar.cause().getMessage());
                         }
                         promise.complete(false);
                     }
@@ -436,13 +436,13 @@ public class WebClientImpl implements WebClient {
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
                         if (ar.result().bodyAsJsonObject().getValue(RESULT).toString().equals("ok")) {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.info("ride deleted: " + ar.result().bodyAsString());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.info("ride deleted: " + ar.result().bodyAsString());
                             }
                             promise.complete(true);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.severe("Failed to delete ride: " + ar.cause().getMessage());
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.severe("Failed to delete ride: " + ar.cause().getMessage());
                             }
                             promise.complete(false);
                         }
@@ -471,8 +471,8 @@ public class WebClientImpl implements WebClient {
         client.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.info("rides: " + ar.result().bodyAsString());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.info("rides: " + ar.result().bodyAsString());
                         }
                         var res = ar.result().bodyAsJsonObject();
                         if (res.containsKey(RESULT)) {
@@ -488,8 +488,8 @@ public class WebClientImpl implements WebClient {
                             promise.complete(retMap);
                         }
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to retrieve rides: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to retrieve rides: " + ar.cause().getMessage());
                         }
                     }
                 });
@@ -511,12 +511,12 @@ public class WebClientImpl implements WebClient {
         client.get(RIDE_QUERY_PATH)
                 .sendJson(requestPayload, ar -> {
                     if (ar.succeeded()) {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.info("ride: " + ar.result().bodyAsString());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.info("ride: " + ar.result().bodyAsString());
                         }
                     } else {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.severe("Failed to retrieve ride: " + ar.cause().getMessage());
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.severe("Failed to retrieve ride: " + ar.cause().getMessage());
                         }
                     }
                 });
@@ -541,16 +541,16 @@ public class WebClientImpl implements WebClient {
                                 String status = jsonMessage.getString("status");
                                 app.updateEBikeFromEventbus(eBikeId, x, y, battery, status);
                     }
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.info("Received message from eventBus: " + message);
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.info("Received message from eventBus: " + message);
                     }
                 });
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.info("WebSocket monitoring established for bikes changes.");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.info("WebSocket monitoring established for bikes changes.");
                 }
             } else {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.severe("Failed to establish WebSocket bikes monitoring: " + asyncResult.cause().getMessage());
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.severe("Failed to establish WebSocket bikes monitoring: " + asyncResult.cause().getMessage());
                 }
             }
         });
@@ -573,16 +573,16 @@ public class WebClientImpl implements WebClient {
                             app.updateUserFromEventbus(credit);
                         }
                     }
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.info("Received message from eventBus: " + message);
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.info("Received message from eventBus: " + message);
                     }
                 });
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.info("WebSocket monitoring established for user changes.");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.info("WebSocket monitoring established for user changes.");
                 }
             } else {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.severe("Failed to establish WebSocket user monitoring: " + asyncResult.cause().getMessage());
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.severe("Failed to establish WebSocket user monitoring: " + asyncResult.cause().getMessage());
                 }
             }
         });

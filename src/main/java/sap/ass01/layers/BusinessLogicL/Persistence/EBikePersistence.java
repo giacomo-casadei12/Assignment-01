@@ -24,7 +24,7 @@ public interface EBikePersistence {
     List<EBike> getAllEBikes(int positionX, int positionY, boolean available);
 
     /**
-     * Gets a bike given its ID.
+     * Gets a bike given its id.
      *
      * @param id the id of the bike
      * @return an EBike containing the requested bike

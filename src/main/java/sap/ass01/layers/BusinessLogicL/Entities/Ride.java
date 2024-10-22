@@ -8,7 +8,7 @@ import sap.ass01.layers.DataAccessL.Schemas.MutableRide;
 public interface Ride extends MutableRide {
 
     @Override
-    int ID();
+    int id();
 
     @Override
     String startDate();

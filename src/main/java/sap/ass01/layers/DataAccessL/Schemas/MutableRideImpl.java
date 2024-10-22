@@ -7,15 +7,15 @@ import java.util.Objects;
  */
 public class MutableRideImpl implements MutableRide {
 
-    private int ID;
+    private int id;
     private String startDate;
     private String endDate;
     private int userID;
     private int eBikeID;
 
     @Override
-    public void setID(int id) {
-        this.ID = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -39,8 +39,8 @@ public class MutableRideImpl implements MutableRide {
     }
 
     @Override
-    public int ID() {
-        return this.ID;
+    public int id() {
+        return this.id;
     }
 
     @Override
@@ -68,11 +68,11 @@ public class MutableRideImpl implements MutableRide {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MutableRideImpl that = (MutableRideImpl) o;
-        return ID == that.ID && userID == that.userID && eBikeID == that.eBikeID && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
+        return id == that.id && userID == that.userID && eBikeID == that.eBikeID && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, startDate, endDate, userID, eBikeID);
+        return Objects.hash(id, startDate, endDate, userID, eBikeID);
     }
 }

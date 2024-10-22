@@ -18,7 +18,7 @@ public interface UserPersistence {
     List<User> getAllUsers();
 
     /**
-     * Gets a user given its ID or username.
+     * Gets a user given its id or username.
      *
      * @param id       the id of the user
      * @param userName the username of the user

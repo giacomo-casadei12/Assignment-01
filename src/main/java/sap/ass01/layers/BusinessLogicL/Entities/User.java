@@ -8,7 +8,7 @@ import sap.ass01.layers.DataAccessL.Schemas.MutableUser;
 public interface User extends MutableUser {
 
     @Override
-    int ID();
+    int id();
 
     @Override
     String userName();

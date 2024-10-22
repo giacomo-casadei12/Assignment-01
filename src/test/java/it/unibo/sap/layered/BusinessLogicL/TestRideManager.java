@@ -52,12 +52,12 @@ public class TestRideManager {
         assertTrue(rs2.contains(r));
         assertTrue(rs3.contains(r));
 
-        rideID = r.ID();
+        rideID = r.id();
 
         b = rideManager.endRide(userID,eBikeID);
         assertTrue(b);
 
-        r = persManager.getRide(r.ID(),0);
+        r = persManager.getRide(r.id(),0);
         assertNotNull(r.endDate());
 
         destroyUserEBikeAndRide();
@@ -73,7 +73,7 @@ public class TestRideManager {
 
         Ride r = persManager.getRide(0,userID);
         assertNotNull(r);
-        rideID = r.ID();
+        rideID = r.id();
         Thread.sleep(10000);
         Pair<Integer,Integer> p = rideManager.updateRide(userID,eBikeID,9900,10000);
         assertEquals(50,p.second());
@@ -88,12 +88,12 @@ public class TestRideManager {
 
         persManager.createUser("TestoRide","NotImportant");
         u = persManager.getUser(0,"TestoRide");
-        persManager.updateUser(u.ID(),100);
-        userID = u.ID();
+        persManager.updateUser(u.id(),100);
+        userID = u.id();
 
         persManager.createEBike(10000,10000);
         b = persManager.getAllEBikes(10000,10000,false).get(0);
-        eBikeID = b.ID();
+        eBikeID = b.id();
     }
 
     private void destroyUserEBikeAndRide(){

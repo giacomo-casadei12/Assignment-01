@@ -34,7 +34,7 @@ import static sap.ass01.layers.utils.JsonFieldsConstants.*;
 public class WebController extends AbstractVerticle {
 
     private final int port;
-    private static final Logger logger = Logger.getLogger("[EBikeCesena]");
+    private static final Logger LOGGER = Logger.getLogger("[EBikeCesena]");
     private static final String BIKE_CHANGE_EVENT_TOPIC = "ebike-Change";
     private static final String USER_CHANGE_EVENT_TOPIC = "users-Change";
     /**
@@ -48,7 +48,7 @@ public class WebController extends AbstractVerticle {
      */
     public WebController(AppManager appManager) {
         this.port = 8080;
-        logger.setLevel(Level.FINE);
+        LOGGER.setLevel(Level.FINE);
         this.pManager = appManager;
         vertx = VertxSingleton.getInstance().getVertx();
         vertx.deployVerticle(this);
@@ -56,7 +56,7 @@ public class WebController extends AbstractVerticle {
 
     @Override
     public void start() {
-        logger.log(Level.INFO, "Web server initializing...");
+        LOGGER.log(Level.INFO, "Web server initializing...");
         HttpServer server = vertx.createHttpServer();
         Router router = Router.router(vertx);
         router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
@@ -72,33 +72,33 @@ public class WebController extends AbstractVerticle {
         server.webSocketHandler(webSocket -> {
             if (webSocket.path().equals("/api/ebikes/monitoring")) {
                 webSocket.accept();
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.INFO, "New ebikes monitoring observer registered.");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.INFO, "New ebikes monitoring observer registered.");
                 }
                 EventBus eb = vertx.eventBus();
                 eb.consumer(BIKE_CHANGE_EVENT_TOPIC, msg -> {
                     JsonObject ev = (JsonObject) msg.body();
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.log(Level.INFO, "ebikes changed: " + ev.encodePrettily());
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.log(Level.INFO, "ebikes changed: " + ev.encodePrettily());
                     }
                     webSocket.writeTextMessage(ev.encodePrettily());
                 });
             } else if (webSocket.path().equals("/api/users/monitoring")) {
                 webSocket.accept();
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.INFO, "New users monitoring observer registered.");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.INFO, "New users monitoring observer registered.");
                 }
                 EventBus eb = vertx.eventBus();
                 eb.consumer(USER_CHANGE_EVENT_TOPIC, msg -> {
                     JsonObject ev = (JsonObject) msg.body();
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.log(Level.INFO, "users changed: " + ev.encodePrettily());
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.log(Level.INFO, "users changed: " + ev.encodePrettily());
                     }
                     webSocket.writeTextMessage(ev.encodePrettily());
                 });
             } else {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.INFO, "Monitoring observer rejected.");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.INFO, "Monitoring observer rejected.");
                 }
                 webSocket.reject();
             }
@@ -108,8 +108,8 @@ public class WebController extends AbstractVerticle {
                 .requestHandler(router)
                 .listen(port);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "EBikeCesena web server ready on port: " + port);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "EBikeCesena web server ready on port: " + port);
         }
 
     }
@@ -121,8 +121,8 @@ public class WebController extends AbstractVerticle {
      * @param context the RoutingContext
      */
     protected void processServiceUserCmd(RoutingContext context) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "New request - user cmd " + context.currentRoute().getPath());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "New request - user cmd " + context.currentRoute().getPath());
         }
         new Thread(() -> {
             JsonObject requestBody = context.body().asJsonObject();
@@ -175,8 +175,8 @@ public class WebController extends AbstractVerticle {
      * @param context the RoutingContext
      */
     protected void processServiceUserQuery(RoutingContext context) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "New request - user query " + context.currentRoute().getPath());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "New request - user query " + context.currentRoute().getPath());
         }
         new Thread(() -> {
             // Parse the JSON body
@@ -201,7 +201,7 @@ public class WebController extends AbstractVerticle {
                             String username = requestBody.containsKey(USERNAME) ? requestBody.getString(USERNAME) : "";
                             u = pManager.getUser(id,username);
                             var map = new HashMap<String, Object>();
-                            map.put(USER_ID, u.ID());
+                            map.put(USER_ID, u.id());
                             map.put(USERNAME, u.userName());
                             map.put(CREDIT, u.credit());
                             map.put("admin", u.admin());
@@ -211,7 +211,7 @@ public class WebController extends AbstractVerticle {
                             var array = new ArrayList<Map<String,Object>>();
                             for (User user : users) {
                                 var map = new HashMap<String, Object>();
-                                map.put(USER_ID, user.ID());
+                                map.put(USER_ID, user.id());
                                 map.put(USERNAME, user.userName());
                                 map.put(CREDIT, user.credit());
                                 map.put("admin", user.admin());
@@ -233,8 +233,8 @@ public class WebController extends AbstractVerticle {
      * @param context the RoutingContext
      */
     protected void processServiceEBikeCmd(RoutingContext context) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "New request - ebike cmd " + context.currentRoute().getPath());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "New request - ebike cmd " + context.currentRoute().getPath());
         }
         new Thread(() -> {
             // Parse the JSON body
@@ -300,8 +300,8 @@ public class WebController extends AbstractVerticle {
      * @param context the RoutingContext
      */
     protected void processServiceEBikeQuery(RoutingContext context) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "New request - ebike query " + context.currentRoute().getPath());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "New request - ebike query " + context.currentRoute().getPath());
         }
         new Thread(() -> {
             // Parse the JSON body
@@ -350,8 +350,8 @@ public class WebController extends AbstractVerticle {
      * @param context the RoutingContext
      */
     protected void processServiceRideCmd(RoutingContext context) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "New request - ride cmd " + context.currentRoute().getPath());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "New request - ride cmd " + context.currentRoute().getPath());
         }
         new Thread(() -> {
             // Parse the JSON body
@@ -422,8 +422,8 @@ public class WebController extends AbstractVerticle {
      * @param context the RoutingContext
      */
     protected void processServiceRideQuery(RoutingContext context) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "New request - ride query " + context.currentRoute().getPath());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "New request - ride query " + context.currentRoute().getPath());
         }
         new Thread(() -> {
             // Parse the JSON body
@@ -516,7 +516,7 @@ public class WebController extends AbstractVerticle {
     }
 
     private void invalidJSONReply(RoutingContext context, JsonObject requestBody) {
-        logger.warning("Received invalid JSON payload: " + requestBody);
+        LOGGER.warning("Received invalid JSON payload: " + requestBody);
         JsonObject reply = new JsonObject();
         reply.put(RESULT, "not ok");
         sendReply(context, reply);
@@ -524,7 +524,7 @@ public class WebController extends AbstractVerticle {
 
     private Map<String, Object> buildEBikeMap(EBike eb) {
         var map = new HashMap<String, Object>();
-        map.put(E_BIKE_ID, eb.ID());
+        map.put(E_BIKE_ID, eb.id());
         map.put(POSITION_X, eb.positionX());
         map.put(POSITION_Y, eb.positionY());
         map.put(BATTERY, eb.battery());
@@ -534,7 +534,7 @@ public class WebController extends AbstractVerticle {
 
     private Map<String, Object> buildRideMap(Ride r) {
         var map = new HashMap<String, Object>();
-        map.put(RIDE_ID, r.ID());
+        map.put(RIDE_ID, r.id());
         map.put(USER_ID, r.userID());
         map.put(E_BIKE_ID, r.eBikeID());
         map.put("startDate", r.startDate());
@@ -548,8 +548,8 @@ public class WebController extends AbstractVerticle {
     }
 
     private void notifyEBikeChanged(int eBikeId, int x, int y, int battery, String status) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "notify ebike changed");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "notify ebike changed");
         }
         EventBus eb = vertx.eventBus();
 
@@ -564,8 +564,8 @@ public class WebController extends AbstractVerticle {
     }
 
     private void notifyUserChanged(int userId, int credit) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.INFO, "notify user changed");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.INFO, "notify user changed");
         }
         EventBus eb = vertx.eventBus();
 

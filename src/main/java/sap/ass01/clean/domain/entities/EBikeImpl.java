@@ -7,15 +7,15 @@ import java.util.Objects;
  */
 public class EBikeImpl implements EBike {
 
-    private int ID;
+    private int id;
     private int battery;
     private String state;
     private int positionX;
     private int positionY;
 
     @Override
-    public void setID(int id) {
-        this.ID = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -39,8 +39,8 @@ public class EBikeImpl implements EBike {
     }
 
     @Override
-    public int ID() {
-        return this.ID;
+    public int id() {
+        return this.id;
     }
 
     @Override
@@ -68,11 +68,11 @@ public class EBikeImpl implements EBike {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EBikeImpl that = (EBikeImpl) o;
-        return ID == that.ID && battery == that.battery && positionX == that.positionX && positionY == that.positionY && Objects.equals(state, that.state);
+        return id == that.id && battery == that.battery && positionX == that.positionX && positionY == that.positionY && Objects.equals(state, that.state);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, battery, state, positionX, positionY);
+        return Objects.hash(id, battery, state, positionX, positionY);
     }
 }

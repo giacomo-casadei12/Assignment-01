@@ -9,7 +9,7 @@ public interface MutableRide {
      *
      * @param id the id
      */
-    void setID(int id);
+    void setId(int id);
 
     /**
      * Sets the start date.
@@ -40,11 +40,11 @@ public interface MutableRide {
     void setEBikeID(int bikeID);
 
     /**
-     * get the ride ID.
+     * get the ride id.
      *
-     * @return an int containing the ID
+     * @return an int containing the id
      */
-    int ID();
+    int id();
 
     /**
      * get the Start date string.

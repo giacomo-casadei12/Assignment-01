@@ -167,7 +167,7 @@ public class RideDB implements RideDA {
     private Ride getSingleRideAndCloseSQL(ResultSet rs, Ride ride, PreparedStatement stmt) throws SQLException {
         if (rs.next()) {
             ride = new RideImpl();
-            ride.setID(rs.getInt("ID"));
+            ride.setId(rs.getInt("id"));
             ride.setStartDate(rs.getString(START_DATE));
             ride.setEndDate(rs.getString(END_DATE));
             ride.setUserID(rs.getInt(USER_ID));
@@ -181,7 +181,7 @@ public class RideDB implements RideDA {
     private void fillRideListAndCloseSQL(List<Ride> rides, Statement stmt, ResultSet rs) throws SQLException {
         while (rs.next()) {
             Ride ride = new RideImpl();
-            ride.setID(rs.getInt("ID"));
+            ride.setId(rs.getInt("id"));
             ride.setStartDate(rs.getString(START_DATE));
             ride.setEndDate(rs.getString(END_DATE));
             ride.setUserID(rs.getInt(USER_ID));
@@ -200,7 +200,7 @@ public class RideDB implements RideDA {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM ride ORDER BY ID DESC LIMIT 1");
             if(rs.next()){
-                lastID = rs.getInt("ID");
+                lastID = rs.getInt("id");
             }
         } catch( SQLException e) {
             throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);

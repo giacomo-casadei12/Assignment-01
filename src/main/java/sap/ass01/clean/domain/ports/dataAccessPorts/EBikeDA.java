@@ -57,7 +57,7 @@ public interface EBikeDA {
     boolean updateEBike(EBike bike);
 
     /**
-     * Delete a bike given its ID.
+     * Delete a bike given its id.
      *
      * @param id the id of the bike to be deleted.
      * @return true if the bike was successfully deleted.

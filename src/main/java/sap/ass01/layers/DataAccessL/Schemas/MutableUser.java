@@ -9,7 +9,7 @@ public interface MutableUser {
      *
      * @param id the id
      */
-    void setID(int id);
+    void setId(int id);
 
     /**
      * Sets the username.
@@ -33,11 +33,11 @@ public interface MutableUser {
     void setIsAdmin(boolean isAdmin);
 
     /**
-     * get the ID of the user.
+     * get the id of the user.
      *
      * @return an int containing the id
      */
-    int ID();
+    int id();
 
     /**
      * get the username of the user.

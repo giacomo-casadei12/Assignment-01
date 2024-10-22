@@ -9,7 +9,7 @@ import sap.ass01.layers.DataAccessL.Schemas.MutableEBike;
 public interface EBike extends MutableEBike {
 
     @Override
-    int ID();
+    int id();
 
     @Override
     int battery();

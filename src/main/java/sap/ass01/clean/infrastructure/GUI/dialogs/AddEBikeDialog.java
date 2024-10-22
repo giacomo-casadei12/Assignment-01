@@ -11,7 +11,7 @@ import java.io.Serial;
  * "Hello ChatGPT. Could you write me a Java class 
  *  implementing a JDialog with title "Adding E-Bike", 
  *  including "OK" and "Cancel" buttons, and some input fields, 
- *  namely: an id input field (with label "E-Bike ID"), 
+ *  namely: an id input field (with label "E-Bike id"),
  *  an x input field (with label "E-Bike location - X coord:") 
  *  and a y input field (with label "E-Bike location - Y coord:").
  *  Thanks a lot!"

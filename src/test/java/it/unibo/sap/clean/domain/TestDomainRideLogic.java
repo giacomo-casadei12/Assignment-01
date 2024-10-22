@@ -99,7 +99,7 @@ public class TestDomainRideLogic {
 
     private User createDefaultUser(int credit) {
         User u = new UserImpl();
-        u.setID(1);
+        u.setId(1);
         u.setCredit(credit);
         u.setName("Test");
         u.setIsAdmin(false);
@@ -108,7 +108,7 @@ public class TestDomainRideLogic {
 
     private EBike createDefaultEBike(EBikeState state) {
         EBike bike = new EBikeImpl();
-        bike.setID(1);
+        bike.setId(1);
         bike.setState(state.toString());
         bike.setBattery(100);
         bike.setPositionX(10);

@@ -73,7 +73,7 @@ public class RideManagerImpl implements RideManager {
             ride = manager.getRide(0, userId);
 
             if (ride != null) {
-                rideId = ride.ID();
+                rideId = ride.id();
                 manager.endRide(rideId);
             }
 
@@ -95,7 +95,7 @@ public class RideManagerImpl implements RideManager {
         Ride ride = manager.getRide(0, userId);
 
         if (ride != null) {
-            int rideId = ride.ID();
+            int rideId = ride.id();
             res = manager.endRide(rideId);
         }
 

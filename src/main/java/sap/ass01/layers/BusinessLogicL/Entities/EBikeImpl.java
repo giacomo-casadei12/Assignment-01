@@ -2,23 +2,23 @@ package sap.ass01.layers.BusinessLogicL.Entities;
 
 import java.util.Objects;
 
-public record EBikeImpl(int ID, int battery, String state, int positionX, int positionY) implements EBike {
+public record EBikeImpl(int id, int battery, String state, int positionX, int positionY) implements EBike {
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EBikeImpl eBike = (EBikeImpl) o;
-        return ID() == eBike.ID();
+        return id() == eBike.id();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(ID());
+        return Objects.hashCode(id());
     }
 
     @Override
-    public void setID(int id) {
+    public void setId(int id) {
         throw new UnsupportedOperationException("This is an immutable class");
     }
 

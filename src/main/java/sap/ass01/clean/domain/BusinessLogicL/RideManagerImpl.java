@@ -17,13 +17,6 @@ public class RideManagerImpl implements RideManager {
     final private static double CREDIT_CONSUMPTION_PER_SECOND = 1;
     private PersistenceNotificationService persistenceNotificationService;
 
-    /**
-     * Instantiates a new Ride manager.
-     */
-    public RideManagerImpl() {
-
-    }
-
     @Override
     public boolean startRide(User user, EBike bike) {
         boolean success = false;

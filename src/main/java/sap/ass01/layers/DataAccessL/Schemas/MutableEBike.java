@@ -8,9 +8,9 @@ public interface MutableEBike {
     /**
      * Id int.
      *
-     * @return the ID of the bike
+     * @return the id of the bike
      */
-    int ID();
+    int id();
 
     /**
      * Battery int.
@@ -45,7 +45,7 @@ public interface MutableEBike {
      *
      * @param id the id
      */
-    void setID(int id);
+    void setId(int id);
 
     /**
      * Sets the battery left for the bike.

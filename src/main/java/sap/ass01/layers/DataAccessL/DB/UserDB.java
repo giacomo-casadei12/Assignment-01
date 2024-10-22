@@ -36,7 +36,7 @@ public class UserDB implements UserDA{
             ResultSet rs = stmt.executeQuery("SELECT * FROM users");
             while (rs.next()) {
                 MutableUser user = new MutableUserImpl();
-                user.setID(rs.getInt("ID"));
+                user.setId(rs.getInt("id"));
                 user.setName(rs.getString(USER_NAME));
                 user.setCredit(rs.getInt(CREDIT));
                 user.setIsAdmin(rs.getBoolean(IS_ADMIN));
@@ -147,7 +147,7 @@ public class UserDB implements UserDA{
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM users ORDER BY ID DESC LIMIT 1");
             if(rs.next()){
-                lastID = rs.getInt("ID");
+                lastID = rs.getInt("id");
             }
         } catch( SQLException e) {
             throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);
@@ -159,7 +159,7 @@ public class UserDB implements UserDA{
     private MutableUser getMutableUser(MutableUser user, Statement stmt, ResultSet rs) throws SQLException {
         if (rs.next()) {
             user = new MutableUserImpl();
-            user.setID(rs.getInt("ID"));
+            user.setId(rs.getInt("id"));
             user.setName(rs.getString(USER_NAME));
             user.setCredit(rs.getInt(CREDIT));
             user.setIsAdmin(rs.getBoolean(IS_ADMIN));

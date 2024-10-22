@@ -16,13 +16,13 @@ public class LayeredArchitectureTest {
 
     private static final String DAL_LAYER = "sap.ass01.layers.DataAccessL..";
     private static final String BLL_LAYER = "sap.ass01.layers.BusinessLogicL..";
-    private static final String PreL_LAYER = "sap.ass01.layers.PresentationL..";
+    private static final String PL_LAYER = "sap.ass01.layers.PresentationL..";
 
     @ArchTest
     public static final ArchRule layeredArchitectureAccessRule = layeredArchitecture().consideringAllDependencies()
             .layer("DB").definedBy(DAL_LAYER)
             .layer("Logic").definedBy(BLL_LAYER)
-            .layer("Presentation").definedBy(PreL_LAYER)
+            .layer("Presentation").definedBy(PL_LAYER)
             .whereLayer("Presentation").mayNotBeAccessedByAnyLayer()
             .whereLayer("Logic").mayOnlyBeAccessedByLayers("Presentation")
             .whereLayer("DB").mayOnlyBeAccessedByLayers("Logic")
@@ -44,8 +44,8 @@ public class LayeredArchitectureTest {
 
     @ArchTest
     public static final ArchRule presentationLayerDependsOnlyFromBusinessLayer =
-            classes().that().resideInAPackage(PreL_LAYER)
+            classes().that().resideInAPackage(PL_LAYER)
             .should().onlyDependOnClassesThat()
             .resideInAnyPackage(BLL_LAYER,"java.*..",
-                    PreL_LAYER,"javax.*..","io.vertx..","sap.ass01.layers.utils..");
+                    PL_LAYER,"javax.*..","io.vertx..","sap.ass01.layers.utils..");
 }

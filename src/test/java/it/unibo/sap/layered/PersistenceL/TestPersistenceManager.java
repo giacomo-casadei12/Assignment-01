@@ -46,16 +46,16 @@ public class TestPersistenceManager {
         assertNotNull(us);
         assertTrue(us.contains(u));
 
-        res = persManager.updateUser(u.ID(), 75);
+        res = persManager.updateUser(u.id(), 75);
         assertTrue(res);
-        u = persManager.getUser(u.ID(),"");
+        u = persManager.getUser(u.id(),"");
         assertNotNull(u);
         assertEquals(TEST_USERNAME, u.userName());
         assertEquals(75, u.credit());
 
-        res = persManager.deleteUser(u.ID());
+        res = persManager.deleteUser(u.id());
         assertTrue(res);
-        u = persManager.getUser(u.ID(),"");
+        u = persManager.getUser(u.id(),"");
         assertNull(u);
 
     }
@@ -87,13 +87,13 @@ public class TestPersistenceManager {
         b = result.stream().filter(bb ->
                 bb.positionX() == 2 && bb.positionY() == 8).toList().get(0);
 
-        b = persManager.getEBike(b.ID());
+        b = persManager.getEBike(b.id());
         assertNotNull(b);
         assertTrue(result.contains(b));
 
-        res = persManager.updateEBike(b.ID(), 75, EBikeState.IN_USE, 10, 10);
+        res = persManager.updateEBike(b.id(), 75, EBikeState.IN_USE, 10, 10);
         assertTrue(res);
-        b = persManager.getEBike(b.ID());
+        b = persManager.getEBike(b.id());
         assertNotNull(b);
         assertEquals(EBikeState.IN_USE.toString(), b.state());
         assertEquals(75, b.battery());
@@ -102,9 +102,9 @@ public class TestPersistenceManager {
         assertNotNull(result);
         assertFalse(result.contains(b));
 
-        res = persManager.deleteEBike(b.ID());
+        res = persManager.deleteEBike(b.id());
         assertTrue(res);
-        b = persManager.getEBike(b.ID());
+        b = persManager.getEBike(b.id());
         assertNull(b);
 
     }

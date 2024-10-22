@@ -35,7 +35,7 @@ public class TestEBikeDAL {
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = bis.stream().
                                                                      filter(eBike -> eBike.positionX() == 22 && eBike.positionY() == 22).
                                                                      findFirst().
-                                                                     get().ID();
+                                                                     get().id();
         b = eBikeDA.updateEBike(id,50, EBikeState.IN_USE,50,50);
         assertTrue(b);
         MutableEBike bi = eBikeDA.getEBikeById(id);

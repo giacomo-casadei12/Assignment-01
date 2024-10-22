@@ -7,14 +7,14 @@ import java.util.Objects;
  */
 public class UserImpl implements User {
 
-    private int ID;
+    private int id;
     private String userName;
     private int credit;
     private boolean admin;
 
     @Override
-    public void setID(int id) {
-        this.ID = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class UserImpl implements User {
     }
 
     @Override
-    public int ID() {
-        return this.ID;
+    public int id() {
+        return this.id;
     }
 
     @Override
@@ -57,11 +57,11 @@ public class UserImpl implements User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserImpl that = (UserImpl) o;
-        return ID == that.ID && credit == that.credit && admin == that.admin && Objects.equals(userName, that.userName);
+        return id == that.id && credit == that.credit && admin == that.admin && Objects.equals(userName, that.userName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, userName, credit, admin);
+        return Objects.hash(id, userName, credit, admin);
     }
 }

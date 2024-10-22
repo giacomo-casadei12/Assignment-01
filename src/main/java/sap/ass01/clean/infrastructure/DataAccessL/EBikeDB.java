@@ -85,7 +85,7 @@ public class EBikeDB implements EBikeDA {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 bike = new EBikeImpl();
-                bike.setID(rs.getInt("ID"));
+                bike.setId(rs.getInt("id"));
                 bike.setBattery(rs.getInt(BATTERY));
                 bike.setState(EBikeState.values()[rs.getInt(STATE)].toString());
                 bike.setPositionX(rs.getInt(POSITION_X));
@@ -125,7 +125,7 @@ public class EBikeDB implements EBikeDA {
             stmt.setInt(2, EBikeState.valueOf(bike.state()).ordinal());
             stmt.setInt(3, bike.positionX());
             stmt.setInt(4, bike.positionY());
-            stmt.setInt(5, bike.ID());
+            stmt.setInt(5, bike.id());
             rs = stmt.executeUpdate();
             stmt.close();
         } catch( SQLException e) {
@@ -151,7 +151,7 @@ public class EBikeDB implements EBikeDA {
     private void fillBikeListAndCloseSQL(List<EBike> bikes, Statement stmt, ResultSet rs) throws SQLException {
         while (rs.next()) {
             EBike bike = new EBikeImpl();
-            bike.setID(rs.getInt("ID"));
+            bike.setId(rs.getInt("id"));
             bike.setBattery(rs.getInt(BATTERY));
             bike.setState(EBikeState.values()[rs.getInt(STATE)].toString());
             bike.setPositionX(rs.getInt(POSITION_X));
@@ -169,7 +169,7 @@ public class EBikeDB implements EBikeDA {
             Statement stmt = connection.createStatement();
             rs = stmt.executeQuery("SELECT * FROM ebike ORDER BY ID DESC LIMIT 1");
             if(rs.next()){
-                lastID = rs.getInt("ID");
+                lastID = rs.getInt("id");
             }
         } catch( SQLException e) {
             throw new IllegalStateException(PROBLEM_IN_THE_QUERY, e);

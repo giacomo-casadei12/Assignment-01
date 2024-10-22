@@ -28,7 +28,7 @@ public class TestRideDAL {
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = rs.stream().
                                 filter(ride -> ride.userID() == 1 && ride.eBikeID() == 1).
                                 findFirst().
-                                get().ID();
+                                get().id();
         MutableRide r = rideDA.getRideById(id);
         assertNotNull(r);
         assertEquals(1, r.userID());
@@ -55,7 +55,7 @@ public class TestRideDAL {
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = rs.stream().
                 filter(ride -> ride.userID() == 1 && ride.eBikeID() == 1).
                 findFirst().
-                get().ID();
+                get().id();
         rs = rideDA.getAllRidesByEBike(1);
         assertFalse(rs.isEmpty());
         b = rideDA.deleteRide(id);
