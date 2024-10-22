@@ -7,4 +7,19 @@ import sap.ass01.layers.DataAccessL.Schemas.MutableRide;
  */
 public interface Ride extends MutableRide {
 
+    @Override
+    int ID();
+
+    @Override
+    String startDate();
+
+    @Override
+    String endDate();
+
+    @Override
+    int userID();
+
+    @Override
+    int eBikeID();
+
 }
