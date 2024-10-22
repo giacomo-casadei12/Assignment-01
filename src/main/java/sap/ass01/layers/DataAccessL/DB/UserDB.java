@@ -32,6 +32,7 @@ public class UserDB implements UserDA{
     public List<MutableUser> getAllUsers() {
         List<MutableUser> users = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM users");
             while (rs.next()) {

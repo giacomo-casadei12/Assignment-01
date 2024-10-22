@@ -37,6 +37,7 @@ public class EBikeDB implements EBikeDA {
     public List<EBike> getAllEBikes() {
         List<EBike> bikes = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM ebike");
             fillBikeListAndCloseSQL(bikes, stmt, rs);

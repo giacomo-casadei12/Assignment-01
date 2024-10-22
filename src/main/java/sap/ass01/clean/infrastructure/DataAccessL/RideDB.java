@@ -39,6 +39,7 @@ public class RideDB implements RideDA {
     public List<Ride> getAllRides() {
         List<Ride> rides = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM ride");
             fillRideListAndCloseSQL(rides, stmt, rs);
